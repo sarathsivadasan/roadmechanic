@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Place under Purchase → Orders, after "Purchase Orders" (sequence 20) -->
+    <menuitem id="menu_odex_multi_vendor_rfq"
+              name="Multi Vendor RFQ"
+              parent="purchase.menu_purchase_form_action"
+              action="action_purchase_multi_rfq"
+              sequence="25"/>
+
+</odoo>
