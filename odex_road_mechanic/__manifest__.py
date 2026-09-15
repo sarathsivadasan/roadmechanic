@@ -1,0 +1,73 @@
+{
+    'name': 'Odex Road Mechanic',
+    'version': '18.0.1.0.0',
+    'category': 'Website/Website',
+    'summary': 'Road Mechanic - UAE automotive workshop directory for Odoo 18 Community',
+    'description': """
+Odex Road Mechanic
+==================
+
+A production ready automotive workshop directory built on the standard Odoo 18
+Community Website. It keeps the standard Odoo website header and footer and only
+renders the directory content.
+
+Main features
+-------------
+* Workshop directory with search, filters, sorting and pagination
+* Workshop detail pages with photo gallery, services, vehicle brands and map
+* Verified / featured workshops with backend controlled priority ranking
+* Moderated customer reviews with server side rating recalculation
+* Customer inquiries stored as Odoo records with a follow up state machine
+* Public workshop registration with an administrator verification workflow
+* Workshop owner portal (read/update own workshop only)
+* Light and dark theme with a persistent toggle (localStorage)
+* Mobile first, responsive layouts
+    """,
+    'author': 'ODEX',
+    'website': 'https://www.odex.in',
+    'license': 'LGPL-3',
+    'depends': [
+        'base',
+        'mail',
+        'portal',
+        'website',
+    ],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'data/workshop_type_data.xml',
+        'data/service_data.xml',
+        'data/vehicle_brand_data.xml',
+        'data/location_data.xml',
+        'views/service_views.xml',
+        'views/workshop_type_views.xml',
+        'views/vehicle_brand_views.xml',
+        'views/location_views.xml',
+        'views/review_views.xml',
+        'views/inquiry_views.xml',
+        'views/verification_views.xml',
+        'views/workshop_views.xml',
+        'views/dashboard_views.xml',
+        'views/res_config_settings_views.xml',
+        'views/menus.xml',
+        'views/website_menu.xml',
+        'views/workshop_snippets.xml',
+        'views/workshop_templates.xml',
+        'views/portal_templates.xml',
+    ],
+    'assets': {
+        'web.assets_frontend': [
+            'odex_road_mechanic/static/src/css/road_mechanic.css',
+            'odex_road_mechanic/static/src/js/road_mechanic.js',
+        ],
+        'web.assets_backend': [
+            'odex_road_mechanic/static/src/css/road_mechanic_backend.css',
+            'odex_road_mechanic/static/src/js/dashboard.js',
+            'odex_road_mechanic/static/src/xml/dashboard.xml',
+        ],
+    },
+    'images': ['static/src/img/road_mechanic_logo.png'],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}

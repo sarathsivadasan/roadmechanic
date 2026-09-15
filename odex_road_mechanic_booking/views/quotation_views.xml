@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_quotation_list" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.quotation.list</field>
+        <field name="model">odex.road.mechanic.quotation</field>
+        <field name="arch" type="xml">
+            <list string="Quotations" decoration-info="state == 'sent'"
+                  decoration-success="state == 'confirmed'"
+                  decoration-warning="state == 'partially_confirmed'"
+                  decoration-muted="state in ('cancelled', 'expired', 'rejected')">
+                <field name="name"/>
+                <field name="create_date" string="Created"/>
+                <field name="workshop_id"/>
+                <field name="customer_name"/>
+                <field name="booking_id" optional="show"/>
+                <field name="line_count" string="Lines"/>
+                <field name="confirmed_line_count" string="Confirmed"/>
+                <field name="amount_total" sum="Total"/>
+                <field name="amount_confirmed" sum="Confirmed total"/>
+                <field name="validity_date" optional="hide"/>
+                <field name="state" widget="badge"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_quotation_form" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.quotation.form</field>
+        <field name="model">odex.road.mechanic.quotation</field>
+        <field name="arch" type="xml">
+            <form string="Quotation">
+                <header>
+                    <button name="action_send" type="object" string="Send to Customer"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_reset_draft" type="object" string="Reset to Draft"
+                            invisible="state in ('draft', 'confirmed')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('draft', 'cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,sent,partially_confirmed,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_booking" type="object" class="oe_stat_button"
+                                icon="fa-calendar" invisible="not booking_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Booking</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Customer">
+                            <field name="customer_name"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group string="Context">
+                            <field name="workshop_id"/>
+                            <field name="booking_id"/>
+                            <field name="inquiry_id"/>
+                            <field name="validity_date"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                        </group>
+                    </group>
+                    <group string="Vehicle">
+                        <group>
+                            <field name="vehicle_id"/>
+                            <field name="vehicle_brand_id"/>
+                        </group>
+                        <group>
+                            <field name="vehicle_model"/>
+                            <field name="vehicle_plate"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lines" name="lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="line_type"/>
+                                    <field name="service_id" options="{'no_create_edit': True}"/>
+                                    <field name="name"/>
+                                    <field name="quantity"/>
+                                    <field name="unit_price"/>
+                                    <field name="discount"/>
+                                    <field name="tax_percent"/>
+                                    <field name="optional"/>
+                                    <field name="price_total" sum="Total"/>
+                                    <field name="customer_state" widget="badge"
+                                           decoration-success="customer_state == 'confirmed'"
+                                           decoration-danger="customer_state == 'rejected'"
+                                           readonly="1"/>
+                                    <field name="customer_note" optional="hide" readonly="1"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="amount_untaxed"/>
+                                <field name="amount_tax"/>
+                                <field name="amount_total" class="oe_subtotal_footer_separator"/>
+                                <field name="amount_confirmed"/>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <group>
+                                <field name="note" placeholder="Visible to the customer"/>
+                                <field name="terms"/>
+                            </group>
+                        </page>
+                        <page string="Customer Response" name="response">
+                            <group>
+                                <group>
+                                    <field name="confirmed_line_count"/>
+                                    <field name="rejected_line_count"/>
+                                    <field name="pending_line_count"/>
+                                </group>
+                                <group>
+                                    <field name="customer_response_date"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_quotation_search" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.quotation.search</field>
+        <field name="model">odex.road.mechanic.quotation</field>
+        <field name="arch" type="xml">
+            <search string="Quotations">
+                <field name="name"/>
+                <field name="customer_name"/>
+                <field name="workshop_id"/>
+                <field name="booking_id"/>
+                <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_sent" string="Awaiting Customer"
+                        domain="[('state', 'in', ('sent', 'partially_confirmed'))]"/>
+                <filter name="filter_confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="filter_rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_workshop" string="Workshop" context="{'group_by': 'workshop_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_quotation" model="ir.actions.act_window">
+        <field name="name">All Quotations</field>
+        <field name="res_model">odex.road.mechanic.quotation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_quotation_search"/>
+    </record>
+
+    <record id="action_quotation_awaiting" model="ir.actions.act_window">
+        <field name="name">Awaiting Customer</field>
+        <field name="res_model">odex.road.mechanic.quotation</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ('sent', 'partially_confirmed'))]</field>
+        <field name="search_view_id" ref="view_quotation_search"/>
+    </record>
+
+</odoo>

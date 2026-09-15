@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_config_settings_road_mechanic" model="ir.ui.view">
+        <field name="name">res.config.settings.road.mechanic</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="website.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='website']" position="inside">
+                <block title="Road Mechanic Directory" name="orm_directory_settings">
+                    <setting id="orm_homepage_setting" string="Road Mechanic as Homepage"
+                             help="Serve the Road Mechanic directory on '/' instead of the standard website homepage.">
+                        <field name="orm_is_homepage"/>
+                    </setting>
+                    <setting id="orm_page_size_setting" string="Workshops per Page"
+                             help="Number of workshops loaded on each page of the directory.">
+                        <field name="orm_listing_page_size"/>
+                    </setting>
+                    <setting id="orm_hero_setting" string="Directory Hero Image"
+                             help="Background photo of the hero section. A branded placeholder is used when empty.">
+                        <field name="orm_hero_image" widget="image" class="w-50"/>
+                    </setting>
+                    <setting id="orm_contact_setting" string="Directory Contact Details"
+                             help="Shown on the Road Mechanic contact page.">
+                        <div class="content-group">
+                            <div class="row mt8">
+                                <label for="orm_contact_phone" class="col-lg-4 o_light_label"/>
+                                <field name="orm_contact_phone"/>
+                            </div>
+                            <div class="row">
+                                <label for="orm_contact_whatsapp" class="col-lg-4 o_light_label"/>
+                                <field name="orm_contact_whatsapp"/>
+                            </div>
+                            <div class="row">
+                                <label for="orm_contact_email" class="col-lg-4 o_light_label"/>
+                                <field name="orm_contact_email"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

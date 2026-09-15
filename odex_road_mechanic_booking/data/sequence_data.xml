@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="seq_road_mechanic_booking" model="ir.sequence">
+            <field name="name">Road Mechanic Booking</field>
+            <field name="code">odex.road.mechanic.booking</field>
+            <field name="prefix">RMB/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_road_mechanic_quotation" model="ir.sequence">
+            <field name="name">Road Mechanic Quotation</field>
+            <field name="code">odex.road.mechanic.quotation</field>
+            <field name="prefix">RMQ/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

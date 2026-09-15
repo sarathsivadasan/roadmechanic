@@ -1,0 +1,140 @@
+/* Road Mechanic - booking, quotation and chat styles.
+   Scoped under .odex-road-mechanic and reusing its CSS variables. */
+
+.odex-road-mechanic .orm-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: .5rem;
+    margin: .5rem 0 1rem;
+}
+
+.odex-road-mechanic .orm-slot {
+    padding: .55rem .4rem;
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius-sm);
+    background: var(--orm-card);
+    color: var(--orm-text);
+    font-size: .88rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+}
+.odex-road-mechanic .orm-slot small { display: block; font-weight: 400; font-size: .72rem; opacity: .7; }
+.odex-road-mechanic .orm-slot:hover:not(:disabled) { border-color: var(--orm-red); color: var(--orm-red); }
+.odex-road-mechanic .orm-slot.is-selected { background: var(--orm-red); border-color: var(--orm-red); color: #fff; }
+.odex-road-mechanic .orm-slot:disabled { opacity: .45; cursor: not-allowed; text-decoration: line-through; }
+.odex-road-mechanic .orm-slot-selected { font-weight: 700; margin: 0; }
+
+.odex-road-mechanic .orm-tabs { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: 1rem; }
+.odex-road-mechanic .orm-tabs--sub { margin-top: -.5rem; }
+.odex-road-mechanic .orm-tab {
+    padding: .35rem .8rem;
+    border: 1px solid var(--orm-border);
+    border-radius: 999px;
+    color: var(--orm-text);
+    font-size: .85rem;
+    font-weight: 600;
+}
+.odex-road-mechanic .orm-tab.is-active { background: var(--orm-red); border-color: var(--orm-red); color: #fff; }
+.odex-road-mechanic .orm-tab:hover { border-color: var(--orm-red); }
+
+.odex-road-mechanic .orm-badge--pending,
+.odex-road-mechanic .orm-badge--draft { background: var(--orm-bg-muted); color: var(--orm-text-muted); }
+.odex-road-mechanic .orm-badge--confirmed,
+.odex-road-mechanic .orm-badge--completed { background: var(--orm-green); color: #fff; border-color: transparent; }
+.odex-road-mechanic .orm-badge--in_progress { background: var(--orm-gold); color: #171717; border-color: transparent; }
+.odex-road-mechanic .orm-badge--cancelled,
+.odex-road-mechanic .orm-badge--declined,
+.odex-road-mechanic .orm-badge--rejected,
+.odex-road-mechanic .orm-badge--no_show { background: var(--orm-red); color: #fff; border-color: transparent; }
+
+.odex-road-mechanic .orm-row--booking { grid-template-columns: minmax(0, 1fr) auto; }
+
+/* ------------------------------------------------------------------ chat */
+.odex-road-mechanic .orm-chat {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: .25rem;
+    margin-bottom: .75rem;
+}
+.odex-road-mechanic .orm-chat__msg {
+    max-width: 80%;
+    padding: .5rem .7rem;
+    border-radius: var(--orm-radius);
+    border: 1px solid var(--orm-border);
+    background: var(--orm-bg-muted);
+}
+.odex-road-mechanic .orm-chat__msg--mine {
+    align-self: flex-end;
+    background: rgba(229, 27, 35, .08);
+    border-color: rgba(229, 27, 35, .35);
+}
+.odex-road-mechanic .orm-chat__author { font-weight: 700; font-size: .8rem; }
+.odex-road-mechanic .orm-chat__body { margin: .15rem 0; white-space: pre-line; }
+.odex-road-mechanic .orm-chat__date { font-size: .72rem; color: var(--orm-text-muted); }
+.odex-road-mechanic .orm-chat__form { display: flex; gap: .5rem; align-items: flex-start; }
+.odex-road-mechanic .orm-chat__form textarea { flex: 1; }
+
+/* -------------------------------------------------------------- quotation */
+.odex-road-mechanic .orm-qline {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px 220px;
+    gap: .75rem;
+    align-items: center;
+    padding: .7rem 0;
+    border-top: 1px solid var(--orm-border);
+}
+.odex-road-mechanic .orm-qline__meta { display: block; color: var(--orm-text-muted); font-size: .82rem; }
+.odex-road-mechanic .orm-qline__total { font-weight: 700; text-align: right; }
+.odex-road-mechanic .orm-qline__decision { display: flex; gap: .6rem; flex-wrap: wrap; }
+
+.odex-road-mechanic .orm-qtotals {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+    align-items: flex-end;
+    margin: 1rem 0;
+    padding-top: .75rem;
+    border-top: 2px solid var(--orm-border);
+}
+.odex-road-mechanic .orm-qtotals div { display: flex; gap: 1rem; min-width: 260px; justify-content: space-between; }
+.odex-road-mechanic .orm-qtotals__confirmed { color: var(--orm-green); font-size: 1.05rem; }
+
+.odex-road-mechanic .orm-qedit { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .75rem; }
+.odex-road-mechanic .orm-qedit__row {
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) 80px 110px 80px 80px 70px 110px 100px 90px;
+    gap: .4rem;
+    align-items: center;
+}
+.odex-road-mechanic .orm-qedit__new {
+    grid-template-columns: minmax(0, 2.2fr) 110px 80px 110px 80px 80px;
+}
+.odex-road-mechanic .orm-qedit__row--head { font-size: .78rem; font-weight: 700; color: var(--orm-text-muted); }
+.odex-road-mechanic .orm-qedit__total { font-weight: 700; }
+
+/* --------------------------------------------------------------- schedule */
+.odex-road-mechanic .orm-schedule { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+.odex-road-mechanic .orm-schedule__row {
+    display: grid;
+    grid-template-columns: 150px repeat(5, minmax(0, 1fr));
+    gap: .4rem;
+    align-items: center;
+}
+.odex-road-mechanic .orm-schedule__day { font-weight: 600; }
+
+.odex-road-mechanic .orm-stat { display: block; color: var(--orm-text); }
+.odex-road-mechanic .orm-stat:hover { border-color: var(--orm-red); color: var(--orm-text); }
+
+@media (max-width: 991.98px) {
+    .odex-road-mechanic .orm-qline { grid-template-columns: minmax(0, 1fr); }
+    .odex-road-mechanic .orm-qline__total { text-align: left; }
+    .odex-road-mechanic .orm-qedit__row,
+    .odex-road-mechanic .orm-qedit__new { grid-template-columns: 1fr 1fr; }
+    .odex-road-mechanic .orm-qedit__row--head { display: none; }
+    .odex-road-mechanic .orm-schedule__row { grid-template-columns: 1fr 1fr; }
+    .odex-road-mechanic .orm-chat__msg { max-width: 100%; }
+}

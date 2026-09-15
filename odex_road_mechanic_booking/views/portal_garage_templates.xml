@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_garage" name="Portal: Garage"
+              inherit_id="portal.portal_my_home" priority="46">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/odex_road_mechanic/static/src/img/road_mechanic_mark.png'"/>
+                <t t-set="title">Garage Dashboard</t>
+                <t t-set="text">Bookings, quotations and customer chats</t>
+                <t t-set="url" t-value="'/my/garage'"/>
+                <t t-set="placeholder_count" t-value="'orm_garage_booking_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_garage_nav" name="Garage Navigation">
+        <nav class="orm-tabs">
+            <a href="/my/garage" t-attf-class="orm-tab #{page_tab == 'dashboard' and 'is-active' or ''}">Dashboard</a>
+            <a href="/my/garage/bookings" t-attf-class="orm-tab #{page_tab == 'bookings' and 'is-active' or ''}">Bookings</a>
+            <a href="/my/garage/quotations" t-attf-class="orm-tab #{page_tab == 'quotations' and 'is-active' or ''}">Quotations</a>
+            <a href="/my/workshops" class="orm-tab">My listings</a>
+        </nav>
+    </template>
+
+    <!-- Dashboard -->
+    <template id="portal_garage_dashboard" name="Garage Dashboard">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">Garage dashboard</h1>
+                <t t-set="page_tab" t-value="'dashboard'"/>
+                <t t-call="odex_road_mechanic_booking.portal_garage_nav"/>
+
+                <div class="orm-stats">
+                    <a class="orm-stat" href="/my/garage/bookings?state=pending">
+                        <strong t-out="stats['pending']"/><span>pending requests</span>
+                    </a>
+                    <a class="orm-stat" href="/my/garage/bookings?state=confirmed">
+                        <strong t-out="stats['confirmed']"/><span>confirmed</span>
+                    </a>
+                    <a class="orm-stat" href="/my/garage/bookings?period=today">
+                        <strong t-out="stats['today']"/><span>today</span>
+                    </a>
+                    <a class="orm-stat" href="/my/garage/bookings?period=week">
+                        <strong t-out="stats['week']"/><span>next 7 days</span>
+                    </a>
+                    <a class="orm-stat" href="/my/garage/quotations">
+                        <strong t-out="stats['quotations']"/><span>quotations</span>
+                    </a>
+                    <a class="orm-stat" href="/my/garage/quotations?state=sent">
+                        <strong t-out="stats['awaiting_customer']"/><span>awaiting customer</span>
+                    </a>
+                </div>
+
+                <div class="orm-panel orm-mb">
+                    <h2 class="orm-block__subtitle">Pending confirmation</h2>
+                    <p class="orm-muted" t-if="not pending_bookings">Nothing waiting for you.</p>
+                    <table class="orm-table" t-if="pending_bookings">
+                        <thead><tr><th>Slot</th><th>Customer</th><th>Vehicle</th><th>Service</th><th></th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="pending_bookings" t-as="booking">
+                                <td t-out="booking.slot_label"/>
+                                <td t-out="booking.customer_name"/>
+                                <td><t t-out="booking.vehicle_brand_id.name"/> <t t-out="booking.vehicle_model"/></td>
+                                <td t-out="booking.service_id.name or '-'"/>
+                                <td><a t-attf-href="/my/garage/booking/#{booking.id}"
+                                       class="orm-btn orm-btn--primary orm-btn--sm">Open</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="orm-panel orm-mb">
+                    <h2 class="orm-block__subtitle">Today</h2>
+                    <p class="orm-muted" t-if="not today_bookings">No booking today.</p>
+                    <table class="orm-table" t-if="today_bookings">
+                        <thead><tr><th>Slot</th><th>Customer</th><th>Status</th><th></th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="today_bookings" t-as="booking">
+                                <td t-out="booking.slot_label"/>
+                                <td t-out="booking.customer_name"/>
+                                <td t-out="booking.state_label"/>
+                                <td><a t-attf-href="/my/garage/booking/#{booking.id}"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">Open</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="orm-panel orm-mb">
+                    <h2 class="orm-block__subtitle">Upcoming</h2>
+                    <p class="orm-muted" t-if="not upcoming_bookings">Nothing scheduled yet.</p>
+                    <table class="orm-table" t-if="upcoming_bookings">
+                        <thead><tr><th>Slot</th><th>Customer</th><th>Status</th><th></th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="upcoming_bookings" t-as="booking">
+                                <td t-out="booking.slot_label"/>
+                                <td t-out="booking.customer_name"/>
+                                <td t-out="booking.state_label"/>
+                                <td><a t-attf-href="/my/garage/booking/#{booking.id}"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">Open</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="orm-panel">
+                    <h2 class="orm-block__subtitle">Booking settings</h2>
+                    <p class="orm-muted orm-small">
+                        Working days, slot length, capacity and closed dates.
+                    </p>
+                    <t t-foreach="workshops" t-as="workshop">
+                        <a t-attf-href="/my/garage/schedule/#{workshop.id}"
+                           class="orm-btn orm-btn--outline orm-btn--sm orm-mb">
+                            <t t-out="workshop.name"/>
+                            <t t-if="not workshop.booking_enabled"> (bookings off)</t>
+                        </a>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Booking queue -->
+    <template id="portal_garage_bookings" name="Garage Bookings">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">Bookings</h1>
+                <t t-set="page_tab" t-value="'bookings'"/>
+                <t t-call="odex_road_mechanic_booking.portal_garage_nav"/>
+
+                <nav class="orm-tabs orm-tabs--sub">
+                    <a href="/my/garage/bookings" t-attf-class="orm-tab #{active_state == 'all' and active_period == 'all' and 'is-active' or ''}">All</a>
+                    <a href="/my/garage/bookings?period=today" t-attf-class="orm-tab #{active_period == 'today' and 'is-active' or ''}">Today</a>
+                    <a href="/my/garage/bookings?period=week" t-attf-class="orm-tab #{active_period == 'week' and 'is-active' or ''}">This week</a>
+                    <a href="/my/garage/bookings?period=upcoming" t-attf-class="orm-tab #{active_period == 'upcoming' and 'is-active' or ''}">Upcoming</a>
+                    <a href="/my/garage/bookings?state=pending" t-attf-class="orm-tab #{active_state == 'pending' and 'is-active' or ''}">Pending</a>
+                    <a href="/my/garage/bookings?state=confirmed" t-attf-class="orm-tab #{active_state == 'confirmed' and 'is-active' or ''}">Confirmed</a>
+                    <a href="/my/garage/bookings?state=in_progress" t-attf-class="orm-tab #{active_state == 'in_progress' and 'is-active' or ''}">In progress</a>
+                    <a href="/my/garage/bookings?state=completed" t-attf-class="orm-tab #{active_state == 'completed' and 'is-active' or ''}">Completed</a>
+                    <a href="/my/garage/bookings?state=cancelled" t-attf-class="orm-tab #{active_state == 'cancelled' and 'is-active' or ''}">Cancelled</a>
+                </nav>
+
+                <p class="orm-muted" t-if="not bookings">No booking in this view.</p>
+                <table class="orm-table" t-if="bookings">
+                    <thead>
+                        <tr><th>Slot</th><th>Reference</th><th>Customer</th><th>Vehicle</th>
+                            <th>Pickup</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="bookings" t-as="booking">
+                            <td t-out="booking.slot_label"/>
+                            <td t-out="booking.name"/>
+                            <td>
+                                <t t-out="booking.customer_name"/><br/>
+                                <span class="orm-muted orm-small" t-out="booking.phone"/>
+                            </td>
+                            <td><t t-out="booking.vehicle_brand_id.name"/> <t t-out="booking.vehicle_model"/></td>
+                            <td t-out="booking.logistics != 'drop_in' and 'Yes' or '-'"/>
+                            <td t-out="booking.state_label"/>
+                            <td><a t-attf-href="/my/garage/booking/#{booking.id}"
+                                   class="orm-btn orm-btn--primary orm-btn--sm">Open</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- Booking detail -->
+    <template id="portal_garage_booking" name="Garage Booking Detail">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <div class="orm-alert orm-alert--success" t-if="saved">Updated.</div>
+                <div class="orm-alert orm-alert--error" t-if="error">
+                    That action could not be applied.
+                </div>
+                <t t-set="page_tab" t-value="'bookings'"/>
+                <t t-call="odex_road_mechanic_booking.portal_garage_nav"/>
+
+                <div class="orm-panel orm-mb">
+                    <h1 class="orm-block__title">
+                        <t t-out="booking.name"/>
+                        <t t-call="odex_road_mechanic_booking.orm_booking_badge"/>
+                    </h1>
+                    <ul class="orm-panel__list">
+                        <li><i class="fa fa-clock-o"/> <span t-out="booking.slot_label"/></li>
+                        <li><i class="fa fa-user"/> <span t-out="booking.customer_name"/></li>
+                        <li><i class="fa fa-phone"/>
+                            <a t-attf-href="tel:#{booking.phone}" t-out="booking.phone"/></li>
+                        <li t-if="booking.email"><i class="fa fa-envelope-o"/>
+                            <a t-attf-href="mailto:#{booking.email}" t-out="booking.email"/></li>
+                        <li t-if="booking.vehicle_brand_id or booking.vehicle_model">
+                            <i class="fa fa-car"/>
+                            <span><t t-out="booking.vehicle_brand_id.name"/>
+                                <t t-out="booking.vehicle_model"/>
+                                <t t-if="booking.vehicle_plate">(<t t-out="booking.vehicle_plate"/>)</t>
+                            </span></li>
+                        <li t-if="booking.service_id"><i class="fa fa-cogs"/>
+                            <span t-out="booking.service_id.name"/></li>
+                        <li t-if="booking.logistics != 'drop_in'"><i class="fa fa-truck"/>
+                            <span>Pickup: <t t-out="booking.pickup_address"/>
+                                <t t-if="booking.dropoff_address"> - drop-off: <t t-out="booking.dropoff_address"/></t>
+                            </span></li>
+                    </ul>
+                    <p t-if="booking.notes" class="orm-muted" t-out="booking.notes"/>
+                    <div class="orm-gallery" t-if="booking.image_ids">
+                        <t t-foreach="booking.image_ids" t-as="photo">
+                            <a class="orm-gallery__thumb" t-att-href="photo.image_url()" target="_blank">
+                                <img t-att-src="photo.thumb_url()" alt="Vehicle photo" loading="lazy"/>
+                            </a>
+                        </t>
+                    </div>
+
+                    <form t-attf-action="/my/garage/booking/#{booking.id}/action" method="post"
+                          class="orm-actions orm-mt">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <button t-if="booking.state == 'pending'" type="submit" name="action"
+                                value="confirm" class="orm-btn orm-btn--primary orm-btn--sm">
+                            Accept booking
+                        </button>
+                        <button t-if="booking.state == 'pending'" type="submit" name="action"
+                                value="decline" class="orm-btn orm-btn--outline orm-btn--sm">
+                            Decline
+                        </button>
+                        <button t-if="booking.state == 'confirmed'" type="submit" name="action"
+                                value="start" class="orm-btn orm-btn--primary orm-btn--sm">
+                            Start work
+                        </button>
+                        <button t-if="booking.state in ('confirmed', 'in_progress')" type="submit"
+                                name="action" value="complete" class="orm-btn orm-btn--primary orm-btn--sm">
+                            Mark completed
+                        </button>
+                        <button t-if="booking.state in ('confirmed', 'in_progress')" type="submit"
+                                name="action" value="no_show" class="orm-btn orm-btn--outline orm-btn--sm">
+                            No show
+                        </button>
+                        <button t-if="booking.state in ('pending', 'confirmed')" type="submit"
+                                name="action" value="cancel" class="orm-btn orm-btn--outline orm-btn--sm">
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+
+                <div class="orm-panel orm-mb">
+                    <h2 class="orm-block__subtitle">Quotations</h2>
+                    <table class="orm-table" t-if="quotations">
+                        <thead><tr><th>Reference</th><th>Total</th><th>Confirmed</th><th>Status</th><th></th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="quotations" t-as="quotation">
+                                <td t-out="quotation.name"/>
+                                <td><t t-out="quotation.amount_total"
+                                       t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></td>
+                                <td><t t-out="quotation.amount_confirmed"
+                                       t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></td>
+                                <td t-out="quotation.state_label"/>
+                                <td><a t-attf-href="/my/garage/quotation/#{quotation.id}"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">Open</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="orm-muted" t-if="not quotations">No quotation yet for this booking.</p>
+                    <form t-attf-action="/my/garage/booking/#{booking.id}/quotation/new" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <button type="submit" class="orm-btn orm-btn--primary orm-btn--sm">
+                            Create a quotation
+                        </button>
+                    </form>
+                </div>
+
+                <div class="orm-panel" id="orm-chat">
+                    <h2 class="orm-block__subtitle">Chat with the customer</h2>
+                    <div class="orm-chat" data-orm-chat="1">
+                        <p class="orm-muted" t-if="not messages">No message yet.</p>
+                        <t t-foreach="messages" t-as="message">
+                            <div t-attf-class="orm-chat__msg orm-chat__msg--#{message.author_type == 'customer' and 'theirs' or 'mine'}">
+                                <span class="orm-chat__author">
+                                    <t t-out="message.author_type == 'customer' and booking.customer_name or 'You'"/>
+                                </span>
+                                <p class="orm-chat__body" t-out="message.body"/>
+                                <span class="orm-chat__date" t-out="message.create_date"
+                                      t-options="{'widget': 'datetime'}"/>
+                            </div>
+                        </t>
+                    </div>
+                    <form t-attf-action="/my/garage/booking/#{booking.id}/message" method="post"
+                          class="orm-chat__form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <textarea name="body" rows="2" class="orm-input" maxlength="4000"
+                                  placeholder="Write a message..." required="required"/>
+                        <button type="submit" class="orm-btn orm-btn--primary">Send</button>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Quotation list -->
+    <template id="portal_garage_quotations" name="Garage Quotations">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">Quotations</h1>
+                <t t-set="page_tab" t-value="'quotations'"/>
+                <t t-call="odex_road_mechanic_booking.portal_garage_nav"/>
+                <nav class="orm-tabs orm-tabs--sub">
+                    <a href="/my/garage/quotations" t-attf-class="orm-tab #{active_state == 'all' and 'is-active' or ''}">All</a>
+                    <a href="/my/garage/quotations?state=draft" t-attf-class="orm-tab #{active_state == 'draft' and 'is-active' or ''}">Draft</a>
+                    <a href="/my/garage/quotations?state=sent" t-attf-class="orm-tab #{active_state == 'sent' and 'is-active' or ''}">Sent</a>
+                    <a href="/my/garage/quotations?state=partially_confirmed" t-attf-class="orm-tab #{active_state == 'partially_confirmed' and 'is-active' or ''}">Partially confirmed</a>
+                    <a href="/my/garage/quotations?state=confirmed" t-attf-class="orm-tab #{active_state == 'confirmed' and 'is-active' or ''}">Confirmed</a>
+                </nav>
+                <p class="orm-muted" t-if="not quotations">No quotation in this view.</p>
+                <table class="orm-table" t-if="quotations">
+                    <thead><tr><th>Reference</th><th>Customer</th><th>Lines</th><th>Total</th>
+                        <th>Confirmed</th><th>Status</th><th></th></tr></thead>
+                    <tbody>
+                        <tr t-foreach="quotations" t-as="quotation">
+                            <td t-out="quotation.name"/>
+                            <td t-out="quotation.customer_name"/>
+                            <td><t t-out="quotation.confirmed_line_count"/> / <t t-out="quotation.line_count"/></td>
+                            <td><t t-out="quotation.amount_total"
+                                   t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></td>
+                            <td><t t-out="quotation.amount_confirmed"
+                                   t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></td>
+                            <td t-out="quotation.state_label"/>
+                            <td><a t-attf-href="/my/garage/quotation/#{quotation.id}"
+                                   class="orm-btn orm-btn--primary orm-btn--sm">Open</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- Quotation editor -->
+    <template id="portal_garage_quotation" name="Garage Quotation Editor">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <div class="orm-alert orm-alert--success" t-if="saved">Quotation saved.</div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'state'">
+                    This quotation can no longer be edited.
+                </div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'send'">
+                    Add at least one line before sending the quotation.
+                </div>
+                <t t-set="page_tab" t-value="'quotations'"/>
+                <t t-call="odex_road_mechanic_booking.portal_garage_nav"/>
+
+                <div class="orm-panel orm-mb">
+                    <h1 class="orm-block__title">
+                        <t t-out="quotation.name"/>
+                        <span class="orm-badge" t-out="quotation.state_label"/>
+                    </h1>
+                    <ul class="orm-panel__list">
+                        <li><i class="fa fa-user"/> <span t-out="quotation.customer_name"/></li>
+                        <li t-if="quotation.booking_id"><i class="fa fa-calendar"/>
+                            <a t-attf-href="/my/garage/booking/#{quotation.booking_id.id}"
+                               t-out="quotation.booking_id.name"/></li>
+                        <li t-if="quotation.vehicle_model or quotation.vehicle_brand_id">
+                            <i class="fa fa-car"/>
+                            <span><t t-out="quotation.vehicle_brand_id.name"/>
+                                <t t-out="quotation.vehicle_model"/></span></li>
+                    </ul>
+                    <p class="orm-muted orm-small" t-if="quotation.customer_response_date">
+                        Customer responded on
+                        <t t-out="quotation.customer_response_date" t-options="{'widget': 'datetime'}"/>:
+                        <t t-out="quotation.confirmed_line_count"/> confirmed,
+                        <t t-out="quotation.rejected_line_count"/> rejected.
+                    </p>
+                </div>
+
+                <form t-attf-action="/my/garage/quotation/#{quotation.id}/save" method="post"
+                      class="orm-panel" data-orm-quotation-form="1">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <h2 class="orm-block__subtitle">Lines</h2>
+                    <div class="orm-qedit">
+                        <div class="orm-qedit__row orm-qedit__row--head">
+                            <span>Description</span><span>Qty</span><span>Unit price</span>
+                            <span>Disc %</span><span>Tax %</span><span>Optional</span><span>Total</span>
+                            <span>Customer</span><span></span>
+                        </div>
+                        <div class="orm-qedit__row" t-foreach="quotation.line_ids" t-as="line">
+                            <input type="text" t-attf-name="line_#{line.id}_name" class="orm-input"
+                                   t-att-value="line.name" maxlength="200"/>
+                            <input type="number" step="0.01" min="0.01" t-attf-name="line_#{line.id}_quantity"
+                                   class="orm-input" t-att-value="line.quantity"/>
+                            <input type="number" step="0.01" min="0" t-attf-name="line_#{line.id}_unit_price"
+                                   class="orm-input" t-att-value="line.unit_price"/>
+                            <input type="number" step="0.01" min="0" max="100"
+                                   t-attf-name="line_#{line.id}_discount" class="orm-input"
+                                   t-att-value="line.discount"/>
+                            <input type="number" step="0.01" min="0" max="100"
+                                   t-attf-name="line_#{line.id}_tax_percent" class="orm-input"
+                                   t-att-value="line.tax_percent"/>
+                            <label class="orm-check">
+                                <input type="checkbox" t-attf-name="line_#{line.id}_optional" value="1"
+                                       t-att-checked="line.optional and 'checked' or None"/>
+                            </label>
+                            <span class="orm-qedit__total">
+                                <t t-out="line.price_total"
+                                   t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/>
+                            </span>
+                            <span t-attf-class="orm-badge orm-badge--#{line.customer_state}"
+                                  t-out="line.customer_state"/>
+                            <label class="orm-check orm-qedit__delete">
+                                <input type="checkbox" t-attf-name="line_#{line.id}_delete" value="1"/>
+                                <span>Delete</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <h3 class="orm-block__subtitle">Add lines</h3>
+                    <div class="orm-qedit" data-orm-new-lines="1">
+                        <div class="orm-qedit__row orm-qedit__new">
+                            <input type="text" name="new_name" class="orm-input"
+                                   placeholder="e.g. AC gas refill" maxlength="200"/>
+                            <select name="new_line_type" class="orm-input">
+                                <option value="labour">Labour</option>
+                                <option value="part">Part</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <input type="number" step="0.01" min="0.01" name="new_quantity"
+                                   class="orm-input" value="1"/>
+                            <input type="number" step="0.01" min="0" name="new_unit_price"
+                                   class="orm-input" value="0"/>
+                            <input type="number" step="0.01" min="0" max="100" name="new_discount"
+                                   class="orm-input" value="0"/>
+                            <input type="number" step="0.01" min="0" max="100" name="new_tax_percent"
+                                   class="orm-input" value="5"/>
+                        </div>
+                    </div>
+                    <button type="button" class="orm-btn orm-btn--outline orm-btn--sm"
+                            data-orm-add-line="1">
+                        <i class="fa fa-plus"/> Add another line
+                    </button>
+
+                    <div class="orm-form__row orm-mt">
+                        <div class="orm-form__field">
+                            <label for="q-validity">Valid until</label>
+                            <input id="q-validity" type="date" name="validity_date" class="orm-input"
+                                   t-att-value="quotation.validity_date or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="q-note">Note for the customer</label>
+                        <textarea id="q-note" name="note" rows="3" class="orm-input" maxlength="2000"
+                                  t-out="quotation.note or ''"/>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="q-terms">Terms</label>
+                        <textarea id="q-terms" name="terms" rows="3" class="orm-input" maxlength="2000"
+                                  t-out="quotation.terms or ''"/>
+                    </div>
+
+                    <div class="orm-qtotals">
+                        <div><span>Untaxed</span><strong t-out="quotation.amount_untaxed"
+                            t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></div>
+                        <div><span>Tax</span><strong t-out="quotation.amount_tax"
+                            t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></div>
+                        <div><span>Total</span><strong t-out="quotation.amount_total"
+                            t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></div>
+                        <div class="orm-qtotals__confirmed"><span>Confirmed by customer</span>
+                            <strong t-out="quotation.amount_confirmed"
+                                t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></div>
+                    </div>
+
+                    <div class="orm-actions">
+                        <button type="submit" class="orm-btn orm-btn--outline">Save draft</button>
+                        <button type="submit" name="send" value="1" class="orm-btn orm-btn--primary">
+                            Save and send to customer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <!-- Schedule configuration -->
+    <template id="portal_garage_schedule" name="Garage Schedule">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <div class="orm-alert orm-alert--success" t-if="saved">Schedule saved.</div>
+                <t t-set="page_tab" t-value="'dashboard'"/>
+                <t t-call="odex_road_mechanic_booking.portal_garage_nav"/>
+
+                <h1 class="orm-block__title">Booking settings - <t t-out="workshop.name"/></h1>
+
+                <form t-attf-action="/my/garage/schedule/#{workshop.id}/save" method="post"
+                      class="orm-panel orm-form">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <label class="orm-check">
+                        <input type="checkbox" name="booking_enabled" value="1"
+                               t-att-checked="workshop.booking_enabled and 'checked' or None"/>
+                        <span>Accept online bookings</span>
+                    </label>
+                    <label class="orm-check">
+                        <input type="checkbox" name="allow_pickup" value="1"
+                               t-att-checked="workshop.allow_pickup and 'checked' or None"/>
+                        <span>Offer pickup and drop-off</span>
+                    </label>
+
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="s-duration">Slot length (hours)</label>
+                            <input id="s-duration" type="number" step="0.25" min="0.25" max="12"
+                                   name="slot_duration" class="orm-input"
+                                   t-att-value="workshop.slot_duration"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="s-capacity">Bookings per slot</label>
+                            <input id="s-capacity" type="number" min="1" max="50" name="slot_capacity"
+                                   class="orm-input" t-att-value="workshop.slot_capacity"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="s-lead">Minimum notice (hours)</label>
+                            <input id="s-lead" type="number" min="0" max="168" name="booking_lead_hours"
+                                   class="orm-input" t-att-value="workshop.booking_lead_hours"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="s-horizon">Booking window (days)</label>
+                            <input id="s-horizon" type="number" min="1" max="180"
+                                   name="booking_horizon_days" class="orm-input"
+                                   t-att-value="workshop.booking_horizon_days"/>
+                        </div>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Working days</h2>
+                    <p class="orm-muted orm-small">
+                        Times are decimal hours, e.g. 8.5 means 08:30. Leave the afternoon empty for
+                        a single block, or set a gap between morning and afternoon for the lunch break.
+                    </p>
+                    <div class="orm-schedule">
+                        <t t-foreach="schedule_rows" t-as="row">
+                            <div class="orm-schedule__row">
+                                <label class="orm-check orm-schedule__day">
+                                    <input type="checkbox" t-attf-name="day_#{row['code']}_enabled"
+                                           value="1"
+                                           t-att-checked="row['enabled'] and 'checked' or None"/>
+                                    <span t-out="row['label']"/>
+                                </label>
+                                <input type="number" step="0.25" min="0" max="24"
+                                       t-attf-name="day_#{row['code']}_mf" class="orm-input"
+                                       t-att-value="row['morning_from']"/>
+                                <input type="number" step="0.25" min="0" max="24"
+                                       t-attf-name="day_#{row['code']}_mt" class="orm-input"
+                                       t-att-value="row['morning_to']"/>
+                                <input type="number" step="0.25" min="0" max="24"
+                                       t-attf-name="day_#{row['code']}_af" class="orm-input"
+                                       t-att-value="row['afternoon_from']"/>
+                                <input type="number" step="0.25" min="0" max="24"
+                                       t-attf-name="day_#{row['code']}_at" class="orm-input"
+                                       t-att-value="row['afternoon_to']"/>
+                                <input type="number" min="0" max="50"
+                                       t-attf-name="day_#{row['code']}_capacity" class="orm-input"
+                                       t-att-value="row['capacity']"
+                                       title="Capacity override, 0 uses the default"/>
+                            </div>
+                        </t>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Add a closed date or blocked slot</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="c-reason">Reason</label>
+                            <input id="c-reason" type="text" name="closed_reason" class="orm-input"
+                                   placeholder="Public holiday" maxlength="120"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="c-from">From</label>
+                            <input id="c-from" type="date" name="closed_from" class="orm-input"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="c-to">To</label>
+                            <input id="c-to" type="date" name="closed_to" class="orm-input"/>
+                        </div>
+                    </div>
+                    <label class="orm-check">
+                        <input type="checkbox" name="closed_whole_day" value="1" checked="checked"/>
+                        <span>Whole day</span>
+                    </label>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="c-tf">Blocked from (hour)</label>
+                            <input id="c-tf" type="number" step="0.25" min="0" max="24"
+                                   name="closed_time_from" class="orm-input" value="0"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="c-tt">Blocked to (hour)</label>
+                            <input id="c-tt" type="number" step="0.25" min="0" max="24"
+                                   name="closed_time_to" class="orm-input" value="0"/>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg">
+                        Save settings
+                    </button>
+                </form>
+
+                <div class="orm-panel orm-mt" t-if="workshop.closed_date_ids">
+                    <h2 class="orm-block__subtitle">Closed dates</h2>
+                    <table class="orm-table">
+                        <thead><tr><th>Reason</th><th>From</th><th>To</th><th>Scope</th><th></th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="workshop.closed_date_ids" t-as="closed">
+                                <td t-out="closed.name"/>
+                                <td t-out="closed.date_from"/>
+                                <td t-out="closed.date_to or '-'"/>
+                                <td t-out="closed.whole_day and 'Whole day' or 'Part of the day'"/>
+                                <td>
+                                    <form t-attf-action="/my/garage/schedule/#{workshop.id}/closed/#{closed.id}/delete"
+                                          method="post">
+                                        <input type="hidden" name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="orm-btn orm-btn--outline orm-btn--sm">
+                                            Remove
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

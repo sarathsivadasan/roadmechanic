@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_booking_root"
+              name="Bookings"
+              parent="odex_road_mechanic.menu_road_mechanic_root"
+              sequence="15"/>
+
+    <menuitem id="menu_booking_all"
+              name="All Bookings"
+              parent="menu_booking_root"
+              action="action_booking"
+              sequence="1"/>
+
+    <menuitem id="menu_booking_pending"
+              name="Pending Bookings"
+              parent="menu_booking_root"
+              action="action_booking_pending"
+              sequence="2"/>
+
+    <menuitem id="menu_booking_calendar"
+              name="Calendar"
+              parent="menu_booking_root"
+              action="action_booking_calendar"
+              sequence="3"/>
+
+    <menuitem id="menu_quotation_root"
+              name="Quotations"
+              parent="odex_road_mechanic.menu_road_mechanic_root"
+              sequence="18"/>
+
+    <menuitem id="menu_quotation_all"
+              name="All Quotations"
+              parent="menu_quotation_root"
+              action="action_quotation"
+              sequence="1"/>
+
+    <menuitem id="menu_quotation_awaiting"
+              name="Awaiting Customer"
+              parent="menu_quotation_root"
+              action="action_quotation_awaiting"
+              sequence="2"/>
+
+    <menuitem id="menu_vehicles"
+              name="Vehicles"
+              parent="odex_road_mechanic.menu_road_mechanic_root"
+              action="action_vehicle"
+              sequence="65"/>
+
+    <menuitem id="menu_messages"
+              name="Conversations"
+              parent="odex_road_mechanic.menu_road_mechanic_root"
+              action="action_message"
+              sequence="35"/>
+
+</odoo>

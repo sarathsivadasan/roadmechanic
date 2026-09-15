@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Portal home entries -->
+    <template id="portal_my_home_booking" name="Portal: Bookings"
+              inherit_id="portal.portal_my_home" priority="45">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/odex_road_mechanic/static/src/img/road_mechanic_mark.png'"/>
+                <t t-set="title">My Bookings</t>
+                <t t-set="text">Workshop appointments and their status</t>
+                <t t-set="url" t-value="'/my/bookings'"/>
+                <t t-set="placeholder_count" t-value="'orm_booking_count'"/>
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/odex_road_mechanic/static/src/img/road_mechanic_mark.png'"/>
+                <t t-set="title">My Quotations</t>
+                <t t-set="text">Confirm or reject quotation lines</t>
+                <t t-set="url" t-value="'/my/quotations'"/>
+                <t t-set="placeholder_count" t-value="'orm_quotation_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Shared status badge -->
+    <template id="orm_booking_badge" name="Booking Status Badge">
+        <span t-attf-class="orm-badge orm-badge--#{booking.state}" t-out="booking.state_label"/>
+    </template>
+
+    <!-- My bookings -->
+    <template id="portal_my_bookings" name="My Bookings">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">My bookings</h1>
+                <nav class="orm-tabs">
+                    <t t-foreach="[('all', 'All'), ('pending', 'Pending'), ('confirmed', 'Confirmed'), ('in_progress', 'In progress'), ('completed', 'Completed'), ('cancelled', 'Cancelled')]" t-as="tab">
+                        <a t-attf-href="/my/bookings#{tab[0] != 'all' and '?state=' + tab[0] or ''}"
+                           t-attf-class="orm-tab #{active_state == tab[0] and 'is-active' or ''}"
+                           t-out="tab[1]"/>
+                    </t>
+                </nav>
+                <p class="orm-muted" t-if="not bookings">
+                    No booking yet. <a href="/workshops">Find a workshop</a> and book a slot.
+                </p>
+                <div class="orm-rows" t-if="bookings">
+                    <article class="orm-row orm-row--booking" t-foreach="bookings" t-as="booking">
+                        <div class="orm-row__body">
+                            <h3 class="orm-row__title">
+                                <a t-attf-href="/my/booking/#{booking.id}" t-out="booking.name"/>
+                                <t t-call="odex_road_mechanic_booking.orm_booking_badge"/>
+                            </h3>
+                            <p class="orm-row__meta">
+                                <i class="fa fa-wrench"/>
+                                <a t-attf-href="/workshop/#{booking.workshop_id.slug}"
+                                   t-out="booking.workshop_id.name"/>
+                            </p>
+                            <p class="orm-row__meta">
+                                <i class="fa fa-clock-o"/> <t t-out="booking.slot_label"/>
+                            </p>
+                            <p class="orm-row__meta" t-if="booking.service_id">
+                                <i class="fa fa-cogs"/> <t t-out="booking.service_id.name"/>
+                            </p>
+                        </div>
+                        <div class="orm-row__actions">
+                            <a t-attf-href="/my/booking/#{booking.id}"
+                               class="orm-btn orm-btn--primary orm-btn--sm">Open</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Booking detail -->
+    <template id="portal_booking_detail" name="Booking Detail">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <div class="orm-alert orm-alert--success" t-if="is_new">
+                    Your booking request was sent. The workshop will confirm it shortly.
+                </div>
+                <div class="orm-alert orm-alert--success" t-if="saved">Updated.</div>
+
+                <div class="orm-panel orm-mb">
+                    <h1 class="orm-block__title">
+                        <t t-out="booking.name"/>
+                        <t t-call="odex_road_mechanic_booking.orm_booking_badge"/>
+                    </h1>
+                    <ul class="orm-panel__list">
+                        <li><i class="fa fa-wrench"/>
+                            <a t-attf-href="/workshop/#{booking.workshop_id.slug}"
+                               t-out="booking.workshop_id.name"/>
+                        </li>
+                        <li><i class="fa fa-clock-o"/> <span t-out="booking.slot_label"/></li>
+                        <li t-if="booking.service_id"><i class="fa fa-cogs"/>
+                            <span t-out="booking.service_id.name"/></li>
+                        <li t-if="booking.vehicle_brand_id or booking.vehicle_model">
+                            <i class="fa fa-car"/>
+                            <span><t t-out="booking.vehicle_brand_id.name"/>
+                                <t t-out="booking.vehicle_model"/>
+                                <t t-if="booking.vehicle_plate">(<t t-out="booking.vehicle_plate"/>)</t>
+                            </span>
+                        </li>
+                        <li t-if="booking.logistics != 'drop_in'">
+                            <i class="fa fa-truck"/>
+                            <span>Pickup from <t t-out="booking.pickup_address"/></span>
+                        </li>
+                        <li t-if="booking.workshop_id.call_number()">
+                            <i class="fa fa-phone"/>
+                            <a t-attf-href="tel:#{booking.workshop_id.call_number()}"
+                               t-out="booking.workshop_id.call_number()"/>
+                        </li>
+                    </ul>
+                    <p t-if="booking.notes" class="orm-muted" t-out="booking.notes"/>
+                    <div class="orm-gallery" t-if="booking.image_ids">
+                        <t t-foreach="booking.image_ids" t-as="photo">
+                            <a class="orm-gallery__thumb" t-att-href="photo.image_url()" target="_blank">
+                                <img t-att-src="photo.thumb_url()" alt="Vehicle photo" loading="lazy"/>
+                            </a>
+                        </t>
+                    </div>
+                    <div class="orm-alert orm-alert--error" t-if="booking.cancel_reason">
+                        <strong>Reason:</strong> <t t-out="booking.cancel_reason"/>
+                    </div>
+                    <form t-if="booking.state in ('pending', 'confirmed')"
+                          t-attf-action="/my/booking/#{booking.id}/cancel" method="post"
+                          class="orm-mt">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="text" name="reason" class="orm-input orm-mb"
+                               placeholder="Reason (optional)" maxlength="500"/>
+                        <button type="submit" class="orm-btn orm-btn--outline orm-btn--sm">
+                            Cancel this booking
+                        </button>
+                    </form>
+                </div>
+
+                <div class="orm-panel orm-mb">
+                    <h2 class="orm-block__subtitle">Quotations</h2>
+                    <p class="orm-muted" t-if="not quotations">
+                        No quotation yet. The workshop will send one after inspecting the vehicle.
+                    </p>
+                    <table class="orm-table" t-if="quotations">
+                        <thead>
+                            <tr><th>Reference</th><th>Total</th><th>Confirmed</th><th>Status</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="quotations" t-as="quotation">
+                                <td t-out="quotation.name"/>
+                                <td><t t-out="quotation.amount_total"
+                                       t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></td>
+                                <td><t t-out="quotation.amount_confirmed"
+                                       t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></td>
+                                <td t-out="quotation.state_label"/>
+                                <td>
+                                    <a t-attf-href="/my/quotation/#{quotation.id}"
+                                       class="orm-btn orm-btn--primary orm-btn--sm">Review</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="orm-panel" id="orm-chat">
+                    <h2 class="orm-block__subtitle">Chat with the workshop</h2>
+                    <div class="orm-chat" data-orm-chat="1">
+                        <p class="orm-muted" t-if="not messages">
+                            No message yet. Ask the workshop anything about this booking.
+                        </p>
+                        <t t-foreach="messages" t-as="message">
+                            <div t-attf-class="orm-chat__msg orm-chat__msg--#{message.author_type == 'customer' and 'mine' or 'theirs'}">
+                                <span class="orm-chat__author">
+                                    <t t-out="message.author_type == 'customer' and 'You' or booking.workshop_id.name"/>
+                                </span>
+                                <p class="orm-chat__body" t-out="message.body"/>
+                                <span class="orm-chat__date" t-out="message.create_date"
+                                      t-options="{'widget': 'datetime'}"/>
+                            </div>
+                        </t>
+                    </div>
+                    <form t-attf-action="/my/booking/#{booking.id}/message" method="post"
+                          class="orm-chat__form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <textarea name="body" rows="2" class="orm-input" maxlength="4000"
+                                  placeholder="Write a message..." required="required"/>
+                        <button type="submit" class="orm-btn orm-btn--primary">Send</button>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- My quotations -->
+    <template id="portal_my_quotations" name="My Quotations">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">My quotations</h1>
+                <p class="orm-muted" t-if="not quotations">No quotation yet.</p>
+                <table class="orm-table" t-if="quotations">
+                    <thead>
+                        <tr><th>Reference</th><th>Workshop</th><th>Lines</th><th>Total</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="quotations" t-as="quotation">
+                            <td t-out="quotation.name"/>
+                            <td t-out="quotation.workshop_id.name"/>
+                            <td>
+                                <t t-out="quotation.confirmed_line_count"/> / <t t-out="quotation.line_count"/>
+                            </td>
+                            <td><t t-out="quotation.amount_total"
+                                   t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></td>
+                            <td t-out="quotation.state_label"/>
+                            <td>
+                                <a t-attf-href="/my/quotation/#{quotation.id}"
+                                   class="orm-btn orm-btn--primary orm-btn--sm">Review</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- Quotation detail with per line decision -->
+    <template id="portal_quotation_detail" name="Quotation Detail">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <div class="orm-alert orm-alert--success" t-if="saved">
+                    Your decision was recorded and sent to the workshop.
+                </div>
+
+                <div class="orm-panel orm-mb">
+                    <h1 class="orm-block__title">
+                        <t t-out="quotation.name"/>
+                        <span class="orm-badge" t-out="quotation.state_label"/>
+                    </h1>
+                    <ul class="orm-panel__list">
+                        <li><i class="fa fa-wrench"/>
+                            <a t-attf-href="/workshop/#{quotation.workshop_id.slug}"
+                               t-out="quotation.workshop_id.name"/></li>
+                        <li t-if="quotation.booking_id"><i class="fa fa-calendar"/>
+                            <a t-attf-href="/my/booking/#{quotation.booking_id.id}"
+                               t-out="quotation.booking_id.name"/></li>
+                        <li t-if="quotation.vehicle_model or quotation.vehicle_brand_id">
+                            <i class="fa fa-car"/>
+                            <span><t t-out="quotation.vehicle_brand_id.name"/>
+                                <t t-out="quotation.vehicle_model"/></span></li>
+                        <li t-if="quotation.validity_date"><i class="fa fa-hourglass-half"/>
+                            <span>Valid until <t t-out="quotation.validity_date"/></span></li>
+                    </ul>
+                    <p class="orm-muted" t-if="quotation.note" t-out="quotation.note"/>
+                </div>
+
+                <form t-attf-action="/my/quotation/#{quotation.id}/respond" method="post"
+                      class="orm-panel">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <h2 class="orm-block__subtitle">Quotation lines</h2>
+                    <p class="orm-muted orm-small">
+                        Confirm the work you want and reject the rest. You decide line by line.
+                    </p>
+                    <div class="orm-qline" t-foreach="quotation.line_ids" t-as="line">
+                        <div class="orm-qline__main">
+                            <strong t-out="line.name"/>
+                            <span class="orm-tag" t-if="line.optional">Optional</span>
+                            <span class="orm-qline__meta">
+                                <t t-out="line.quantity"/> ×
+                                <t t-out="line.unit_price"
+                                   t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/>
+                                <t t-if="line.discount"> - <t t-out="line.discount"/>%</t>
+                                <t t-if="line.tax_percent"> + <t t-out="line.tax_percent"/>% tax</t>
+                            </span>
+                        </div>
+                        <div class="orm-qline__total">
+                            <t t-out="line.price_total"
+                               t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/>
+                        </div>
+                        <div class="orm-qline__decision">
+                            <t t-if="quotation.state in ('sent', 'partially_confirmed')">
+                                <label class="orm-check">
+                                    <input type="radio" t-attf-name="line_#{line.id}" value="confirm"
+                                           t-att-checked="line.customer_state == 'confirmed' and 'checked' or None"/>
+                                    <span>Confirm</span>
+                                </label>
+                                <label class="orm-check">
+                                    <input type="radio" t-attf-name="line_#{line.id}" value="reject"
+                                           t-att-checked="line.customer_state == 'rejected' and 'checked' or None"/>
+                                    <span>Reject</span>
+                                </label>
+                                <label class="orm-check">
+                                    <input type="radio" t-attf-name="line_#{line.id}" value="pending"
+                                           t-att-checked="line.customer_state == 'pending' and 'checked' or None"/>
+                                    <span>Decide later</span>
+                                </label>
+                            </t>
+                            <t t-else="">
+                                <span t-attf-class="orm-badge orm-badge--#{line.customer_state}"
+                                      t-out="line.customer_state"/>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="orm-qtotals">
+                        <div><span>Untaxed</span>
+                            <strong t-out="quotation.amount_untaxed"
+                                    t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></div>
+                        <div><span>Tax</span>
+                            <strong t-out="quotation.amount_tax"
+                                    t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></div>
+                        <div><span>Quoted total</span>
+                            <strong t-out="quotation.amount_total"
+                                    t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></div>
+                        <div class="orm-qtotals__confirmed"><span>You confirmed</span>
+                            <strong t-out="quotation.amount_confirmed"
+                                    t-options="{'widget': 'monetary', 'display_currency': quotation.currency_id}"/></div>
+                    </div>
+
+                    <t t-if="quotation.state in ('sent', 'partially_confirmed')">
+                        <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg">
+                            Send my decision
+                        </button>
+                    </t>
+                    <p class="orm-muted orm-small" t-if="quotation.terms" t-out="quotation.terms"/>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <!-- My vehicles -->
+    <template id="portal_my_vehicles" name="My Vehicles">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <div class="orm-alert orm-alert--success" t-if="saved">Saved.</div>
+                <h1 class="orm-block__title">My vehicles</h1>
+                <div class="orm-grid orm-grid--cards" t-if="vehicles">
+                    <div class="orm-panel" t-foreach="vehicles" t-as="vehicle">
+                        <h3 class="orm-panel__title" t-out="vehicle.name"/>
+                        <p class="orm-muted">
+                            <t t-out="vehicle.year"/> <t t-out="vehicle.colour"/>
+                        </p>
+                        <p class="orm-muted orm-small">
+                            <t t-out="vehicle.booking_count"/> booking(s)
+                        </p>
+                        <form t-attf-action="/my/vehicle/#{vehicle.id}/delete" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <button type="submit" class="orm-btn orm-btn--outline orm-btn--sm">
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <p class="orm-muted" t-else="">No vehicle saved yet.</p>
+
+                <form action="/my/vehicles/add" method="post" class="orm-form orm-panel orm-mt"
+                      enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <h2 class="orm-block__subtitle">Add a vehicle</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="v-brand">Brand</label>
+                            <select id="v-brand" name="brand_id" class="orm-input">
+                                <option value="">Select brand</option>
+                                <t t-foreach="orm_brands" t-as="brand">
+                                    <option t-att-value="brand.id" t-out="brand.name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="v-model">Model</label>
+                            <input id="v-model" type="text" name="model_name" class="orm-input"
+                                   maxlength="80"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="v-plate">Plate number</label>
+                            <input id="v-plate" type="text" name="plate" class="orm-input" maxlength="32"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="v-year">Year</label>
+                            <input id="v-year" type="text" name="year" class="orm-input" maxlength="8"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="v-image">Photo</label>
+                        <input id="v-image" type="file" name="image" class="orm-input" accept="image/*"/>
+                    </div>
+                    <button type="submit" class="orm-btn orm-btn--primary">Add vehicle</button>
+                </form>
+            </div>
+        </t>
+    </template>
+
+</odoo>

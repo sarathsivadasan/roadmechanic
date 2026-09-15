@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Bookings -->
+    <record id="rule_booking_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all bookings</field>
+        <field name="model_id" ref="model_odex_road_mechanic_booking"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_booking_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners see their own bookings</field>
+        <field name="model_id" ref="model_odex_road_mechanic_booking"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_booking_customer_own" model="ir.rule">
+        <field name="name">Road Mechanic: customers see their own bookings</field>
+        <field name="model_id" ref="model_odex_road_mechanic_booking"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_customer')), (4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Booking photos -->
+    <record id="rule_booking_image_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners see photos of their bookings</field>
+        <field name="model_id" ref="model_odex_road_mechanic_booking_image"/>
+        <field name="domain_force">['|', ('booking_id.workshop_id.partner_id', '=', user.partner_id.id), ('booking_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Quotations -->
+    <record id="rule_quotation_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all quotations</field>
+        <field name="model_id" ref="model_odex_road_mechanic_quotation"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_quotation_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners manage their own quotations</field>
+        <field name="model_id" ref="model_odex_road_mechanic_quotation"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+    </record>
+
+    <record id="rule_quotation_customer_own" model="ir.rule">
+        <field name="name">Road Mechanic: customers see quotations sent to them</field>
+        <field name="model_id" ref="model_odex_road_mechanic_quotation"/>
+        <field name="domain_force">['&amp;', ('partner_id', '=', user.partner_id.id), ('state', '!=', 'draft')]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_customer')), (4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_quotation_line_portal" model="ir.rule">
+        <field name="name">Road Mechanic: quotation lines follow their quotation</field>
+        <field name="model_id" ref="model_odex_road_mechanic_quotation_line"/>
+        <field name="domain_force">['|', '|', ('quotation_id.partner_id', '=', user.partner_id.id), ('quotation_id.workshop_id.partner_id', '=', user.partner_id.id), ('quotation_id.workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Vehicles -->
+    <record id="rule_vehicle_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all vehicles</field>
+        <field name="model_id" ref="model_odex_road_mechanic_vehicle"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_vehicle_owner" model="ir.rule">
+        <field name="name">Road Mechanic: customers manage their own vehicles</field>
+        <field name="model_id" ref="model_odex_road_mechanic_vehicle"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Chat -->
+    <record id="rule_message_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all chat messages</field>
+        <field name="model_id" ref="model_odex_road_mechanic_message"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_message_portal" model="ir.rule">
+        <field name="name">Road Mechanic: chat is visible to its two sides only</field>
+        <field name="model_id" ref="model_odex_road_mechanic_message"/>
+        <field name="domain_force">['|', '|', ('booking_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Working days and closed dates -->
+    <record id="rule_working_day_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners manage their own schedule</field>
+        <field name="model_id" ref="model_odex_road_mechanic_working_day"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+    </record>
+
+    <record id="rule_closed_date_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners manage their own closed dates</field>
+        <field name="model_id" ref="model_odex_road_mechanic_closed_date"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+    </record>
+
+</odoo>

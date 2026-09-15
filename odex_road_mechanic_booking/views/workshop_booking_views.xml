@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_workshop_form_booking" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.workshop.form.booking</field>
+        <field name="model">odex.road.mechanic.workshop</field>
+        <field name="inherit_id" ref="odex_road_mechanic.view_workshop_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_bookings" type="object" class="oe_stat_button" icon="fa-calendar">
+                    <field name="booking_count" widget="statinfo" string="Bookings"/>
+                </button>
+                <button name="action_view_quotations" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                    <field name="quotation_count" widget="statinfo" string="Quotations"/>
+                </button>
+            </xpath>
+            <xpath expr="//page[@name='hours']" position="after">
+                <page string="Booking Slots" name="booking">
+                    <group>
+                        <group>
+                            <field name="booking_enabled"/>
+                            <field name="slot_duration" invisible="not booking_enabled"/>
+                            <field name="slot_capacity" invisible="not booking_enabled"/>
+                        </group>
+                        <group>
+                            <field name="booking_lead_hours" invisible="not booking_enabled"/>
+                            <field name="booking_horizon_days" invisible="not booking_enabled"/>
+                            <field name="allow_pickup" invisible="not booking_enabled"/>
+                        </group>
+                    </group>
+                    <div class="mb-2" invisible="not booking_enabled">
+                        <button name="action_generate_default_days" type="object"
+                                string="Generate Saturday - Thursday schedule" class="btn-link"/>
+                    </div>
+                    <separator string="Working Days"/>
+                    <field name="working_day_ids" invisible="not booking_enabled">
+                        <list editable="bottom">
+                            <field name="dayofweek"/>
+                            <field name="morning_from" widget="float_time"/>
+                            <field name="morning_to" widget="float_time"/>
+                            <field name="afternoon_from" widget="float_time"/>
+                            <field name="afternoon_to" widget="float_time"/>
+                            <field name="capacity"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </list>
+                    </field>
+                    <separator string="Closed Dates and Blocked Slots"/>
+                    <field name="closed_date_ids" invisible="not booking_enabled">
+                        <list editable="bottom">
+                            <field name="name"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="whole_day" widget="boolean_toggle"/>
+                            <field name="time_from" widget="float_time" invisible="whole_day"/>
+                            <field name="time_to" widget="float_time" invisible="whole_day"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_inquiry_form_booking" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.inquiry.form.booking</field>
+        <field name="model">odex.road.mechanic.inquiry</field>
+        <field name="inherit_id" ref="odex_road_mechanic.view_inquiry_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_create_quotation" type="object" string="Create Quotation"
+                        class="btn-secondary" invisible="state in ('closed', 'cancelled')"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <group string="Follow up">
+                    <group>
+                        <field name="booking_count"/>
+                        <field name="quotation_count"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

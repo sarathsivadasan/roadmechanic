@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_booking_list" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.booking.list</field>
+        <field name="model">odex.road.mechanic.booking</field>
+        <field name="arch" type="xml">
+            <list string="Bookings" decoration-info="state == 'pending'"
+                  decoration-success="state == 'confirmed'"
+                  decoration-muted="state in ('cancelled', 'declined', 'no_show')">
+                <field name="name"/>
+                <field name="slot_start" string="Slot"/>
+                <field name="workshop_id"/>
+                <field name="customer_name"/>
+                <field name="phone" optional="show"/>
+                <field name="vehicle_id" optional="hide"/>
+                <field name="vehicle_brand_id" optional="show"/>
+                <field name="vehicle_model" optional="show"/>
+                <field name="service_id" optional="show"/>
+                <field name="logistics" optional="hide"/>
+                <field name="quotation_count" string="Quotes" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'pending'"
+                       decoration-success="state in ('confirmed', 'completed')"
+                       decoration-danger="state in ('cancelled', 'declined', 'no_show')"/>
+                <field name="booking_date" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_booking_calendar" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.booking.calendar</field>
+        <field name="model">odex.road.mechanic.booking</field>
+        <field name="arch" type="xml">
+            <calendar string="Bookings" date_start="slot_start" date_stop="slot_end"
+                      color="workshop_id" mode="week" quick_create="0">
+                <field name="customer_name"/>
+                <field name="workshop_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_booking_kanban" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.booking.kanban</field>
+        <field name="model">odex.road.mechanic.booking</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false">
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="fw-bold"><field name="name"/></div>
+                        <div><field name="customer_name"/></div>
+                        <div class="text-muted"><field name="slot_label"/></div>
+                        <div class="text-muted"><field name="workshop_id"/></div>
+                        <div><field name="vehicle_brand_id"/> <field name="vehicle_model"/></div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_booking_search" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.booking.search</field>
+        <field name="model">odex.road.mechanic.booking</field>
+        <field name="arch" type="xml">
+            <search string="Bookings">
+                <field name="name"/>
+                <field name="customer_name"
+                       filter_domain="['|', '|', ('customer_name', 'ilike', self), ('phone', 'ilike', self), ('vehicle_plate', 'ilike', self)]"/>
+                <field name="workshop_id"/>
+                <field name="vehicle_id"/>
+                <field name="service_id"/>
+                <filter name="filter_pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="filter_confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="filter_in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter name="filter_completed" string="Completed" domain="[('state', '=', 'completed')]"/>
+                <separator/>
+                <filter name="filter_today" string="Today"
+                        domain="[('booking_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_upcoming" string="Upcoming"
+                        domain="[('booking_date', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="filter_pickup" string="Pickup Requested"
+                        domain="[('logistics', 'in', ('pickup', 'pickup_drop'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_workshop" string="Workshop" context="{'group_by': 'workshop_id'}"/>
+                    <filter name="group_date" string="Booking Date" context="{'group_by': 'booking_date'}"/>
+                    <filter name="group_service" string="Service" context="{'group_by': 'service_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_booking_form" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.booking.form</field>
+        <field name="model">odex.road.mechanic.booking</field>
+        <field name="arch" type="xml">
+            <form string="Booking">
+                <header>
+                    <button name="action_submit" type="object" string="Submit"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary" invisible="state not in ('draft', 'pending')"/>
+                    <button name="action_start" type="object" string="Start Work"
+                            class="btn-primary" invisible="state != 'confirmed'"/>
+                    <button name="action_complete" type="object" string="Complete"
+                            invisible="state not in ('confirmed', 'in_progress')"/>
+                    <button name="action_create_quotation" type="object" string="New Quotation"
+                            invisible="state in ('cancelled', 'declined')"/>
+                    <button name="action_decline" type="object" string="Decline"
+                            invisible="state not in ('pending', 'draft')"/>
+                    <button name="action_no_show" type="object" string="No Show"
+                            invisible="state not in ('confirmed', 'in_progress')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('cancelled', 'declined', 'completed')"/>
+                    <button name="action_reset_pending" type="object" string="Reset"
+                            invisible="state in ('pending', 'draft')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,confirmed,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_quotations" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="quotation_count" widget="statinfo" string="Quotations"/>
+                        </button>
+                        <button name="action_view_chat" type="object" class="oe_stat_button" icon="fa-comments-o">
+                            <field name="chat_count" widget="statinfo" string="Chat"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Customer">
+                            <field name="customer_name"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group string="Slot">
+                            <field name="workshop_id"/>
+                            <field name="slot_start"/>
+                            <field name="duration"/>
+                            <field name="slot_end" readonly="1"/>
+                            <field name="booking_date" readonly="1"/>
+                            <field name="source" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Vehicle &amp; Service" name="vehicle">
+                            <group>
+                                <group>
+                                    <field name="vehicle_id"/>
+                                    <field name="vehicle_brand_id"/>
+                                    <field name="vehicle_model"/>
+                                    <field name="vehicle_plate"/>
+                                </group>
+                                <group>
+                                    <field name="service_id"/>
+                                    <field name="service_ids" widget="many2many_tags"
+                                           options="{'no_create_edit': True}"/>
+                                    <field name="inquiry_id"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="notes" placeholder="Problem described by the customer"/>
+                            </group>
+                        </page>
+                        <page string="Pickup &amp; Drop-off" name="logistics">
+                            <group>
+                                <group>
+                                    <field name="logistics"/>
+                                    <field name="pickup_address"
+                                           invisible="logistics == 'drop_in'"/>
+                                    <field name="dropoff_address"
+                                           invisible="logistics != 'pickup_drop'"/>
+                                </group>
+                                <group>
+                                    <field name="pickup_latitude"/>
+                                    <field name="pickup_longitude"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Photos" name="photos">
+                            <field name="image_ids" mode="kanban">
+                                <kanban>
+                                    <templates>
+                                        <t t-name="card">
+                                            <div class="text-center">
+                                                <field name="image" widget="image" options="{'size': [200, 150]}"/>
+                                                <div><field name="name" placeholder="Caption"/></div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form>
+                                    <group>
+                                        <field name="image" widget="image"/>
+                                        <field name="name"/>
+                                        <field name="sequence"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Chat" name="chat">
+                            <field name="message_thread_ids" readonly="1">
+                                <list>
+                                    <field name="create_date" string="Sent"/>
+                                    <field name="author_type"/>
+                                    <field name="author_name"/>
+                                    <field name="body"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Quotations" name="quotations">
+                            <field name="quotation_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="create_date"/>
+                                    <field name="amount_total"/>
+                                    <field name="amount_confirmed"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Cancellation" name="cancel"
+                              invisible="state not in ('cancelled', 'declined', 'no_show')">
+                            <group>
+                                <field name="cancel_reason"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_booking" model="ir.actions.act_window">
+        <field name="name">All Bookings</field>
+        <field name="res_model">odex.road.mechanic.booking</field>
+        <field name="view_mode">list,kanban,calendar,form</field>
+        <field name="search_view_id" ref="view_booking_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No booking yet</p>
+            <p>Bookings arrive from the website once a workshop enables online booking.</p>
+        </field>
+    </record>
+
+    <record id="action_booking_pending" model="ir.actions.act_window">
+        <field name="name">Pending Bookings</field>
+        <field name="res_model">odex.road.mechanic.booking</field>
+        <field name="view_mode">list,kanban,calendar,form</field>
+        <field name="domain">[('state', '=', 'pending')]</field>
+        <field name="search_view_id" ref="view_booking_search"/>
+    </record>
+
+    <record id="action_booking_calendar" model="ir.actions.act_window">
+        <field name="name">Booking Calendar</field>
+        <field name="res_model">odex.road.mechanic.booking</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="search_view_id" ref="view_booking_search"/>
+    </record>
+
+</odoo>

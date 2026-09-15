@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Book now buttons on the workshop detail page -->
+    <template id="workshop_detail_booking"
+              inherit_id="odex_road_mechanic.workshop_detail" priority="20">
+        <xpath expr="//div[@id='orm-actions']" position="inside">
+            <a t-if="workshop.booking_enabled" t-attf-href="/book/#{workshop.slug}"
+               class="orm-btn orm-btn--primary">
+                <i class="fa fa-calendar-check-o"/> Book a slot
+            </a>
+        </xpath>
+        <xpath expr="//div[hasclass('orm-mobilebar')]" position="inside">
+            <a t-if="workshop.booking_enabled" t-attf-href="/book/#{workshop.slug}"
+               class="orm-btn orm-btn--primary orm-btn--sm">
+                <i class="fa fa-calendar-check-o"/> Book
+            </a>
+        </xpath>
+    </template>
+
+    <!-- Public booking form -->
+    <template id="booking_form" name="Book a Workshop">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Book a slot - Road Mechanic</t>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic">
+                    <section class="orm-subhero">
+                        <div class="orm-container">
+                            <nav class="orm-breadcrumb" aria-label="Breadcrumb">
+                                <a href="/workshops">Workshops</a><span>/</span>
+                                <a t-attf-href="/workshop/#{workshop.slug}" t-out="workshop.name"/>
+                                <span>/</span><span>Book a slot</span>
+                            </nav>
+                            <h1 class="orm-subhero__title">Book a slot at <t t-out="workshop.name"/></h1>
+                            <p class="orm-subhero__text">
+                                Pick a date, choose an available time and tell the workshop what the
+                                car needs. The workshop confirms your booking.
+                            </p>
+                        </div>
+                        <t t-call="odex_road_mechanic.orm_theme_toggle"/>
+                    </section>
+
+                    <section class="orm-section">
+                        <div class="orm-container orm-container--narrow">
+                            <div class="orm-alert orm-alert--success" t-if="booked">
+                                Your booking request was sent. Reference
+                                <strong t-out="booked"/>. The workshop will confirm it shortly.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'missing'">
+                                Please fill in your name, phone number and pick a time slot.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'email'">
+                                Please enter a valid email address.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'slot'">
+                                That slot is no longer available. Please choose another one.
+                            </div>
+
+                            <form action="/road-mechanic/booking/submit" method="post"
+                                  class="orm-form orm-panel" enctype="multipart/form-data"
+                                  data-orm-booking-form="1"
+                                  t-att-data-workshop-id="workshop.id">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="hidden" name="workshop_slug" t-att-value="workshop.slug"/>
+                                <input type="hidden" name="slot_start" data-orm-slot-input="1"/>
+                                <input type="text" name="orm_website_url" class="orm-hp" tabindex="-1"
+                                       autocomplete="off" aria-hidden="true"/>
+
+                                <h2 class="orm-block__subtitle">1. Pick a date and time</h2>
+                                <div class="orm-form__row">
+                                    <div class="orm-form__field">
+                                        <label for="bk-date">Date</label>
+                                        <input id="bk-date" type="date" class="orm-input"
+                                               data-orm-slot-date="1"
+                                               t-att-min="today" t-att-max="max_date"/>
+                                    </div>
+                                    <div class="orm-form__field">
+                                        <span class="orm-form__label">Selected slot</span>
+                                        <p class="orm-slot-selected" data-orm-slot-label="1">
+                                            No slot selected yet
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="orm-slots" data-orm-slot-grid="1">
+                                    <p class="orm-muted">Choose a date to see the available times.</p>
+                                </div>
+
+                                <h2 class="orm-block__subtitle">2. Your vehicle</h2>
+                                <div class="orm-form__row" t-if="vehicles">
+                                    <div class="orm-form__field">
+                                        <label for="bk-vehicle">Saved vehicle</label>
+                                        <select id="bk-vehicle" name="vehicle_id" class="orm-input">
+                                            <option value="">Use the details below</option>
+                                            <t t-foreach="vehicles" t-as="vehicle">
+                                                <option t-att-value="vehicle.id" t-out="vehicle.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="orm-form__row">
+                                    <div class="orm-form__field">
+                                        <label for="bk-brand">Brand</label>
+                                        <select id="bk-brand" name="vehicle_brand_id" class="orm-input">
+                                            <option value="">Select brand</option>
+                                            <t t-foreach="orm_brands" t-as="brand">
+                                                <option t-att-value="brand.id" t-out="brand.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="orm-form__field">
+                                        <label for="bk-model">Model</label>
+                                        <input id="bk-model" type="text" name="vehicle_model"
+                                               class="orm-input" maxlength="80"/>
+                                    </div>
+                                </div>
+                                <div class="orm-form__row">
+                                    <div class="orm-form__field">
+                                        <label for="bk-plate">Plate number</label>
+                                        <input id="bk-plate" type="text" name="vehicle_plate"
+                                               class="orm-input" maxlength="32"/>
+                                    </div>
+                                    <div class="orm-form__field">
+                                        <label for="bk-service">Service needed</label>
+                                        <select id="bk-service" name="service_id" class="orm-input">
+                                            <option value="">Select service</option>
+                                            <t t-foreach="orm_services" t-as="service">
+                                                <option t-att-value="service.id" t-out="service.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="orm-form__field">
+                                    <label for="bk-notes">What is the problem?</label>
+                                    <textarea id="bk-notes" name="notes" rows="4" class="orm-input"
+                                              maxlength="2000"
+                                              placeholder="e.g. AC not cooling, noise from the front left wheel"/>
+                                </div>
+                                <div class="orm-form__field">
+                                    <label for="bk-photos">Photos of the vehicle or the problem</label>
+                                    <input id="bk-photos" type="file" name="photos" class="orm-input"
+                                           accept="image/*" multiple="multiple"/>
+                                </div>
+
+                                <t t-if="workshop.allow_pickup">
+                                    <h2 class="orm-block__subtitle">3. Pickup and drop-off</h2>
+                                    <div class="orm-form__field">
+                                        <span class="orm-form__label">How do we get the vehicle?</span>
+                                        <label class="orm-check">
+                                            <input type="radio" name="logistics" value="drop_in"
+                                                   checked="checked" data-orm-logistics="1"/>
+                                            <span>I will drive to the workshop</span>
+                                        </label>
+                                        <label class="orm-check">
+                                            <input type="radio" name="logistics" value="pickup"
+                                                   data-orm-logistics="1"/>
+                                            <span>Pick up my vehicle</span>
+                                        </label>
+                                        <label class="orm-check">
+                                            <input type="radio" name="logistics" value="pickup_drop"
+                                                   data-orm-logistics="1"/>
+                                            <span>Pick up and drop back</span>
+                                        </label>
+                                    </div>
+                                    <div class="orm-form__row orm-pickup-fields" data-orm-pickup-fields="1"
+                                         style="display: none;">
+                                        <div class="orm-form__field">
+                                            <label for="bk-pickup">Pickup location</label>
+                                            <input id="bk-pickup" type="text" name="pickup_address"
+                                                   class="orm-input" maxlength="200"/>
+                                        </div>
+                                        <div class="orm-form__field">
+                                            <label for="bk-dropoff">Drop-off location</label>
+                                            <input id="bk-dropoff" type="text" name="dropoff_address"
+                                                   class="orm-input" maxlength="200"/>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <input type="hidden" name="logistics" value="drop_in"/>
+                                </t>
+
+                                <h2 class="orm-block__subtitle">
+                                    <t t-out="workshop.allow_pickup and '4. Your details' or '3. Your details'"/>
+                                </h2>
+                                <div class="orm-form__row">
+                                    <div class="orm-form__field">
+                                        <label for="bk-name">Your name *</label>
+                                        <input id="bk-name" type="text" name="customer_name"
+                                               class="orm-input" required="required" maxlength="120"
+                                               t-att-value="partner and partner.name or ''"/>
+                                    </div>
+                                    <div class="orm-form__field">
+                                        <label for="bk-phone">Phone *</label>
+                                        <input id="bk-phone" type="tel" name="phone" class="orm-input"
+                                               required="required" maxlength="40"
+                                               t-att-value="partner and (partner.mobile or partner.phone) or ''"/>
+                                    </div>
+                                </div>
+                                <div class="orm-form__field">
+                                    <label for="bk-email">Email</label>
+                                    <input id="bk-email" type="email" name="email" class="orm-input"
+                                           maxlength="120" t-att-value="partner and partner.email or ''"/>
+                                </div>
+
+                                <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg"
+                                        data-orm-booking-submit="1" disabled="disabled">
+                                    Request this slot
+                                </button>
+                                <p class="orm-muted orm-small">
+                                    The slot is held once the workshop confirms your booking.
+                                    You can follow the status in your account.
+                                </p>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>
