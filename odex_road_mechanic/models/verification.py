@@ -9,7 +9,7 @@ class RoadMechanicVerificationReject(models.TransientModel):
     _description = 'Reject Workshop Verification'
 
     workshop_ids = fields.Many2many(
-        'odex.road.mechanic.workshop', string='Workshops', required=True)
+        'odex.road.mechanic.workshop', 'odex_rm_workshop_verification_rej_rel', 'verification_rej_id', 'workshop_id'  string='Workshops', required=True)
     reason = fields.Text(string='Rejection Reason', required=True)
     unpublish = fields.Boolean(
         string='Unpublish Workshop', default=True,
