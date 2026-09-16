@@ -12,6 +12,13 @@ custom CSS is scoped under `.odex-road-mechanic`.
 
 ## Install
 
+The module installs cleanly on a database that already contains Road Mechanic
+master data. A `pre_init_hook` runs before the data files load and adopts any
+existing vehicle brand, service or workshop type with a matching name, so the
+loader updates those rows instead of trying to insert duplicates. That is what
+previously stopped an install with
+`duplicate key value violates unique constraint ..._name_uniq`.
+
 1. Copy `odex_road_mechanic` into your addons path, e.g.
    `/opt/odoo18/wms25ii/custom-addons/`.
 2. Restart the Odoo service (Python models require a full process restart).

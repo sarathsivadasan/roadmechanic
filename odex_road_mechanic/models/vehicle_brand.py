@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class RoadMechanicVehicleBrand(models.Model):
@@ -19,9 +20,27 @@ class RoadMechanicVehicleBrand(models.Model):
         string='Workshops', compute='_compute_workshop_count')
 
     _sql_constraints = [
-        ('name_uniq', 'unique(name)', 'This vehicle brand already exists.'),
         ('slug_uniq', 'unique(slug)', 'The URL slug must be unique.'),
     ]
+
+    @api.constrains('name', 'active')
+    def _check_unique_name(self):
+        """Keep brand names unique without a database constraint.
+
+        A hard SQL constraint made the module impossible to install on a
+        database that already held a brand with the same name, so the rule is
+        enforced here instead, where it can be reported cleanly.
+        """
+        for record in self:
+            if not record.name:
+                continue
+            duplicate = self.with_context(active_test=False).search_count([
+                ('id', '!=', record.id),
+                ('name', '=ilike', record.name.strip()),
+            ])
+            if duplicate:
+                raise ValidationError(
+                    _('A vehicle brand named "%s" already exists.', record.name))
 
     @api.depends('workshop_ids')
     def _compute_workshop_count(self):
