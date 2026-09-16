@@ -21,7 +21,7 @@
                     <group>
                         <group>
                             <field name="request_count" readonly="1"/>
-                            <field name="offer_count" readonly="1"/>
+                            <field name="part_offer_count" readonly="1"/>
                         </group>
                     </group>
                 </page>

@@ -20,9 +20,9 @@ class RoadMechanicWorkshop(models.Model):
     request_ids = fields.One2many(
         'odex.road.mechanic.request', 'provider_id', string='Service Requests')
     request_count = fields.Integer(compute='_compute_service_counts')
-    offer_ids = fields.One2many(
-        'odex.road.mechanic.part.offer', 'workshop_id', string='Offers Sent')
-    offer_count = fields.Integer(compute='_compute_service_counts')
+    part_offer_ids = fields.One2many(
+        'odex.road.mechanic.part.offer', 'workshop_id', string='Parts Offers Sent')
+    part_offer_count = fields.Integer(compute='_compute_service_counts')
 
     def _compute_service_counts(self):
         request_data = self.env['odex.road.mechanic.request'].sudo()._read_group(
@@ -33,7 +33,7 @@ class RoadMechanicWorkshop(models.Model):
         offers = {workshop.id: count for workshop, count in offer_data}
         for record in self:
             record.request_count = requests.get(record.id, 0)
-            record.offer_count = offers.get(record.id, 0)
+            record.part_offer_count = offers.get(record.id, 0)
 
     def action_view_service_requests(self):
         self.ensure_one()
