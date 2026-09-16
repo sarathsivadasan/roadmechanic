@@ -56,7 +56,7 @@ Main features
         'views/vehicle_views.xml',
         'views/message_views.xml',
         'views/request_views.xml',
-        'views/offer_views.xml',
+        'views/part_offer_views.xml',
         'views/notification_views.xml',
         'views/workshop_services_views.xml',
         'views/res_config_settings_views.xml',
