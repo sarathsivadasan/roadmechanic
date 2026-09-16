@@ -133,6 +133,8 @@ class RoadMechanicQuotation(models.Model):
                 raise ValidationError(_('Add at least one line before sending the quotation.'))
             record.write({'state': 'sent'})
             record.message_post(body=_('Quotation sent to the customer.'))
+            if record.inquiry_id and record.inquiry_id.state in ('new', 'contacted', 'in_progress'):
+                record.inquiry_id.sudo().write({'state': 'quoted'})
             if record.booking_id:
                 record.booking_id.post_chat_message(
                     _('A quotation (%s) is ready for your review.', record.name),

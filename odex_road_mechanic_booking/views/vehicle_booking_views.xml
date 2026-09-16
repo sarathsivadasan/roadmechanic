@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_vehicle_form_booking" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.vehicle.form.booking</field>
+        <field name="model">odex.road.mechanic.vehicle</field>
+        <field name="inherit_id" ref="odex_road_mechanic.view_vehicle_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_bookings" type="object" class="oe_stat_button"
+                        icon="fa-calendar">
+                    <field name="booking_count" widget="statinfo" string="Bookings"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_message_list_booking" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.message.list.booking</field>
+        <field name="model">odex.road.mechanic.message</field>
+        <field name="inherit_id" ref="odex_road_mechanic.view_message_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='request_id']" position="after">
+                <field name="booking_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

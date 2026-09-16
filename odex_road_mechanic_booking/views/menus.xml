@@ -41,16 +41,6 @@
               action="action_quotation_awaiting"
               sequence="2"/>
 
-    <menuitem id="menu_vehicles"
-              name="Vehicles"
-              parent="odex_road_mechanic.menu_road_mechanic_root"
-              action="action_vehicle"
-              sequence="65"/>
 
-    <menuitem id="menu_messages"
-              name="Conversations"
-              parent="odex_road_mechanic.menu_road_mechanic_root"
-              action="action_message"
-              sequence="35"/>
 
 </odoo>

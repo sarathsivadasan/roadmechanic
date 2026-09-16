@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-
-    <record id="action_road_mechanic_dashboard" model="ir.actions.client">
-        <field name="name">Road Mechanic Dashboard</field>
-        <field name="tag">orm_road_mechanic_dashboard</field>
-    </record>
-
-</odoo>

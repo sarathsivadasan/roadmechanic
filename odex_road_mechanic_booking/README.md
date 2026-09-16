@@ -96,3 +96,11 @@ read everything under Road Mechanic → Conversations.
 * Service duration is per workshop (slot length), not per service.
 * Quotation tax is a percentage per line, not Odoo taxes, and quotations do not
   post to accounting. That belongs in the WMS/invoicing bridge.
+
+
+## Relationship with the core addon
+
+Vehicles and the chat thread are defined in `odex_road_mechanic`; this addon
+extends them with `booking_id`, `quotation_id` and the booking history on a
+vehicle. It can be installed and uninstalled without touching the directory or
+the marketplace.

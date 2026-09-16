@@ -48,6 +48,9 @@ class RoadMechanicBooking(models.Model):
         'odex.road.mechanic.service',
         'odex_rm_booking_service_rel', 'booking_id', 'service_id',
         string='Additional Services')
+    offer_id = fields.Many2one(
+        'odex.road.mechanic.offer', string='Booked Offer', index=True,
+        help='Set when the customer started the booking from a workshop offer.')
     slot_start = fields.Datetime(string='Slot Start', required=True, index=True, tracking=True)
     slot_end = fields.Datetime(string='Slot End', compute='_compute_slot_end', store=True)
     booking_date = fields.Date(
@@ -171,6 +174,13 @@ class RoadMechanicBooking(models.Model):
     def _onchange_workshop_id(self):
         if self.workshop_id and self.workshop_id.slot_duration:
             self.duration = self.workshop_id.slot_duration
+
+    @api.onchange('offer_id')
+    def _onchange_offer_id(self):
+        if self.offer_id:
+            self.workshop_id = self.offer_id.workshop_id
+            if self.offer_id.service_id:
+                self.service_id = self.offer_id.service_id
 
     @api.onchange('vehicle_id')
     def _onchange_vehicle_id(self):

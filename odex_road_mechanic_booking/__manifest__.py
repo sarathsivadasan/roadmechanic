@@ -1,6 +1,6 @@
 {
     'name': 'Odex Road Mechanic - Bookings & Quotations',
-    'version': '18.0.1.0.0',
+    'version': '18.0.2.0.0',
     'category': 'Website/Website',
     'summary': 'Booking slots, quotations with line level confirmation, and customer/garage chat for Road Mechanic',
     'description': """
@@ -33,11 +33,10 @@ other way around, and it is the natural bridge to ODEX WMS.
         'security/ir.model.access.csv',
         'data/sequence_data.xml',
         'data/cron_data.xml',
-        'views/vehicle_views.xml',
         'views/booking_views.xml',
         'views/quotation_views.xml',
-        'views/message_views.xml',
         'views/workshop_booking_views.xml',
+        'views/vehicle_booking_views.xml',
         'views/menus.xml',
         'views/booking_templates.xml',
         'views/portal_customer_templates.xml',

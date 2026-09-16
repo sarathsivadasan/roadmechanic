@@ -62,7 +62,17 @@
                                   t-att-data-workshop-id="workshop.id">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 <input type="hidden" name="workshop_slug" t-att-value="workshop.slug"/>
+                                <input type="hidden" name="offer_id"
+                                       t-att-value="offer and offer.id or ''"/>
                                 <input type="hidden" name="slot_start" data-orm-slot-input="1"/>
+                                <div class="orm-alert orm-alert--success" t-if="offer">
+                                    <strong t-out="offer.discount_label"/> -
+                                    <t t-out="offer.name"/>
+                                    <span class="orm-muted orm-small" t-if="offer.end_date">
+                                        (valid until <t t-out="offer.end_date"
+                                                        t-options="{'widget': 'date'}"/>)
+                                    </span>
+                                </div>
                                 <input type="text" name="orm_website_url" class="orm-hp" tabindex="-1"
                                        autocomplete="off" aria-hidden="true"/>
 
@@ -124,7 +134,8 @@
                                         <select id="bk-service" name="service_id" class="orm-input">
                                             <option value="">Select service</option>
                                             <t t-foreach="orm_services" t-as="service">
-                                                <option t-att-value="service.id" t-out="service.name"/>
+                                                <option t-att-value="service.id" t-out="service.name"
+                                                        t-att-selected="offer and offer.service_id.id == service.id and 'selected' or None"/>
                                             </t>
                                         </select>
                                     </div>

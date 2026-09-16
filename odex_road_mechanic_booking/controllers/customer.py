@@ -53,6 +53,17 @@ class RoadMechanicBookingWebsite(http.Controller, RoadMechanicBookingMixin):
     # ------------------------------------------------------------------
     # Public booking form
     # ------------------------------------------------------------------
+    def _orm_offer_from_param(self, workshop, offer_id):
+        """Only an offer of this very workshop may pre-fill the booking."""
+        if not offer_id or not str(offer_id).isdigit():
+            return False
+        Offer = request.env['odex.road.mechanic.offer']
+        offer = Offer.sudo().browse(int(offer_id)).exists()
+        if offer and offer.workshop_id.id == workshop.id and offer.website_published \
+                and offer.is_running:
+            return offer
+        return False
+
     @http.route(['/book/<string:workshop_slug>'], type='http', auth='public',
                 website=True, sitemap=False)
     def orm_booking_form(self, workshop_slug, **post):
@@ -75,6 +86,7 @@ class RoadMechanicBookingWebsite(http.Controller, RoadMechanicBookingMixin):
                 days=workshop.booking_horizon_days or 30),
             'error': post.get('error'),
             'booked': post.get('booked'),
+            'offer': self._orm_offer_from_param(workshop, post.get('offer')),
         }
         return request.render('odex_road_mechanic_booking.booking_form', values)
 
@@ -138,8 +150,10 @@ class RoadMechanicBookingWebsite(http.Controller, RoadMechanicBookingMixin):
             if vehicle and vehicle.partner_id.id == partner.id:
                 vehicle_id = vehicle.id
 
+        offer = self._orm_offer_from_param(workshop, post.get('offer_id'))
         values = {
             'workshop_id': workshop.id,
+            'offer_id': offer.id if offer else False,
             'partner_id': partner.id if partner else False,
             'customer_name': name[:120],
             'phone': phone[:40],
@@ -149,7 +163,8 @@ class RoadMechanicBookingWebsite(http.Controller, RoadMechanicBookingMixin):
                 'odex.road.mechanic.vehicle.brand', post.get('vehicle_brand_id')),
             'vehicle_model': (post.get('vehicle_model') or '').strip()[:80] or False,
             'vehicle_plate': (post.get('vehicle_plate') or '').strip()[:32] or False,
-            'service_id': _rel('odex.road.mechanic.service', post.get('service_id')),
+            'service_id': _rel('odex.road.mechanic.service', post.get('service_id'))
+                          or (offer.service_id.id if offer and offer.service_id else False),
             'slot_start': slot_start,
             'duration': workshop.slot_duration or 1.0,
             'logistics': logistics,

@@ -228,6 +228,39 @@ class RoadMechanicWorkshop(models.Model):
                 })
         return True
 
+    def working_hours_rows(self):
+        """Use the configured working days once the booking addon is installed."""
+        self.ensure_one()
+        if not self.working_day_ids:
+            return super().working_hours_rows()
+        labels = [(0, 'Monday'), (1, 'Tuesday'), (2, 'Wednesday'), (3, 'Thursday'),
+                  (4, 'Friday'), (5, 'Saturday'), (6, 'Sunday')]
+        lines = {int(line.dayofweek): line for line in self.working_day_ids if line.active}
+        today_index = datetime.now(self._booking_tz()).weekday()
+        rows = []
+        for index, name in labels:
+            line = lines.get(index)
+            if not line:
+                rows.append({'day': name, 'hours': _('Closed'),
+                             'today': index == today_index, 'closed': True})
+                continue
+            blocks = ['%s - %s' % (self._format_hour(start), self._format_hour(end))
+                      for start, end in line.time_ranges()]
+            rows.append({
+                'day': name,
+                'hours': ', '.join(blocks) or _('Closed'),
+                'today': index == today_index,
+                'closed': not blocks,
+            })
+        return rows
+
+    def orm_booking_url(self):
+        """Core asks for this to decide whether to show "Book now"."""
+        self.ensure_one()
+        if self.booking_enabled and self.website_published and self.slug:
+            return '/book/%s' % self.slug
+        return False
+
     def action_view_bookings(self):
         self.ensure_one()
         return {
