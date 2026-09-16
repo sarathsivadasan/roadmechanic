@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_workshop_list" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.workshop.list</field>
+        <field name="model">odex.road.mechanic.workshop</field>
+        <field name="arch" type="xml">
+            <list string="Workshops" decoration-success="is_verified" decoration-muted="not website_published">
+                <field name="name"/>
+                <field name="workshop_type_id" optional="show"/>
+                <field name="workshop_class" optional="show"/>
+                <field name="location_id" optional="show"/>
+                <field name="emirate" optional="hide"/>
+                <field name="phone" optional="show"/>
+                <field name="whatsapp" optional="hide"/>
+                <field name="rating" widget="float" digits="[3,2]" optional="show"/>
+                <field name="review_count" optional="show"/>
+                <field name="verification_status" widget="badge"
+                       decoration-success="verification_status == 'verified'"
+                       decoration-warning="verification_status in ('submitted','under_review')"
+                       decoration-danger="verification_status == 'rejected'"/>
+                <field name="is_verified" widget="boolean_toggle" readonly="1"/>
+                <field name="is_featured" widget="boolean_toggle"
+                       groups="odex_road_mechanic.group_road_mechanic_manager"/>
+                <field name="priority" optional="hide"
+                       groups="odex_road_mechanic.group_road_mechanic_manager"/>
+                <field name="website_published" widget="boolean_toggle"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_workshop_kanban" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.workshop.kanban</field>
+        <field name="model">odex.road.mechanic.workshop</field>
+        <field name="arch" type="xml">
+            <kanban class="o_orm_workshop_kanban">
+                <field name="is_verified"/>
+                <field name="rating"/>
+                <field name="review_count"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="row g-0">
+                            <div class="col-4">
+                                <field name="main_image" widget="image" class="w-100"
+                                       options="{'size': [120, 90]}"/>
+                            </div>
+                            <div class="col-8 ps-2">
+                                <div class="fw-bold">
+                                    <field name="name"/>
+                                    <span class="badge text-bg-success ms-1" t-if="record.is_verified.raw_value">Verified</span>
+                                </div>
+                                <div class="text-muted small">
+                                    <field name="location_id"/>
+                                </div>
+                                <div class="small">
+                                    <i class="fa fa-star text-warning"/>
+                                    <field name="rating"/>
+                                    (<field name="review_count"/>)
+                                </div>
+                                <div class="small">
+                                    <field name="verification_status" widget="badge"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_workshop_search" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.workshop.search</field>
+        <field name="model">odex.road.mechanic.workshop</field>
+        <field name="arch" type="xml">
+            <search string="Workshops">
+                <field name="name" string="Workshop"
+                       filter_domain="['|', '|', ('name', 'ilike', self), ('phone', 'ilike', self), ('area', 'ilike', self)]"/>
+                <field name="service_ids"/>
+                <field name="vehicle_brand_ids"/>
+                <field name="location_id"/>
+                <field name="workshop_type_id"/>
+                <filter name="filter_verified" string="Verified" domain="[('is_verified', '=', True)]"/>
+                <filter name="filter_featured" string="Featured" domain="[('is_featured', '=', True)]"/>
+                <filter name="filter_class_a" string="Class A" domain="[('workshop_class', '=', 'a')]"/>
+                <filter name="filter_published" string="Published" domain="[('website_published', '=', True)]"/>
+                <filter name="filter_unpublished" string="Not Published" domain="[('website_published', '=', False)]"/>
+                <separator/>
+                <filter name="filter_pending" string="Pending Verification"
+                        domain="[('verification_status', 'in', ('submitted', 'under_review'))]"/>
+                <filter name="filter_rejected" string="Rejected"
+                        domain="[('verification_status', '=', 'rejected')]"/>
+                <separator/>
+                <filter name="filter_open_now" string="Open Now" domain="[('is_open', '=', True)]"/>
+                <separator/>
+                <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_emirate" string="Emirate" context="{'group_by': 'emirate'}"/>
+                    <filter name="group_location" string="Area" context="{'group_by': 'location_id'}"/>
+                    <filter name="group_type" string="Workshop Type" context="{'group_by': 'workshop_type_id'}"/>
+                    <filter name="group_class" string="Workshop Class" context="{'group_by': 'workshop_class'}"/>
+                    <filter name="group_status" string="Verification Status" context="{'group_by': 'verification_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_workshop_form" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.workshop.form</field>
+        <field name="model">odex.road.mechanic.workshop</field>
+        <field name="arch" type="xml">
+            <form string="Workshop">
+                <header>
+                    <button name="action_submit" type="object" string="Submit for Verification"
+                            class="btn-primary"
+                            invisible="verification_status not in ('draft', 'rejected')"/>
+                    <button name="action_start_review" type="object" string="Start Review"
+                            class="btn-primary"
+                            groups="odex_road_mechanic.group_road_mechanic_manager"
+                            invisible="verification_status != 'submitted'"/>
+                    <button name="action_verify" type="object" string="Verify"
+                            class="btn-primary"
+                            groups="odex_road_mechanic.group_road_mechanic_manager"
+                            invisible="verification_status not in ('submitted', 'under_review', 'rejected')"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            groups="odex_road_mechanic.group_road_mechanic_manager"
+                            invisible="verification_status in ('draft', 'rejected')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft"
+                            groups="odex_road_mechanic.group_road_mechanic_manager"
+                            invisible="verification_status == 'draft'"/>
+                    <button name="action_publish" type="object" string="Publish"
+                            class="btn-secondary"
+                            groups="odex_road_mechanic.group_road_mechanic_manager"
+                            invisible="website_published"/>
+                    <button name="action_unpublish" type="object" string="Unpublish"
+                            groups="odex_road_mechanic.group_road_mechanic_manager"
+                            invisible="not website_published"/>
+                    <field name="verification_status" widget="statusbar"
+                           statusbar_visible="draft,submitted,under_review,verified"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_reviews" type="object" class="oe_stat_button" icon="fa-star">
+                            <field name="review_count" widget="statinfo" string="Reviews"/>
+                        </button>
+                        <button name="action_view_offers" type="object" class="oe_stat_button" icon="fa-tags">
+                            <field name="offer_count" widget="statinfo" string="Offers"/>
+                        </button>
+                        <button name="action_view_inquiries" type="object" class="oe_stat_button" icon="fa-envelope">
+                            <field name="inquiry_count" widget="statinfo" string="Inquiries"/>
+                        </button>
+                        <button name="action_open_website" type="object" class="oe_stat_button" icon="fa-globe"
+                                invisible="not website_published">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Go to</span>
+                                <span class="o_stat_text">Website</span>
+                            </div>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Verified" bg_color="text-bg-success"
+                            invisible="not is_verified"/>
+                    <field name="active" invisible="1"/>
+                    <field name="is_verified" invisible="1"/>
+                    <field name="logo" widget="image" class="oe_avatar" options="{'preview_image': 'logo'}"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Auto Pro Garage"/></h1>
+                        <field name="short_description" placeholder="One line shown on the workshop card"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="workshop_type_id"/>
+                            <field name="workshop_class"
+                                   groups="odex_road_mechanic.group_road_mechanic_manager"/>
+                            <field name="location_id"/>
+                            <field name="partner_id"/>
+                            <field name="owner_name"/>
+                        </group>
+                        <group>
+                            <field name="is_featured"
+                                   groups="odex_road_mechanic.group_road_mechanic_manager"/>
+                            <field name="priority"
+                                   groups="odex_road_mechanic.group_road_mechanic_manager"/>
+                            <field name="website_published"
+                                   groups="odex_road_mechanic.group_road_mechanic_manager"/>
+                            <field name="rating" readonly="1"/>
+                            <field name="review_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="General" name="general">
+                            <group>
+                                <field name="description" placeholder="Describe the workshop, its equipment and its team."/>
+                            </group>
+                        </page>
+                        <page string="Contact" name="contact">
+                            <group>
+                                <group>
+                                    <field name="phone" widget="phone"/>
+                                    <field name="mobile" widget="phone"/>
+                                    <field name="whatsapp" widget="phone"/>
+                                </group>
+                                <group>
+                                    <field name="email" widget="email"/>
+                                    <field name="website" widget="url"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Location" name="location">
+                            <group>
+                                <group>
+                                    <field name="street"/>
+                                    <field name="street2"/>
+                                    <field name="area"/>
+                                    <field name="city"/>
+                                </group>
+                                <group>
+                                    <field name="emirate"/>
+                                    <field name="zip"/>
+                                    <field name="country_id"/>
+                                    <field name="latitude"/>
+                                    <field name="longitude"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="full_address" readonly="1"/>
+                                <field name="has_exact_location" readonly="1"/>
+                            </group>
+                            <field name="location_warning" invisible="1"/>
+                            <div class="alert alert-warning" role="alert"
+                                 invisible="not location_warning">
+                                <i class="fa fa-map-marker me-1"/>
+                                <field name="location_warning" readonly="1" nolabel="1"/>
+                            </div>
+                            <div class="text-muted">
+                                Latitude and longitude are the authoritative location used by
+                                "Get Directions". Drag the pin on the Garage Partner portal
+                                (Location &amp; Map) or paste the coordinates from a map app.
+                            </div>
+                        </page>
+                        <page string="Services" name="services">
+                            <group>
+                                <field name="service_ids" widget="many2many_tags"
+                                       options="{'no_create_edit': True}"/>
+                                <field name="vehicle_brand_ids" widget="many2many_tags"
+                                       options="{'no_create_edit': True}"/>
+                            </group>
+                        </page>
+                        <page string="Media" name="media">
+                            <group>
+                                <group>
+                                    <field name="main_image" widget="image" class="w-75"/>
+                                </group>
+                                <group>
+                                    <field name="cover_image" widget="image" class="w-75"/>
+                                </group>
+                            </group>
+                            <separator string="Gallery Photos"/>
+                            <field name="gallery_image_ids" mode="kanban">
+                                <kanban>
+                                    <templates>
+                                        <t t-name="card">
+                                            <div class="text-center">
+                                                <field name="image" widget="image" options="{'size': [200, 150]}"/>
+                                                <div><field name="name" placeholder="Caption"/></div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form>
+                                    <group>
+                                        <field name="image" widget="image"/>
+                                        <field name="name"/>
+                                        <field name="sequence"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Working Hours" name="hours">
+                            <group>
+                                <group>
+                                    <field name="open_24h"/>
+                                    <field name="opening_time" widget="float_time" invisible="open_24h"/>
+                                    <field name="closing_time" widget="float_time" invisible="open_24h"/>
+                                    <field name="tz"/>
+                                </group>
+                                <group>
+                                    <field name="is_open" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="working_hours" placeholder="Sat - Thu: 8:00 - 22:00&#10;Friday: 14:00 - 22:00"/>
+                            </group>
+                        </page>
+                        <page string="Verification" name="verification"
+                              groups="odex_road_mechanic.group_road_mechanic_user">
+                            <group>
+                                <group>
+                                    <field name="is_verified" readonly="1"/>
+                                    <field name="verified_by" readonly="1"/>
+                                    <field name="verification_date" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="trade_licence_number"/>
+                                    <field name="trade_licence" filename="trade_licence_filename"/>
+                                    <field name="trade_licence_filename" invisible="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="verification_notes"
+                                       placeholder="Internal notes. Never shown on the website."/>
+                            </group>
+                        </page>
+                        <page string="Website" name="website_page">
+                            <group>
+                                <group>
+                                    <field name="slug" placeholder="Generated from the name"/>
+                                    <field name="website_url" readonly="1" widget="url"/>
+                                </group>
+                                <group>
+                                    <field name="website_meta_title"/>
+                                    <field name="website_meta_description"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Offers" name="offers">
+                            <field name="offer_ids" context="{'default_workshop_id': id}">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="discount_label" string="Badge"/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="is_running" string="Running"/>
+                                    <field name="website_published" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Reviews" name="reviews">
+                            <field name="review_ids" readonly="1">
+                                <list>
+                                    <field name="create_date"/>
+                                    <field name="customer_name"/>
+                                    <field name="rating"/>
+                                    <field name="title"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Inquiries" name="inquiries">
+                            <field name="inquiry_ids" readonly="1">
+                                <list>
+                                    <field name="create_date"/>
+                                    <field name="customer_name"/>
+                                    <field name="phone"/>
+                                    <field name="service_id"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_workshop" model="ir.actions.act_window">
+        <field name="name">All Workshops</field>
+        <field name="res_model">odex.road.mechanic.workshop</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_workshop_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first workshop</p>
+            <p>Workshops registered from the website land here with the status "Submitted".</p>
+        </field>
+    </record>
+
+    <record id="action_workshop_pending" model="ir.actions.act_window">
+        <field name="name">Pending Verification</field>
+        <field name="res_model">odex.road.mechanic.workshop</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('verification_status', 'in', ('submitted', 'under_review'))]</field>
+        <field name="search_view_id" ref="view_workshop_search"/>
+    </record>
+
+    <record id="action_workshop_verified" model="ir.actions.act_window">
+        <field name="name">Verified Workshops</field>
+        <field name="res_model">odex.road.mechanic.workshop</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('is_verified', '=', True)]</field>
+        <field name="search_view_id" ref="view_workshop_search"/>
+    </record>
+
+    <record id="action_workshop_featured" model="ir.actions.act_window">
+        <field name="name">Featured Workshops</field>
+        <field name="res_model">odex.road.mechanic.workshop</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('is_featured', '=', True)]</field>
+        <field name="search_view_id" ref="view_workshop_search"/>
+    </record>
+
+    <record id="action_workshop_rejected" model="ir.actions.act_window">
+        <field name="name">Rejected Workshops</field>
+        <field name="res_model">odex.road.mechanic.workshop</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('verification_status', '=', 'rejected')]</field>
+        <field name="search_view_id" ref="view_workshop_search"/>
+    </record>
+
+</odoo>

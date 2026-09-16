@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_road_mechanic_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'website'}</field>
+    </record>
+
+    <menuitem id="menu_road_mechanic_root"
+              name="Road Mechanic"
+              web_icon="odex_road_mechanic,static/src/img/road_mechanic_mark.png"
+              sequence="55"
+              groups="odex_road_mechanic.group_road_mechanic_user"/>
+
+    <menuitem id="menu_road_mechanic_dashboard"
+              name="Dashboard"
+              parent="menu_road_mechanic_root"
+              action="action_road_mechanic_dashboard"
+              sequence="1"/>
+
+    <menuitem id="menu_road_mechanic_workshops"
+              name="Workshops"
+              parent="menu_road_mechanic_root"
+              sequence="10"/>
+
+    <menuitem id="menu_road_mechanic_workshop_all"
+              name="All Workshops"
+              parent="menu_road_mechanic_workshops"
+              action="action_workshop"
+              sequence="1"/>
+
+    <menuitem id="menu_road_mechanic_workshop_pending"
+              name="Pending Verification"
+              parent="menu_road_mechanic_workshops"
+              action="action_workshop_pending"
+              sequence="2"/>
+
+    <menuitem id="menu_road_mechanic_workshop_verified"
+              name="Verified Workshops"
+              parent="menu_road_mechanic_workshops"
+              action="action_workshop_verified"
+              sequence="3"/>
+
+    <menuitem id="menu_road_mechanic_workshop_featured"
+              name="Featured Workshops"
+              parent="menu_road_mechanic_workshops"
+              action="action_workshop_featured"
+              sequence="4"/>
+
+    <menuitem id="menu_road_mechanic_workshop_rejected"
+              name="Rejected Workshops"
+              parent="menu_road_mechanic_workshops"
+              action="action_workshop_rejected"
+              sequence="5"/>
+
+    <menuitem id="menu_road_mechanic_inquiries"
+              name="Inquiries"
+              parent="menu_road_mechanic_root"
+              sequence="20"/>
+
+    <menuitem id="menu_road_mechanic_inquiry_all"
+              name="All Inquiries"
+              parent="menu_road_mechanic_inquiries"
+              action="action_inquiry"
+              sequence="1"/>
+
+    <menuitem id="menu_road_mechanic_inquiry_new"
+              name="New Inquiries"
+              parent="menu_road_mechanic_inquiries"
+              action="action_inquiry_new"
+              sequence="2"/>
+
+    <menuitem id="menu_road_mechanic_reviews"
+              name="Reviews"
+              parent="menu_road_mechanic_root"
+              sequence="30"/>
+
+    <menuitem id="menu_road_mechanic_review_all"
+              name="All Reviews"
+              parent="menu_road_mechanic_reviews"
+              action="action_review"
+              sequence="1"/>
+
+    <menuitem id="menu_road_mechanic_review_pending"
+              name="Pending Reviews"
+              parent="menu_road_mechanic_reviews"
+              action="action_review_pending"
+              sequence="2"/>
+
+    <menuitem id="menu_road_mechanic_review_approved"
+              name="Approved Reviews"
+              parent="menu_road_mechanic_reviews"
+              action="action_review_approved"
+              sequence="3"/>
+
+    <menuitem id="menu_road_mechanic_review_rejected"
+              name="Rejected Reviews"
+              parent="menu_road_mechanic_reviews"
+              action="action_review_rejected"
+              sequence="4"/>
+
+    <menuitem id="menu_road_mechanic_offers"
+              name="Offers"
+              parent="menu_road_mechanic_root"
+              sequence="25"/>
+
+    <menuitem id="menu_road_mechanic_offer_all"
+              name="All Offers"
+              parent="menu_road_mechanic_offers"
+              action="action_offer"
+              sequence="1"/>
+
+    <menuitem id="menu_road_mechanic_offer_running"
+              name="Running Offers"
+              parent="menu_road_mechanic_offers"
+              action="action_offer_running"
+              sequence="2"/>
+
+    <menuitem id="menu_road_mechanic_offer_expired"
+              name="Expired Offers"
+              parent="menu_road_mechanic_offers"
+              action="action_offer_expired"
+              sequence="3"/>
+
+    <menuitem id="menu_road_mechanic_customers"
+              name="Customers"
+              parent="menu_road_mechanic_root"
+              action="action_customers"
+              sequence="33"/>
+
+    <menuitem id="menu_road_mechanic_services"
+              name="Services"
+              parent="menu_road_mechanic_root"
+              action="action_service"
+              sequence="40"/>
+
+    <menuitem id="menu_road_mechanic_types"
+              name="Workshop Types"
+              parent="menu_road_mechanic_root"
+              action="action_workshop_type"
+              sequence="50"/>
+
+    <menuitem id="menu_road_mechanic_brands"
+              name="Vehicle Brands"
+              parent="menu_road_mechanic_root"
+              action="action_vehicle_brand"
+              sequence="60"/>
+
+    <menuitem id="menu_road_mechanic_locations"
+              name="Locations"
+              parent="menu_road_mechanic_root"
+              action="action_location"
+              sequence="70"/>
+
+    <menuitem id="menu_road_mechanic_configuration"
+              name="Configuration"
+              parent="menu_road_mechanic_root"
+              sequence="90"
+              groups="odex_road_mechanic.group_road_mechanic_manager"/>
+
+    <menuitem id="menu_road_mechanic_configuration_settings"
+              name="Directory Settings"
+              parent="menu_road_mechanic_configuration"
+              action="action_road_mechanic_settings"
+              sequence="1"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_road_mechanic_configuration_services"
+              name="Services"
+              parent="menu_road_mechanic_configuration"
+              action="action_service"
+              sequence="10"/>
+
+    <menuitem id="menu_road_mechanic_configuration_types"
+              name="Workshop Types"
+              parent="menu_road_mechanic_configuration"
+              action="action_workshop_type"
+              sequence="20"/>
+
+    <menuitem id="menu_road_mechanic_configuration_brands"
+              name="Vehicle Brands"
+              parent="menu_road_mechanic_configuration"
+              action="action_vehicle_brand"
+              sequence="30"/>
+
+    <menuitem id="menu_road_mechanic_configuration_locations"
+              name="Locations"
+              parent="menu_road_mechanic_configuration"
+              action="action_location"
+              sequence="40"/>
+
+</odoo>

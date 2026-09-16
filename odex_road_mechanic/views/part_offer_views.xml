@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_part_offer_list" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.part.offer.list</field>
+        <field name="model">odex.road.mechanic.part.offer</field>
+        <field name="arch" type="xml">
+            <list string="Offers" decoration-success="state == 'accepted'"
+                  decoration-muted="state in ('rejected', 'withdrawn')">
+                <field name="create_date" string="Sent"/>
+                <field name="request_id"/>
+                <field name="workshop_id"/>
+                <field name="available"/>
+                <field name="price"/>
+                <field name="brand" optional="show"/>
+                <field name="condition"/>
+                <field name="warranty" optional="hide"/>
+                <field name="delivery_available" optional="show"/>
+                <field name="state" widget="badge"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_part_offer_form" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.part.offer.form</field>
+        <field name="model">odex.road.mechanic.part.offer</field>
+        <field name="arch" type="xml">
+            <form string="Offer">
+                <header>
+                    <button name="action_send" type="object" string="Send to Customer"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_accept" type="object" string="Accept"
+                            invisible="state != 'sent'"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state != 'sent'"/>
+                    <button name="action_withdraw" type="object" string="Withdraw"
+                            invisible="state not in ('draft', 'sent')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,accepted"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="request_id"/>
+                            <field name="workshop_id"/>
+                            <field name="available"/>
+                            <field name="price"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                        </group>
+                        <group>
+                            <field name="brand"/>
+                            <field name="condition"/>
+                            <field name="warranty"/>
+                            <field name="delivery_available"/>
+                            <field name="delivery_time"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="message"/>
+                    </group>
+                    <separator string="Photos of the Part"/>
+                    <field name="image_ids" mode="kanban">
+                        <kanban>
+                            <templates>
+                                <t t-name="card">
+                                    <div class="text-center">
+                                        <field name="image" widget="image" options="{'size': [200, 150]}"/>
+                                        <div><field name="name"/></div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <form>
+                            <group>
+                                <field name="image" widget="image"/>
+                                <field name="name"/>
+                                <field name="sequence"/>
+                            </group>
+                        </form>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_part_offer" model="ir.actions.act_window">
+        <field name="name">Supplier Offers</field>
+        <field name="res_model">odex.road.mechanic.part.offer</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

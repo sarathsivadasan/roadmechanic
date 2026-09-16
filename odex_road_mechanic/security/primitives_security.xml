@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vehicles -->
+    <record id="rule_vehicle_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all vehicles</field>
+        <field name="model_id" ref="model_odex_road_mechanic_vehicle"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_vehicle_owner" model="ir.rule">
+        <field name="name">Road Mechanic: customers manage their own vehicles</field>
+        <field name="model_id" ref="model_odex_road_mechanic_vehicle"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Chat -->
+    <record id="rule_message_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all chat messages</field>
+        <field name="model_id" ref="model_odex_road_mechanic_message"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_message_portal" model="ir.rule">
+        <field name="name">Road Mechanic: chat is visible to its two sides only</field>
+        <field name="model_id" ref="model_odex_road_mechanic_message"/>
+        <field name="domain_force">['|', '|', ('request_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+
+</odoo>

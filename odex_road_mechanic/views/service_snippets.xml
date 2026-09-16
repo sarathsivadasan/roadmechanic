@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Status timeline -->
+    <template id="orm_status_timeline" name="Request Status Timeline">
+        <ol class="orm-timeline">
+            <li t-foreach="steps" t-as="step"
+                t-attf-class="orm-timeline__step #{step['done'] and 'is-done' or ''} #{step['current'] and 'is-current' or ''}">
+                <span class="orm-timeline__dot"/>
+                <span class="orm-timeline__label" t-out="step['label']"/>
+            </li>
+        </ol>
+    </template>
+
+    <!-- Request summary card -->
+    <template id="orm_request_summary" name="Request Summary">
+        <ul class="orm-panel__list">
+            <li><i class="fa fa-hashtag"/> <strong t-out="req.name"/></li>
+            <li><i class="fa fa-wrench"/> <span t-out="req.service_label or req.request_type_label"/></li>
+            <li t-if="req.location_address"><i class="fa fa-map-marker"/>
+                <span t-out="req.location_address"/></li>
+            <li t-if="req.dropoff_address"><i class="fa fa-flag-checkered"/>
+                <span t-out="req.dropoff_address"/></li>
+            <li t-if="req.vehicle_label"><i class="fa fa-car"/>
+                <span><t t-out="req.vehicle_label"/>
+                    <t t-if="req.vehicle_plate">(<t t-out="req.vehicle_plate"/>)</t></span></li>
+            <li t-if="req.quantity and req.request_type in ('spare_part', 'used_part')">
+                <i class="fa fa-cubes"/> <span>Quantity: <t t-out="req.quantity"/></span></li>
+            <li t-if="req.eta_minutes"><i class="fa fa-clock-o"/>
+                <span>Estimated response: <t t-out="req.eta_minutes"/> minutes</span></li>
+            <li t-if="req.provider_id"><i class="fa fa-user"/>
+                <span t-out="req.provider_id.name"/></li>
+            <li><i class="fa fa-calendar"/>
+                <span t-out="req.create_date" t-options="{'widget': 'datetime'}"/></li>
+        </ul>
+    </template>
+
+    <!-- Offer card -->
+    <template id="orm_offer_card" name="Offer Card">
+        <article t-attf-class="orm-offer #{offer.state == 'accepted' and 'is-accepted' or ''}">
+            <header class="orm-offer__head">
+                <div>
+                    <h3 class="orm-offer__supplier" t-out="offer.workshop_id.name"/>
+                    <span class="orm-badge orm-badge--verified" t-if="offer.workshop_id.is_verified">
+                        <i class="fa fa-check-circle"/> Verified
+                    </span>
+                    <span class="orm-badge" t-out="offer.condition_label"/>
+                </div>
+                <div class="orm-offer__price">
+                    <t t-if="offer.available">
+                        <t t-out="offer.price"
+                           t-options="{'widget': 'monetary', 'display_currency': offer.currency_id}"/>
+                    </t>
+                    <t t-else="">Not available</t>
+                </div>
+            </header>
+            <ul class="orm-offer__facts">
+                <li t-if="offer.brand"><i class="fa fa-tag"/> <t t-out="offer.brand"/></li>
+                <li t-if="offer.warranty"><i class="fa fa-shield"/> Warranty: <t t-out="offer.warranty"/></li>
+                <li t-if="offer.delivery_available"><i class="fa fa-truck"/>
+                    Delivery available<t t-if="offer.delivery_time"> - <t t-out="offer.delivery_time"/></t>
+                </li>
+                <li t-if="not offer.delivery_available"><i class="fa fa-map-marker"/> Pickup only</li>
+            </ul>
+            <p class="orm-offer__message" t-if="offer.message" t-out="offer.message"/>
+            <div class="orm-gallery" t-if="offer.image_ids">
+                <t t-foreach="offer.image_ids" t-as="photo">
+                    <a class="orm-gallery__thumb" t-att-href="photo.image_url()" target="_blank">
+                        <img t-att-src="photo.thumb_url()" alt="Part photo" loading="lazy"/>
+                    </a>
+                </t>
+            </div>
+            <div class="orm-offer__actions" t-if="is_owner or token">
+                <a t-attf-href="/chat/#{req.id}?token=#{token}" class="orm-btn orm-btn--outline orm-btn--sm">
+                    <i class="fa fa-comments-o"/> Chat
+                </a>
+                <t t-if="offer.state == 'sent' and req.state not in ('completed', 'cancelled')">
+                    <form t-attf-action="/road-mechanic/offer/#{offer.id}/accept" method="post"
+                          class="d-inline">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="token" t-att-value="token"/>
+                        <button type="submit" class="orm-btn orm-btn--primary orm-btn--sm">
+                            Accept offer
+                        </button>
+                    </form>
+                    <form t-attf-action="/road-mechanic/offer/#{offer.id}/reject" method="post"
+                          class="d-inline">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="token" t-att-value="token"/>
+                        <button type="submit" class="orm-btn orm-btn--outline orm-btn--sm">
+                            Reject
+                        </button>
+                    </form>
+                </t>
+                <span class="orm-badge orm-badge--confirmed" t-if="offer.state == 'accepted'">
+                    Accepted
+                </span>
+            </div>
+        </article>
+    </template>
+
+    <!-- Chat thread -->
+    <template id="orm_chat_thread" name="Request Chat Thread">
+        <div class="orm-chat" data-orm-chat="1">
+            <p class="orm-muted" t-if="not messages">
+                No message yet. Start the conversation below.
+            </p>
+            <t t-foreach="messages" t-as="message">
+                <div t-attf-class="orm-chat__msg orm-chat__msg--#{message.author_type == chat_side and 'mine' or 'theirs'}">
+                    <span class="orm-chat__author" t-out="message.author_name or message.author_type"/>
+                    <p class="orm-chat__body" t-out="message.body"/>
+                    <span class="orm-chat__date" t-out="message.create_date"
+                          t-options="{'widget': 'datetime'}"/>
+                </div>
+            </t>
+        </div>
+    </template>
+
+    <!-- Image upload field -->
+    <template id="orm_upload_field" name="Image Upload Field">
+        <div class="orm-form__field">
+            <label t-att-for="upload_id" t-out="upload_label"/>
+            <div class="orm-upload" data-orm-upload="1">
+                <input t-att-id="upload_id" type="file" name="photos" accept="image/jpeg,image/png,image/webp"
+                       multiple="multiple" class="orm-upload__input"/>
+                <p class="orm-upload__hint">
+                    <i class="fa fa-cloud-upload"/>
+                    Drag and drop, or tap to choose. JPG, PNG or WEBP, up to 8 images.
+                </p>
+                <div class="orm-upload__previews" data-orm-upload-previews="1"/>
+            </div>
+        </div>
+    </template>
+
+</odoo>

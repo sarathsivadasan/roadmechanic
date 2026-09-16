@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_request_roadside" model="ir.sequence">
+            <field name="name">Road Mechanic Roadside Request</field>
+            <field name="code">odex.road.mechanic.request.roadside</field>
+            <field name="prefix">RMA/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_request_recovery" model="ir.sequence">
+            <field name="name">Road Mechanic Recovery Request</field>
+            <field name="code">odex.road.mechanic.request.recovery</field>
+            <field name="prefix">RMR/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_request_spare" model="ir.sequence">
+            <field name="name">Road Mechanic Spare Part Request</field>
+            <field name="code">odex.road.mechanic.request.spare</field>
+            <field name="prefix">RMS/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_request_used" model="ir.sequence">
+            <field name="name">Road Mechanic Used Part Request</field>
+            <field name="code">odex.road.mechanic.request.used</field>
+            <field name="prefix">RMU/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_message_list" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.message.list</field>
+        <field name="model">odex.road.mechanic.message</field>
+        <field name="arch" type="xml">
+            <list string="Chat Messages" create="false">
+                <field name="create_date" string="Sent"/>
+                <field name="workshop_id"/>
+                <field name="request_id"/>
+                <field name="author_type"/>
+                <field name="author_name"/>
+                <field name="body"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_message_form" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.message.form</field>
+        <field name="model">odex.road.mechanic.message</field>
+        <field name="arch" type="xml">
+            <form string="Chat Message" create="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="workshop_id"/>
+                            <field name="request_id"/>
+                            <field name="quotation_id"/>
+                            <field name="inquiry_id"/>
+                        </group>
+                        <group>
+                            <field name="author_type"/>
+                            <field name="author_name"/>
+                            <field name="partner_id"/>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="body"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_message_search" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.message.search</field>
+        <field name="model">odex.road.mechanic.message</field>
+        <field name="arch" type="xml">
+            <search string="Chat">
+                <field name="workshop_id"/>
+                <field name="request_id"/>
+                <field name="body"/>
+                <filter name="filter_customer" string="From Customers" domain="[('author_type', '=', 'customer')]"/>
+                <filter name="filter_garage" string="From Garages" domain="[('author_type', '=', 'garage')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_request" string="Request" context="{'group_by': 'request_id'}"/>
+                    <filter name="group_workshop" string="Workshop" context="{'group_by': 'workshop_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_message" model="ir.actions.act_window">
+        <field name="name">Conversations</field>
+        <field name="res_model">odex.road.mechanic.message</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_message_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_request_list" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.request.list</field>
+        <field name="model">odex.road.mechanic.request</field>
+        <field name="arch" type="xml">
+            <list string="Service Requests" decoration-info="state in ('submitted','searching')"
+                  decoration-success="state in ('completed','delivered')"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="create_date" string="Received"/>
+                <field name="request_type"/>
+                <field name="service_label" string="Service / Part"/>
+                <field name="customer_name"/>
+                <field name="phone" optional="show"/>
+                <field name="location_address" optional="show"/>
+                <field name="dropoff_address" optional="hide"/>
+                <field name="vehicle_label" string="Vehicle" optional="show"/>
+                <field name="provider_id" optional="show"/>
+                <field name="offer_count" string="Offers" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('submitted','searching')"
+                       decoration-success="state in ('completed','delivered')"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_request_kanban" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.request.kanban</field>
+        <field name="model">odex.road.mechanic.request</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false">
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="fw-bold"><field name="name"/></div>
+                        <div><field name="service_label"/></div>
+                        <div class="text-muted"><field name="customer_name"/></div>
+                        <div class="text-muted"><field name="location_address"/></div>
+                        <div><field name="provider_id"/></div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_request_search" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.request.search</field>
+        <field name="model">odex.road.mechanic.request</field>
+        <field name="arch" type="xml">
+            <search string="Service Requests">
+                <field name="name"/>
+                <field name="customer_name"
+                       filter_domain="['|', '|', ('customer_name', 'ilike', self), ('phone', 'ilike', self), ('vehicle_plate', 'ilike', self)]"/>
+                <field name="part_name"/>
+                <field name="provider_id"/>
+                <field name="location_address"/>
+                <filter name="f_roadside" string="Roadside" domain="[('request_type', '=', 'roadside')]"/>
+                <filter name="f_recovery" string="Recovery" domain="[('request_type', '=', 'recovery')]"/>
+                <filter name="f_spare" string="Spare Parts" domain="[('request_type', '=', 'spare_part')]"/>
+                <filter name="f_used" string="Used Parts" domain="[('request_type', '=', 'used_part')]"/>
+                <separator/>
+                <filter name="f_open" string="Open"
+                        domain="[('state', 'not in', ('completed', 'cancelled'))]"/>
+                <filter name="f_unassigned" string="No Provider" domain="[('provider_id', '=', False)]"/>
+                <filter name="f_offers" string="Has Offers" domain="[('offer_count', '&gt;', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_type" string="Request Type" context="{'group_by': 'request_type'}"/>
+                    <filter name="g_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="g_provider" string="Provider" context="{'group_by': 'provider_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_request_form" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.request.form</field>
+        <field name="model">odex.road.mechanic.request</field>
+        <field name="arch" type="xml">
+            <form string="Service Request">
+                <header>
+                    <button name="action_assign_provider" type="object" string="Assign Provider"
+                            class="btn-primary" invisible="state in ('completed', 'cancelled')"/>
+                    <button name="action_on_the_way" type="object" string="On The Way"
+                            invisible="request_type not in ('roadside', 'recovery') or state in ('completed', 'cancelled')"/>
+                    <button name="action_arrived" type="object" string="Arrived"
+                            invisible="request_type not in ('roadside', 'recovery') or state in ('completed', 'cancelled')"/>
+                    <button name="action_start_service" type="object" string="Start Service"
+                            invisible="request_type != 'roadside' or state in ('completed', 'cancelled')"/>
+                    <button name="action_picked_up" type="object" string="Picked Up"
+                            invisible="request_type != 'recovery' or state in ('completed', 'cancelled')"/>
+                    <button name="action_in_transit" type="object" string="In Transit"
+                            invisible="request_type != 'recovery' or state in ('completed', 'cancelled')"/>
+                    <button name="action_dispatched" type="object" string="Dispatched"
+                            invisible="request_type not in ('spare_part', 'used_part') or state in ('completed', 'cancelled')"/>
+                    <button name="action_delivered" type="object" string="Delivered"
+                            invisible="state in ('completed', 'cancelled')"/>
+                    <button name="action_complete" type="object" string="Complete"
+                            invisible="state in ('completed', 'cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('completed', 'cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_offers" type="object" class="oe_stat_button"
+                                icon="fa-tags" invisible="request_type not in ('spare_part', 'used_part')">
+                            <field name="offer_count" widget="statinfo" string="Offers"/>
+                        </button>
+                        <button name="action_view_chat" type="object" class="oe_stat_button" icon="fa-comments-o">
+                            <field name="chat_count" widget="statinfo" string="Chat"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                        <h3><field name="request_type" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Customer">
+                            <field name="customer_name"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="partner_id"/>
+                            <field name="source" readonly="1"/>
+                        </group>
+                        <group string="Fulfilment">
+                            <field name="provider_id"/>
+                            <field name="assigned_date" readonly="1"/>
+                            <field name="eta_minutes"/>
+                            <field name="accepted_offer_id" readonly="1"
+                                   invisible="request_type not in ('spare_part', 'used_part')"/>
+                            <field name="tracking_url" widget="url" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Service" name="service">
+                            <group>
+                                <group>
+                                    <field name="roadside_service" invisible="request_type != 'roadside'"/>
+                                    <field name="recovery_type" invisible="request_type != 'recovery'"/>
+                                    <field name="part_name" invisible="request_type not in ('spare_part', 'used_part')"/>
+                                    <field name="part_number" invisible="request_type not in ('spare_part', 'used_part')"/>
+                                    <field name="part_brand" invisible="request_type not in ('spare_part', 'used_part')"/>
+                                </group>
+                                <group>
+                                    <field name="quantity" invisible="request_type not in ('spare_part', 'used_part')"/>
+                                    <field name="part_condition" invisible="request_type not in ('spare_part', 'used_part')"/>
+                                    <field name="delivery_required" invisible="request_type not in ('spare_part', 'used_part')"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="description"/>
+                                <field name="video_url" widget="url"/>
+                            </group>
+                        </page>
+                        <page string="Location" name="location">
+                            <group>
+                                <group>
+                                    <field name="location_address"/>
+                                    <field name="latitude"/>
+                                    <field name="longitude"/>
+                                    <field name="location_id"/>
+                                </group>
+                                <group invisible="request_type != 'recovery'">
+                                    <field name="dropoff_address"/>
+                                    <field name="dropoff_latitude"/>
+                                    <field name="dropoff_longitude"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="map_url" widget="url" readonly="1"/>
+                                <field name="route_url" widget="url" readonly="1"
+                                       invisible="request_type != 'recovery'"/>
+                            </group>
+                        </page>
+                        <page string="Vehicle" name="vehicle">
+                            <group>
+                                <group>
+                                    <field name="vehicle_id"/>
+                                    <field name="vehicle_brand_id"/>
+                                    <field name="vehicle_model"/>
+                                    <field name="vehicle_year"/>
+                                    <field name="vehicle_variant"/>
+                                </group>
+                                <group>
+                                    <field name="vehicle_plate"/>
+                                    <field name="vehicle_colour"/>
+                                    <field name="vehicle_condition"/>
+                                    <field name="vehicle_engine"/>
+                                    <field name="vehicle_vin"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Photos" name="photos">
+                            <field name="image_ids" mode="kanban">
+                                <kanban>
+                                    <templates>
+                                        <t t-name="card">
+                                            <div class="text-center">
+                                                <field name="image" widget="image" options="{'size': [200, 150]}"/>
+                                                <div><field name="name"/></div>
+                                                <div><field name="category"/></div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form>
+                                    <group>
+                                        <field name="image" widget="image"/>
+                                        <field name="name"/>
+                                        <field name="category"/>
+                                        <field name="sequence"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Offers" name="offers"
+                              invisible="request_type not in ('spare_part', 'used_part')">
+                            <field name="offer_ids" readonly="1">
+                                <list>
+                                    <field name="workshop_id"/>
+                                    <field name="available"/>
+                                    <field name="price"/>
+                                    <field name="brand"/>
+                                    <field name="condition"/>
+                                    <field name="warranty"/>
+                                    <field name="delivery_available"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Chat" name="chat">
+                            <field name="message_ids_chat" readonly="1">
+                                <list>
+                                    <field name="create_date" string="Sent"/>
+                                    <field name="author_type"/>
+                                    <field name="author_name"/>
+                                    <field name="body"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Cancellation" name="cancel" invisible="state != 'cancelled'">
+                            <group><field name="cancel_reason"/></group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_request_all" model="ir.actions.act_window">
+        <field name="name">All Requests</field>
+        <field name="res_model">odex.road.mechanic.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_request_search"/>
+    </record>
+
+    <record id="action_request_roadside" model="ir.actions.act_window">
+        <field name="name">Roadside Assistance</field>
+        <field name="res_model">odex.road.mechanic.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('request_type', '=', 'roadside')]</field>
+        <field name="context">{'default_request_type': 'roadside'}</field>
+        <field name="search_view_id" ref="view_request_search"/>
+    </record>
+
+    <record id="action_request_recovery" model="ir.actions.act_window">
+        <field name="name">Vehicle Recovery</field>
+        <field name="res_model">odex.road.mechanic.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('request_type', '=', 'recovery')]</field>
+        <field name="context">{'default_request_type': 'recovery'}</field>
+        <field name="search_view_id" ref="view_request_search"/>
+    </record>
+
+    <record id="action_request_spare" model="ir.actions.act_window">
+        <field name="name">Spare Parts</field>
+        <field name="res_model">odex.road.mechanic.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('request_type', '=', 'spare_part')]</field>
+        <field name="context">{'default_request_type': 'spare_part'}</field>
+        <field name="search_view_id" ref="view_request_search"/>
+    </record>
+
+    <record id="action_request_used" model="ir.actions.act_window">
+        <field name="name">Used Parts</field>
+        <field name="res_model">odex.road.mechanic.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('request_type', '=', 'used_part')]</field>
+        <field name="context">{'default_request_type': 'used_part'}</field>
+        <field name="search_view_id" ref="view_request_search"/>
+    </record>
+
+</odoo>

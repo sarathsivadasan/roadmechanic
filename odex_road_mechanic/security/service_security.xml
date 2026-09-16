@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="rule_request_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all service requests</field>
+        <field name="model_id" ref="model_odex_road_mechanic_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_request_customer_own" model="ir.rule">
+        <field name="name">Road Mechanic: customers see their own requests</field>
+        <field name="model_id" ref="model_odex_road_mechanic_request"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_part_offer_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all offers</field>
+        <field name="model_id" ref="model_odex_road_mechanic_part_offer"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_part_offer_supplier" model="ir.rule">
+        <field name="name">Road Mechanic: suppliers manage their own offers</field>
+        <field name="model_id" ref="model_odex_road_mechanic_part_offer"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+    </record>
+
+    <record id="rule_part_offer_customer" model="ir.rule">
+        <field name="name">Road Mechanic: customers see offers sent to them</field>
+        <field name="model_id" ref="model_odex_road_mechanic_part_offer"/>
+        <field name="domain_force">['&amp;', ('customer_partner_id', '=', user.partner_id.id), ('state', '!=', 'draft')]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_notification_own" model="ir.rule">
+        <field name="name">Road Mechanic: notifications belong to their recipient</field>
+        <field name="model_id" ref="model_odex_road_mechanic_notification"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_notification_internal" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all notifications</field>
+        <field name="model_id" ref="model_odex_road_mechanic_notification"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_request_image_portal" model="ir.rule">
+        <field name="name">Road Mechanic: request photos follow their request</field>
+        <field name="model_id" ref="model_odex_road_mechanic_request_image"/>
+        <field name="domain_force">[('request_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

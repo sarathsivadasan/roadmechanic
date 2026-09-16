@@ -1,0 +1,1421 @@
+/* ==========================================================================
+   Road Mechanic directory styles
+   Everything is scoped under .odex-road-mechanic so the standard Odoo
+   website header, footer and other pages are never affected.
+   ========================================================================== */
+
+.odex-road-mechanic {
+    --orm-red: #e51b23;
+    --orm-red-dark: #b8141b;
+    --orm-gold: #d6b06a;
+    --orm-green: #12a55b;
+    --orm-whatsapp: #25d366;
+
+    --orm-bg: #ffffff;
+    --orm-bg-muted: #f5f6f7;
+    --orm-card: #ffffff;
+    --orm-text: #171717;
+    --orm-text-muted: #6b7280;
+    --orm-border: #e5e5e5;
+    --orm-shadow: 0 1px 2px rgba(15, 15, 15, .06), 0 8px 24px rgba(15, 15, 15, .06);
+    --orm-shadow-sm: 0 1px 2px rgba(15, 15, 15, .08);
+    --orm-radius: 10px;
+    --orm-radius-sm: 6px;
+    --orm-gap: 1.25rem;
+
+    background: var(--orm-bg);
+    color: var(--orm-text);
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+html[data-orm-theme="dark"] .odex-road-mechanic {
+    --orm-red: #ff1f2d;
+    --orm-red-dark: #e51b23;
+    --orm-gold: #d6b06a;
+    --orm-green: #1fc46e;
+
+    --orm-bg: #0d0d0d;
+    --orm-bg-muted: #121212;
+    --orm-card: #171717;
+    --orm-text: #ffffff;
+    --orm-text-muted: #a3a3a3;
+    --orm-border: #333333;
+    --orm-shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 10px 30px rgba(0, 0, 0, .45);
+    --orm-shadow-sm: 0 1px 2px rgba(0, 0, 0, .55);
+}
+
+.odex-road-mechanic *,
+.odex-road-mechanic *::before,
+.odex-road-mechanic *::after { box-sizing: border-box; }
+
+.odex-road-mechanic img { max-width: 100%; }
+
+.odex-road-mechanic a { color: var(--orm-red); text-decoration: none; }
+.odex-road-mechanic a:hover { color: var(--orm-red-dark); text-decoration: none; }
+
+.odex-road-mechanic h1,
+.odex-road-mechanic h2,
+.odex-road-mechanic h3 {
+    color: var(--orm-text);
+    font-weight: 800;
+    letter-spacing: -.01em;
+    margin: 0 0 .5rem;
+}
+
+.odex-road-mechanic p { margin: 0 0 .75rem; }
+
+.odex-road-mechanic :focus-visible {
+    outline: 2px solid var(--orm-red);
+    outline-offset: 2px;
+}
+
+.orm-container {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+.orm-container--narrow { max-width: 900px; }
+
+.orm-muted { color: var(--orm-text-muted); }
+.orm-small { font-size: .82rem; }
+.orm-mt { margin-top: 1rem; }
+.orm-mb { margin-bottom: 1rem; }
+.orm-hp { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+/* --------------------------------------------------------------- buttons */
+.odex-road-mechanic .orm-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    padding: .62rem 1.1rem;
+    border: 1px solid transparent;
+    border-radius: var(--orm-radius-sm);
+    background: transparent;
+    color: var(--orm-text);
+    font-weight: 600;
+    font-size: .92rem;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.odex-road-mechanic .orm-btn--primary { background: var(--orm-red); color: #fff; }
+.odex-road-mechanic .orm-btn--primary:hover { background: var(--orm-red-dark); color: #fff; }
+.odex-road-mechanic .orm-btn--gold { background: var(--orm-gold); color: #171717; }
+.odex-road-mechanic .orm-btn--gold:hover { background: #c39f5c; color: #171717; }
+.odex-road-mechanic .orm-btn--whatsapp { background: var(--orm-whatsapp); color: #06331a; }
+.odex-road-mechanic .orm-btn--whatsapp:hover { background: #1fbb5a; color: #06331a; }
+.odex-road-mechanic .orm-btn--outline {
+    border-color: var(--orm-red);
+    color: var(--orm-red);
+    background: transparent;
+}
+.odex-road-mechanic .orm-btn--outline:hover { background: var(--orm-red); color: #fff; }
+.odex-road-mechanic .orm-btn--sm { padding: .45rem .8rem; font-size: .85rem; }
+.odex-road-mechanic .orm-btn--lg { padding: .8rem 1.6rem; font-size: 1rem; }
+.odex-road-mechanic .orm-btn--block { display: flex; width: 100%; }
+
+/* ----------------------------------------------------------------- hero */
+.orm-hero {
+    position: relative;
+    background-color: #0d0d0d;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    padding: 3.5rem 0 2.5rem;
+}
+.orm-hero__inner {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.orm-hero__text { flex: 1 1 640px; max-width: 720px; }
+.orm-hero__eyebrow {
+    color: #fff;
+    font-weight: 700;
+    font-size: .85rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: .35rem;
+    opacity: .9;
+}
+.orm-hero__title {
+    color: #fff;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.05;
+    margin-bottom: .5rem;
+}
+.orm-hero__title span { color: var(--orm-red); }
+.orm-hero__subtitle { color: rgba(255, 255, 255, .88); font-size: 1.05rem; margin-bottom: 1.4rem; }
+
+.orm-hero__points {
+    flex: 0 0 300px;
+    background: rgba(255, 255, 255, .96);
+    border-radius: var(--orm-radius);
+    padding: 1rem;
+    box-shadow: var(--orm-shadow);
+    color: #171717;
+}
+html[data-orm-theme="dark"] .orm-hero__points { background: rgba(23, 23, 23, .95); color: #fff; }
+.orm-point { display: flex; gap: .75rem; align-items: flex-start; padding: .6rem .25rem; }
+.orm-point + .orm-point { border-top: 1px solid rgba(128, 128, 128, .25); }
+.orm-point strong { display: block; font-size: .95rem; }
+.orm-point span { font-size: .82rem; opacity: .75; }
+.orm-point__icon {
+    color: var(--orm-red);
+    font-size: 1.15rem;
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(229, 27, 35, .1);
+}
+
+.orm-subhero {
+    position: relative;
+    background: var(--orm-bg-muted);
+    border-bottom: 1px solid var(--orm-border);
+    padding: 2.2rem 0 1.8rem;
+}
+.orm-subhero__title { font-size: clamp(1.6rem, 3.6vw, 2.4rem); }
+.orm-subhero__text { color: var(--orm-text-muted); max-width: 70ch; }
+.orm-subhero .orm-hero__eyebrow { color: var(--orm-red); }
+
+/* ------------------------------------------------------------ theme toggle */
+.odex-road-mechanic .orm-theme-toggle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .4rem .7rem;
+    border-radius: 999px;
+    border: 1px solid var(--orm-border);
+    background: var(--orm-card);
+    color: var(--orm-text);
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.orm-theme-toggle__light { display: none; }
+html[data-orm-theme="dark"] .orm-theme-toggle__light { display: inline; }
+html[data-orm-theme="dark"] .orm-theme-toggle__dark { display: none; }
+
+/* ----------------------------------------------------------------- search */
+.odex-road-mechanic .orm-search {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius);
+    padding: .5rem;
+    box-shadow: var(--orm-shadow);
+}
+.orm-search__field { position: relative; flex: 1 1 210px; min-width: 0; }
+.orm-search__label {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden; clip: rect(0 0 0 0);
+}
+.orm-search__icon {
+    position: absolute;
+    left: .75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--orm-text-muted);
+    pointer-events: none;
+}
+.odex-road-mechanic .orm-search__input {
+    width: 100%;
+    height: 46px;
+    padding: 0 .75rem 0 2.25rem;
+    border: 1px solid transparent;
+    border-radius: var(--orm-radius-sm);
+    background: var(--orm-card);
+    color: var(--orm-text);
+    font-size: .95rem;
+    appearance: none;
+}
+.odex-road-mechanic .orm-search__input:focus { border-color: var(--orm-border); }
+.orm-search__submit { flex: 0 0 auto; height: 46px; min-width: 130px; }
+
+.orm-suggest {
+    position: absolute;
+    top: calc(100% + .25rem);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius-sm);
+    box-shadow: var(--orm-shadow);
+    overflow: hidden;
+    display: none;
+}
+.orm-suggest.is-open { display: block; }
+.orm-suggest__item {
+    display: flex;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .55rem .75rem;
+    color: var(--orm-text);
+    font-size: .9rem;
+}
+.orm-suggest__item:hover { background: var(--orm-bg-muted); color: var(--orm-text); }
+.orm-suggest__type { color: var(--orm-text-muted); font-size: .75rem; text-transform: capitalize; }
+
+/* --------------------------------------------------------- service strip */
+.orm-services {
+    display: flex;
+    gap: .25rem;
+    overflow-x: auto;
+    padding: .85rem 1rem;
+    background: var(--orm-bg-muted);
+    border-bottom: 1px solid var(--orm-border);
+    scrollbar-width: thin;
+    /* centred while the categories fit, scrollable without clipping when they
+       do not: "safe" keeps the first item reachable on narrow screens. */
+    justify-content: center;
+}
+@supports (justify-content: safe center) {
+    .orm-services { justify-content: safe center; }
+}
+.orm-services__item {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .35rem;
+    min-width: 92px;
+    padding: .4rem .5rem;
+    color: var(--orm-text);
+    font-size: .78rem;
+    text-align: center;
+    border-bottom: 2px solid transparent;
+}
+.orm-services__item:hover { color: var(--orm-red); }
+.orm-services__item--active { border-bottom-color: var(--orm-red); }
+.orm-services__item--active .orm-services__icon { background: var(--orm-red); color: #fff; }
+.orm-services__icon {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    font-size: 1.05rem;
+}
+.orm-services__name { white-space: nowrap; }
+
+/* -------------------------------------------------------------- sections */
+.orm-section { padding: 2rem 0; }
+.orm-section--muted { background: var(--orm-bg-muted); }
+.orm-section__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.1rem;
+}
+.orm-section__title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: 1.35rem;
+    margin: 0;
+}
+.orm-section__icon {
+    color: #fff;
+    background: var(--orm-red);
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .9rem;
+}
+.orm-section__icon--gold { background: var(--orm-gold); color: #171717; }
+.orm-section__link { font-weight: 600; font-size: .9rem; }
+.orm-count { color: var(--orm-text-muted); font-weight: 500; font-size: .95rem; }
+.orm-pill {
+    background: var(--orm-red);
+    color: #fff;
+    border-radius: 999px;
+    padding: .15rem .6rem;
+    font-size: .72rem;
+    font-weight: 700;
+}
+
+/* ----------------------------------------------------------------- cards */
+.orm-grid { display: grid; gap: var(--orm-gap); }
+.orm-grid--cards { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.orm-grid--results { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.orm-grid--services { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+
+.orm-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius);
+    overflow: hidden;
+    box-shadow: var(--orm-shadow-sm);
+}
+.orm-card__media { position: relative; display: block; aspect-ratio: 16 / 10; background: var(--orm-bg-muted); }
+.orm-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.orm-card__badge { position: absolute; top: .55rem; right: .55rem; }
+.orm-card__status {
+    position: absolute;
+    left: .55rem;
+    bottom: .55rem;
+    background: rgba(0, 0, 0, .65);
+    color: #fff;
+    border-radius: 999px;
+    padding: .12rem .55rem;
+    font-size: .72rem;
+    font-weight: 600;
+}
+.orm-card__body { padding: .85rem; display: flex; flex-direction: column; gap: .4rem; flex: 1; }
+.orm-card__title { font-size: 1rem; margin: 0; }
+.orm-card__title a { color: var(--orm-text); }
+.orm-card__title a:hover { color: var(--orm-red); }
+.orm-card__meta { color: var(--orm-text-muted); font-size: .85rem; margin: 0; }
+.orm-card__meta .fa { color: var(--orm-red); margin-right: .25rem; }
+.orm-card__body .orm-btn--outline { margin-top: auto; }
+
+.orm-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    border-radius: 999px;
+    padding: .15rem .55rem;
+    font-size: .74rem;
+    font-weight: 700;
+    background: var(--orm-bg-muted);
+    color: var(--orm-text-muted);
+    border: 1px solid var(--orm-border);
+}
+.orm-badge--verified { background: var(--orm-green); color: #fff; border-color: transparent; }
+
+.orm-stars { display: inline-flex; align-items: center; gap: .15rem; font-size: .85rem; }
+.orm-stars .fa { color: var(--orm-gold); }
+.orm-stars__value { font-weight: 700; margin-left: .25rem; color: var(--orm-text); }
+.orm-stars__count { color: var(--orm-text-muted); }
+
+.orm-tags { display: flex; flex-wrap: wrap; gap: .3rem; list-style: none; margin: 0; padding: 0; }
+.orm-tag {
+    background: var(--orm-bg-muted);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius-sm);
+    padding: .1rem .45rem;
+    font-size: .74rem;
+    color: var(--orm-text-muted);
+}
+.orm-tag--more { color: var(--orm-red); border-color: var(--orm-red); }
+
+.orm-actions { display: flex; gap: .4rem; }
+.orm-actions .orm-btn { flex: 1; }
+
+.orm-dot { width: .55rem; height: .55rem; border-radius: 50%; display: inline-block; margin-right: .3rem; }
+.orm-dot--open { background: var(--orm-green); }
+.orm-dot--closed { background: #9ca3af; }
+
+/* ------------------------------------------------------------------ rows */
+.orm-rows { display: flex; flex-direction: column; gap: .75rem; }
+.orm-row {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 2fr) minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius);
+    padding: .75rem;
+    box-shadow: var(--orm-shadow-sm);
+}
+.orm-row__media { display: block; border-radius: var(--orm-radius-sm); overflow: hidden; aspect-ratio: 4 / 3; }
+.orm-row__media img { width: 100%; height: 100%; object-fit: cover; }
+.orm-row__title { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; font-size: 1.05rem; margin: 0 0 .2rem; }
+.orm-row__title a { color: var(--orm-text); }
+.orm-row__title a:hover { color: var(--orm-red); }
+.orm-row__meta { color: var(--orm-text-muted); font-size: .86rem; margin: 0 0 .25rem; }
+.orm-row__meta .fa { color: var(--orm-red); margin-right: .25rem; }
+.orm-row__rating { margin-bottom: .35rem; }
+.orm-row__hours { font-size: .85rem; color: var(--orm-text-muted); }
+.orm-row__status { font-weight: 600; color: var(--orm-green); margin: 0 0 .15rem; }
+.orm-row__time, .orm-row__phone { margin: 0; }
+.orm-row__time .fa, .orm-row__phone .fa { margin-right: .35rem; }
+.orm-row__actions { display: flex; flex-direction: column; gap: .4rem; min-width: 160px; }
+
+/* --------------------------------------------------------------- layout */
+.orm-layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.orm-layout--detail { grid-template-columns: minmax(0, 1fr) 320px; padding-top: 1.5rem; padding-bottom: 1.5rem; }
+.orm-layout--detail .orm-layout__main { order: 1; }
+.orm-layout--detail .orm-layout__side { order: 2; }
+.orm-sticky { position: sticky; top: 90px; }
+
+/* -------------------------------------------------------------- toolbar */
+.orm-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.orm-toolbar__title { font-size: 1.25rem; margin: 0; }
+.orm-toolbar__controls { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.orm-sort { display: flex; align-items: center; gap: .4rem; margin: 0; }
+.orm-sort__label { color: var(--orm-text-muted); font-size: .85rem; margin: 0; }
+.orm-viewswitch { display: inline-flex; border: 1px solid var(--orm-border); border-radius: var(--orm-radius-sm); overflow: hidden; }
+.orm-viewswitch__btn { padding: .4rem .7rem; color: var(--orm-text-muted); background: var(--orm-card); }
+.orm-viewswitch__btn.is-active { background: var(--orm-red); color: #fff; }
+
+/* -------------------------------------------------------------- filters */
+.orm-filters {
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius);
+    padding: 1rem;
+    box-shadow: var(--orm-shadow-sm);
+}
+.orm-filters__head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .75rem; }
+.orm-filters__title { font-size: 1rem; margin: 0; display: flex; align-items: center; gap: .4rem; }
+.orm-filters__clear { font-size: .82rem; }
+.orm-filters__close { display: none; background: none; border: 0; color: var(--orm-text); font-size: 1.1rem; }
+.orm-filters__group { padding: .6rem 0; border-top: 1px solid var(--orm-border); }
+.orm-filters__group:first-of-type { border-top: 0; }
+.orm-filters__label, .orm-form__label { display: block; font-weight: 700; font-size: .85rem; margin-bottom: .35rem; }
+.orm-filters__group--switches { display: flex; flex-direction: column; gap: .5rem; }
+
+.odex-road-mechanic .orm-input {
+    width: 100%;
+    padding: .5rem .65rem;
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius-sm);
+    background: var(--orm-card);
+    color: var(--orm-text);
+    font-size: .9rem;
+}
+.odex-road-mechanic .orm-input--sm { width: auto; padding: .35rem .5rem; font-size: .85rem; }
+.odex-road-mechanic textarea.orm-input { resize: vertical; }
+
+.orm-checklist { display: grid; gap: .3rem; max-height: 230px; overflow-y: auto; }
+.orm-checklist--wide { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); max-height: none; }
+.orm-check { display: flex; align-items: center; gap: .45rem; font-size: .88rem; margin: 0; cursor: pointer; }
+
+.orm-switch { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: .88rem; cursor: pointer; margin: 0; }
+.orm-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.orm-switch__track {
+    width: 42px; height: 24px;
+    border-radius: 999px;
+    background: #cbd5e1;
+    position: relative;
+    transition: background-color .15s ease;
+    flex: 0 0 auto;
+}
+html[data-orm-theme="dark"] .orm-switch__track { background: #3f3f46; }
+.orm-switch__thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .15s ease;
+}
+.orm-switch input:checked + .orm-switch__track { background: var(--orm-red); }
+.orm-switch input:checked + .orm-switch__track .orm-switch__thumb { transform: translateX(18px); }
+.orm-switch input:focus-visible + .orm-switch__track { outline: 2px solid var(--orm-red); outline-offset: 2px; }
+
+/* ---------------------------------------------------------------- pager */
+.orm-pager { display: flex; justify-content: center; margin-top: 1.5rem; }
+.odex-road-mechanic .orm-pager .pagination { gap: .25rem; }
+.odex-road-mechanic .orm-pager .page-link { color: var(--orm-text); background: var(--orm-card); border-color: var(--orm-border); }
+.odex-road-mechanic .orm-pager .active .page-link { background: var(--orm-red); border-color: var(--orm-red); color: #fff; }
+
+/* --------------------------------------------------------------- detail */
+.orm-detail-hero { position: relative; background: var(--orm-bg-muted); padding: 1.25rem 0 1.5rem; border-bottom: 1px solid var(--orm-border); }
+.orm-breadcrumb { display: flex; gap: .4rem; flex-wrap: wrap; font-size: .82rem; color: var(--orm-text-muted); margin-bottom: .75rem; }
+.orm-detail-hero__media { position: relative; border-radius: var(--orm-radius); overflow: hidden; }
+.orm-detail-hero__img { width: 100%; max-height: 430px; object-fit: cover; display: block; cursor: zoom-in; }
+.orm-gallery { display: flex; gap: .5rem; overflow-x: auto; padding-top: .6rem; }
+.orm-gallery__thumb {
+    flex: 0 0 auto;
+    width: 118px; height: 84px;
+    padding: 0;
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius-sm);
+    overflow: hidden;
+    background: none;
+    cursor: zoom-in;
+}
+.orm-gallery__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.orm-gallery--manage { flex-wrap: wrap; }
+.orm-gallery__manageitem { display: flex; flex-direction: column; gap: .35rem; width: 140px; }
+.orm-gallery__manageitem img { width: 140px; height: 100px; object-fit: cover; border-radius: var(--orm-radius-sm); }
+
+.orm-detail-head__title { font-size: clamp(1.5rem, 3.5vw, 2.1rem); margin-bottom: .4rem; }
+.orm-detail-head__meta { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: .5rem; }
+.orm-detail-head__status { font-weight: 600; font-size: .9rem; }
+.orm-detail-head__address { color: var(--orm-text-muted); }
+.orm-detail-head__address .fa { color: var(--orm-red); margin-right: .3rem; }
+
+.orm-actionbar { display: flex; gap: .5rem; flex-wrap: wrap; margin: 1rem 0 1.5rem; }
+
+.orm-block { padding: 1.25rem 0; border-top: 1px solid var(--orm-border); }
+.orm-block__title { font-size: 1.15rem; display: flex; align-items: center; gap: .5rem; }
+.orm-block__subtitle { font-size: 1rem; margin: 1.25rem 0 .5rem; }
+.orm-prose { color: var(--orm-text); max-width: 72ch; }
+.orm-prose--wide { max-width: 80ch; }
+.orm-prose h2 { font-size: 1.15rem; margin-top: 1.5rem; }
+.orm-hours { color: var(--orm-text-muted); white-space: pre-line; }
+
+.orm-chips { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; padding: 0; margin: 0; }
+.orm-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    background: var(--orm-bg-muted);
+    border: 1px solid var(--orm-border);
+    border-radius: 999px;
+    padding: .3rem .75rem;
+    font-size: .85rem;
+    color: var(--orm-text);
+}
+.orm-chip:hover { border-color: var(--orm-red); color: var(--orm-red); }
+.orm-chip--plain { color: var(--orm-text-muted); }
+.orm-chip .fa { color: var(--orm-red); }
+
+.orm-panel {
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius);
+    padding: 1.1rem;
+    box-shadow: var(--orm-shadow-sm);
+}
+.orm-panel__logo { width: 64px; height: 64px; object-fit: contain; border-radius: var(--orm-radius-sm); background: var(--orm-bg-muted); padding: .25rem; }
+.orm-panel__title { font-size: 1.1rem; margin: .6rem 0 .2rem; }
+.orm-panel__type { color: var(--orm-text-muted); font-size: .88rem; }
+.orm-panel__list { list-style: none; padding: 0; margin: .75rem 0; display: flex; flex-direction: column; gap: .45rem; font-size: .9rem; }
+.orm-panel__list li { display: flex; gap: .5rem; align-items: baseline; word-break: break-word; }
+.orm-panel__list .fa { color: var(--orm-red); width: 1rem; }
+
+.orm-map { position: relative; padding-top: 52%; border-radius: var(--orm-radius); overflow: hidden; border: 1px solid var(--orm-border); margin-bottom: .75rem; }
+.orm-map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* -------------------------------------------------------------- reviews */
+.orm-reviews { display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1rem; }
+.orm-review { background: var(--orm-card); border: 1px solid var(--orm-border); border-radius: var(--orm-radius); padding: .85rem; }
+.orm-review__head { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .3rem; }
+.orm-review__date { color: var(--orm-text-muted); font-size: .8rem; }
+.orm-review__title { font-size: .98rem; margin: 0 0 .2rem; }
+.orm-review__text { margin: 0; color: var(--orm-text); white-space: pre-line; }
+
+.orm-rating-input { display: inline-flex; flex-direction: row-reverse; gap: .15rem; }
+.orm-rating-input input { position: absolute; opacity: 0; width: 0; height: 0; }
+.orm-rating-input label { font-size: 1.6rem; color: #d1d5db; cursor: pointer; margin: 0; line-height: 1; }
+html[data-orm-theme="dark"] .orm-rating-input label { color: #3f3f46; }
+.orm-rating-input input:checked ~ label,
+.orm-rating-input label:hover,
+.orm-rating-input label:hover ~ label { color: var(--orm-gold); }
+.orm-rating-input input:focus-visible + label { outline: 2px solid var(--orm-red); outline-offset: 2px; }
+
+/* ---------------------------------------------------------------- forms */
+.orm-form { display: flex; flex-direction: column; gap: .75rem; }
+.orm-form__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .75rem; }
+.orm-form__field { display: flex; flex-direction: column; gap: .3rem; }
+.orm-form__field label { font-weight: 600; font-size: .85rem; margin: 0; }
+.orm-form .orm-btn { align-self: flex-start; }
+
+.orm-alert {
+    border-radius: var(--orm-radius-sm);
+    padding: .7rem .9rem;
+    margin-bottom: .75rem;
+    border: 1px solid var(--orm-border);
+    background: var(--orm-bg-muted);
+    color: var(--orm-text);
+    font-size: .9rem;
+}
+.orm-alert--success { border-color: var(--orm-green); background: rgba(18, 165, 91, .1); }
+.orm-alert--error { border-color: var(--orm-red); background: rgba(229, 27, 35, .08); }
+
+.orm-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.orm-table th, .orm-table td { text-align: left; padding: .5rem .4rem; border-bottom: 1px solid var(--orm-border); }
+.orm-table th { color: var(--orm-text-muted); font-weight: 700; }
+
+/* ------------------------------------------------------------------- why */
+.orm-why { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--orm-gap); }
+.orm-why__item { background: var(--orm-card); border: 1px solid var(--orm-border); border-radius: var(--orm-radius); padding: 1rem; }
+.orm-why__item .fa { color: var(--orm-red); font-size: 1.4rem; margin-bottom: .5rem; }
+.orm-why__item h3 { font-size: 1rem; }
+.orm-why__item p { color: var(--orm-text-muted); font-size: .88rem; margin: 0; }
+
+.orm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--orm-gap); margin-bottom: 1.5rem; }
+.orm-stat { background: var(--orm-card); border: 1px solid var(--orm-border); border-left: 4px solid var(--orm-red); border-radius: var(--orm-radius); padding: 1rem; }
+.orm-stat strong { display: block; font-size: 1.9rem; line-height: 1.1; }
+.orm-stat span { color: var(--orm-text-muted); font-size: .88rem; }
+
+.orm-servicecard {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius);
+    padding: 1rem;
+    color: var(--orm-text);
+    box-shadow: var(--orm-shadow-sm);
+}
+.orm-servicecard:hover { border-color: var(--orm-red); color: var(--orm-text); }
+.orm-servicecard__icon {
+    width: 44px; height: 44px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+    background: rgba(229, 27, 35, .1);
+    color: var(--orm-red);
+    font-size: 1.2rem;
+}
+.orm-servicecard__title { font-size: 1.02rem; margin: 0; }
+.orm-servicecard__text { color: var(--orm-text-muted); font-size: .85rem; margin: 0; }
+.orm-servicecard__count { color: var(--orm-red); font-weight: 700; font-size: .82rem; margin-top: auto; }
+
+/* ------------------------------------------------------------------- cta */
+.orm-cta { background: #0d0d0d; color: #fff; padding: 2rem 0; }
+.orm-cta__inner {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+.orm-cta__title { color: #fff; font-size: 1.5rem; margin-bottom: .25rem; }
+.orm-cta__text { color: rgba(255, 255, 255, .8); margin: 0; max-width: 60ch; }
+
+/* ----------------------------------------------------------------- empty */
+.orm-empty { text-align: center; padding: 2.5rem 1rem; border: 1px dashed var(--orm-border); border-radius: var(--orm-radius); }
+.orm-empty__mark { width: 80px; opacity: .8; margin-bottom: .75rem; }
+.orm-empty__title { font-size: 1.1rem; }
+.orm-empty__text { color: var(--orm-text-muted); }
+
+/* -------------------------------------------------------------- lightbox */
+.orm-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1090;
+    background: rgba(0, 0, 0, .92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.orm-lightbox[hidden] { display: none; }
+.orm-lightbox__img { max-width: 92vw; max-height: 86vh; object-fit: contain; border-radius: var(--orm-radius-sm); }
+.orm-lightbox__close, .orm-lightbox__nav {
+    position: absolute;
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+    border: 0;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+.orm-lightbox__close { top: 1rem; right: 1rem; }
+.orm-lightbox__nav--prev { left: 1rem; }
+.orm-lightbox__nav--next { right: 1rem; }
+
+/* ------------------------------------------------------------ mobile bar */
+.orm-mobilebar { display: none; }
+.orm-only-mobile { display: none; }
+
+/* ---------------------------------------------------------------- 1200px */
+@media (max-width: 1199.98px) {
+    .orm-row { grid-template-columns: 150px minmax(0, 2fr) minmax(0, 1fr); }
+    .orm-row__actions { grid-column: 1 / -1; flex-direction: row; justify-content: flex-end; }
+    .orm-layout--detail { grid-template-columns: minmax(0, 1fr); }
+    .orm-layout--detail .orm-layout__side { order: 0; }
+    .orm-sticky { position: static; }
+}
+
+/* ----------------------------------------------------------------- 992px */
+@media (max-width: 991.98px) {
+    .orm-hero__inner { flex-direction: column; }
+    .orm-hero__points { flex: 1 1 auto; width: 100%; }
+    .orm-layout { grid-template-columns: minmax(0, 1fr); }
+    .orm-only-mobile { display: inline-flex; }
+
+    .orm-layout__side[data-orm-filters-panel] {
+        position: fixed;
+        top: 0; bottom: 0; left: 0;
+        width: min(88vw, 360px);
+        z-index: 1080;
+        background: var(--orm-bg);
+        padding: 1rem;
+        overflow-y: auto;
+        transform: translateX(-102%);
+        transition: transform .2s ease;
+        box-shadow: var(--orm-shadow);
+    }
+    .orm-layout__side[data-orm-filters-panel].is-open { transform: translateX(0); }
+    .orm-filters__close { display: inline-flex; }
+    .orm-filters { border: 0; box-shadow: none; padding: 0; }
+    .orm-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, .5);
+        z-index: 1070;
+    }
+}
+
+/* ----------------------------------------------------------------- 768px */
+@media (max-width: 767.98px) {
+    .odex-road-mechanic { font-size: 14.5px; }
+    .orm-hero { padding: 2.25rem 0 1.75rem; }
+    .orm-search { flex-direction: column; }
+    .orm-search__field { flex: 1 1 auto; width: 100%; }
+    .orm-search__submit { width: 100%; }
+
+    .orm-grid--cards, .orm-grid--results { grid-template-columns: 1fr; }
+    .orm-row { grid-template-columns: 110px minmax(0, 1fr); }
+    .orm-row__hours { grid-column: 1 / -1; }
+    .orm-row__actions { flex-direction: row; min-width: 0; }
+    .orm-row__actions .orm-btn { flex: 1; }
+
+    .orm-toolbar { flex-direction: column; align-items: stretch; }
+    .orm-toolbar__controls { justify-content: space-between; }
+
+    .odex-road-mechanic--detail { padding-bottom: 4.5rem; }
+    .orm-mobilebar {
+        display: flex;
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 1040;
+        gap: .4rem;
+        padding: .5rem;
+        background: var(--orm-card);
+        border-top: 1px solid var(--orm-border);
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, .15);
+    }
+    .orm-mobilebar .orm-btn { flex: 1; }
+    .orm-detail-hero__img { max-height: 260px; }
+    .orm-cta__inner { flex-direction: column; align-items: flex-start; }
+    .orm-checklist--wide { grid-template-columns: 1fr 1fr; }
+}
+
+/* ----------------------------------------------------------------- 380px */
+@media (max-width: 400px) {
+    .orm-row { grid-template-columns: 1fr; }
+    .orm-row__media { aspect-ratio: 16 / 9; }
+    .orm-checklist--wide { grid-template-columns: 1fr; }
+    .orm-services__item { min-width: 80px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .odex-road-mechanic * { transition: none !important; }
+}
+
+@media print {
+    .orm-mobilebar, .orm-theme-toggle, .orm-actionbar { display: none !important; }
+}
+
+
+/* ------------------------------------------------------- workshop offers */
+.orm-grid--offers { grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); }
+.orm-section--offers { background: var(--orm-bg-muted); }
+
+.orm-offertile {
+    display: flex;
+    flex-direction: column;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius);
+    overflow: hidden;
+    box-shadow: var(--orm-shadow-sm);
+}
+.orm-offertile__media { position: relative; display: block; aspect-ratio: 16 / 10; background: var(--orm-bg-muted); }
+.orm-offertile__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.orm-offertile__badge {
+    position: absolute;
+    top: .55rem; left: .55rem;
+    background: var(--orm-red);
+    color: #fff;
+    font-weight: 800;
+    font-size: .82rem;
+    padding: .2rem .6rem;
+    border-radius: var(--orm-radius-sm);
+    letter-spacing: .02em;
+}
+.orm-offertile__body { display: flex; flex-direction: column; gap: .3rem; padding: .85rem; flex: 1; }
+.orm-offertile__title { font-size: 1rem; margin: 0; }
+.orm-offertile__title a { color: var(--orm-text); }
+.orm-offertile__title a:hover { color: var(--orm-red); }
+.orm-offertile__sub { color: var(--orm-red); font-size: .84rem; font-weight: 600; margin: 0; }
+.orm-offertile__workshop, .orm-offertile__meta { color: var(--orm-text-muted); font-size: .84rem; margin: 0; }
+.orm-offertile__workshop .fa, .orm-offertile__meta .fa { color: var(--orm-red); margin-right: .25rem; }
+.orm-offertile__workshop a { color: var(--orm-text-muted); }
+.orm-offertile__valid { font-size: .8rem; color: var(--orm-text-muted); margin: 0; }
+.orm-offertile__body .orm-btn { margin-top: auto; }
+
+.orm-card__offer {
+    position: absolute;
+    top: .55rem; left: .55rem;
+    background: var(--orm-gold);
+    color: #171717;
+    font-weight: 800;
+    font-size: .74rem;
+    padding: .12rem .5rem;
+    border-radius: var(--orm-radius-sm);
+}
+.orm-badge--offer { background: var(--orm-gold); color: #171717; border-color: transparent; }
+
+.orm-offerhero { position: relative; border-radius: var(--orm-radius); overflow: hidden; margin-bottom: 1rem; }
+.orm-offerhero__img { width: 100%; max-height: 420px; object-fit: cover; display: block; }
+.orm-offerhero__badge {
+    position: absolute;
+    top: 1rem; left: 1rem;
+    background: var(--orm-red);
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: .35rem .9rem;
+    border-radius: var(--orm-radius-sm);
+}
+.orm-offerfacts { list-style: none; padding: 0; margin: 0 0 1rem; display: flex; flex-wrap: wrap; gap: .4rem 1.25rem; }
+.orm-offerfacts li { color: var(--orm-text-muted); font-size: .9rem; }
+.orm-offerfacts .fa { color: var(--orm-red); margin-right: .3rem; }
+.orm-offerfacts__was { text-decoration: line-through; color: var(--orm-text-muted); margin-right: .4rem; }
+.orm-offerfacts__now { color: var(--orm-red); font-weight: 800; font-size: 1.15rem; }
+
+/* ---------------------------------------------------------- pin map */
+.orm-pinmap {
+    height: 340px;
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius);
+    overflow: hidden;
+    margin-bottom: .75rem;
+    background: var(--orm-bg-muted);
+}
+.orm-pinmap .leaflet-container { height: 100%; width: 100%; }
+
+
+/* ==========================================================================
+   Workshop detail page (premium marketplace layout)
+   Everything stays scoped to .roadmechanic-workshop-page inside
+   .odex-road-mechanic, so the website header, footer and other pages are
+   untouched and both themes keep working through the existing variables.
+   ========================================================================== */
+
+.roadmechanic-workshop-page { background: var(--orm-bg-muted); }
+
+/* ------------------------------------------------------------------- hero */
+.roadmechanic-workshop-page .orm-wsp-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 420px;
+    background: #0d0d0d;
+    overflow: hidden;
+}
+.roadmechanic-workshop-page .orm-wsp-hero__media { position: absolute; inset: 0; }
+.roadmechanic-workshop-page .orm-wsp-hero__img {
+    width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in;
+}
+.roadmechanic-workshop-page .orm-wsp-hero__scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10, 10, 10, .25) 0%, rgba(10, 10, 10, .55) 45%, rgba(10, 10, 10, .92) 100%);
+}
+.roadmechanic-workshop-page .orm-wsp-hero__inner {
+    position: relative;
+    width: 100%;
+    padding-top: 1.25rem;
+    padding-bottom: 1.5rem;
+}
+.roadmechanic-workshop-page .orm-wsp-hero__crumb { color: rgba(255, 255, 255, .75); }
+.roadmechanic-workshop-page .orm-wsp-hero__crumb a { color: rgba(255, 255, 255, .85); }
+.roadmechanic-workshop-page .orm-wsp-hero__crumb a:hover { color: #fff; }
+.roadmechanic-workshop-page .orm-wsp-hero__row {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 1.5rem; flex-wrap: wrap;
+}
+.roadmechanic-workshop-page .orm-wsp-hero__verified { margin-bottom: .5rem; }
+.roadmechanic-workshop-page .orm-wsp-hero__title {
+    color: #fff;
+    font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+    line-height: 1.1;
+    margin: 0 0 .5rem;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, .45);
+}
+.roadmechanic-workshop-page .orm-wsp-hero__meta {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    color: rgba(255, 255, 255, .9); font-size: .92rem; margin-bottom: .75rem;
+}
+.roadmechanic-workshop-page .orm-wsp-hero__meta .orm-stars__value,
+.roadmechanic-workshop-page .orm-wsp-hero__meta .orm-stars__count { color: rgba(255, 255, 255, .92); }
+.roadmechanic-workshop-page .orm-wsp-hero__where .fa { color: var(--orm-red); margin-right: .3rem; }
+.roadmechanic-workshop-page .orm-wsp-hero__status { font-weight: 600; }
+.roadmechanic-workshop-page .orm-wsp-hero__tags {
+    display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; margin: 0; padding: 0;
+}
+.roadmechanic-workshop-page .orm-wsp-hero__tags li {
+    display: inline-flex; align-items: center; gap: .35rem;
+    background: rgba(255, 255, 255, .14);
+    border: 1px solid rgba(255, 255, 255, .22);
+    color: #fff;
+    border-radius: var(--orm-radius-sm);
+    padding: .25rem .65rem;
+    font-size: .82rem;
+    backdrop-filter: blur(4px);
+}
+.roadmechanic-workshop-page .orm-wsp-hero__tags .fa { color: var(--orm-gold); }
+.roadmechanic-workshop-page .orm-wsp-hero__offer a {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-width: 168px;
+    padding: .7rem 1.1rem;
+    border-radius: var(--orm-radius);
+    background: var(--orm-gold);
+    color: #171717;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .35);
+}
+.roadmechanic-workshop-page .orm-wsp-hero__offer strong { font-size: 1.35rem; line-height: 1.1; }
+.roadmechanic-workshop-page .orm-wsp-hero__offer span { font-size: .82rem; opacity: .85; }
+
+/* ---------------------------------------------------------------- gallery */
+.roadmechanic-workshop-page .orm-wsp-gallery {
+    position: relative;
+    margin-top: -1.9rem;
+    z-index: 3;
+    display: flex; align-items: center; gap: .75rem;
+}
+.roadmechanic-workshop-page .orm-wsp-gallery .orm-gallery { padding: 0; flex: 1; }
+.roadmechanic-workshop-page .orm-wsp-gallery__count {
+    flex: 0 0 auto;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: 999px;
+    padding: .25rem .7rem;
+    font-size: .78rem;
+    color: var(--orm-text-muted);
+}
+
+/* ------------------------------------------------------------------- tabs */
+.roadmechanic-workshop-page .orm-wsp-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--orm-card);
+    border-bottom: 1px solid var(--orm-border);
+    margin-top: 1rem;
+}
+.roadmechanic-workshop-page .orm-wsp-tabs__inner {
+    display: flex; gap: .25rem; overflow-x: auto; scrollbar-width: thin;
+}
+.roadmechanic-workshop-page .orm-wsp-tab {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .85rem .9rem;
+    color: var(--orm-text-muted);
+    font-size: .9rem;
+    font-weight: 600;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+}
+.roadmechanic-workshop-page .orm-wsp-tab:hover { color: var(--orm-red); }
+.roadmechanic-workshop-page .orm-wsp-tab.is-active {
+    color: var(--orm-red);
+    border-bottom-color: var(--orm-red);
+}
+.roadmechanic-workshop-page .orm-wsp-tab__count {
+    background: var(--orm-bg-muted);
+    border-radius: 999px;
+    padding: 0 .4rem;
+    font-size: .72rem;
+    color: var(--orm-text-muted);
+}
+.roadmechanic-workshop-page .orm-wsp-tab.is-active .orm-wsp-tab__count {
+    background: var(--orm-red); color: #fff;
+}
+
+/* ----------------------------------------------------------------- layout */
+.roadmechanic-workshop-page .orm-wsp-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 1.25rem;
+    align-items: start;
+    padding-top: 1.25rem;
+    padding-bottom: 2rem;
+}
+.roadmechanic-workshop-page .orm-wsp-main { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
+.roadmechanic-workshop-page .orm-wsp-side { min-width: 0; }
+.roadmechanic-workshop-page .orm-wsp-sticky {
+    position: sticky; top: 4.5rem;
+    display: flex; flex-direction: column; gap: 1rem;
+}
+
+/* ------------------------------------------------------------------ cards */
+.roadmechanic-workshop-page .orm-wsp-card {
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: var(--orm-shadow-sm);
+    scroll-margin-top: 5rem;
+}
+.roadmechanic-workshop-page .orm-wsp-card--tight { padding: 1rem; }
+.roadmechanic-workshop-page .orm-wsp-card__head {
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.roadmechanic-workshop-page .orm-wsp-card__head--sm { margin-bottom: .6rem; }
+.roadmechanic-workshop-page .orm-wsp-card__icon {
+    width: 34px; height: 34px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    background: rgba(229, 27, 35, .1);
+    color: var(--orm-red);
+}
+.roadmechanic-workshop-page .orm-wsp-card__icon--gold {
+    background: rgba(214, 176, 106, .18); color: #a9812f;
+}
+.roadmechanic-workshop-page .orm-wsp-card__title { font-size: 1.12rem; margin: 0; }
+.roadmechanic-workshop-page .orm-wsp-card__subtitle {
+    font-size: 1rem; margin: 1.5rem 0 .75rem;
+    padding-top: 1rem; border-top: 1px solid var(--orm-border);
+}
+.roadmechanic-workshop-page .orm-wsp-card__link { margin-left: auto; font-size: .86rem; font-weight: 600; }
+
+.roadmechanic-workshop-page .orm-wsp-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.roadmechanic-workshop-page .orm-wsp-actions .orm-btn { flex: 1 1 auto; min-width: 140px; }
+.odex-road-mechanic .orm-btn--dark { background: #16233a; color: #fff; }
+.odex-road-mechanic .orm-btn--dark:hover { background: #0e1729; color: #fff; }
+
+/* ------------------------------------------------------------------ about */
+.roadmechanic-workshop-page .orm-wsp-about { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.25rem; }
+.roadmechanic-workshop-page .orm-wsp-about__lead { font-size: 1rem; font-weight: 600; }
+.roadmechanic-workshop-page .orm-wsp-about__media img {
+    width: 100%; height: 100%; max-height: 260px; object-fit: cover;
+    border-radius: 12px; display: block;
+}
+.roadmechanic-workshop-page .orm-wsp-clamp {
+    max-height: 7.5rem; overflow: hidden; position: relative;
+}
+.roadmechanic-workshop-page .orm-wsp-clamp::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3rem;
+    background: linear-gradient(180deg, transparent, var(--orm-card));
+}
+.roadmechanic-workshop-page .orm-wsp-clamp.is-open { max-height: none; }
+.roadmechanic-workshop-page .orm-wsp-clamp.is-open::after { display: none; }
+.roadmechanic-workshop-page .orm-wsp-more {
+    background: none; border: 0; padding: .25rem 0;
+    color: var(--orm-red); font-weight: 700; font-size: .88rem; cursor: pointer;
+}
+.roadmechanic-workshop-page .orm-wsp-trust {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: .6rem; list-style: none; padding: 0; margin: 1rem 0 0;
+}
+.roadmechanic-workshop-page .orm-wsp-trust li {
+    display: flex; align-items: center; gap: .45rem;
+    font-size: .84rem; color: var(--orm-text-muted);
+}
+.roadmechanic-workshop-page .orm-wsp-trust .fa { color: var(--orm-red); }
+
+/* --------------------------------------------------------------- services */
+.roadmechanic-workshop-page .orm-wsp-services {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .6rem;
+}
+.roadmechanic-workshop-page .orm-wsp-service {
+    display: flex; flex-direction: column; align-items: center; gap: .45rem;
+    padding: .9rem .5rem;
+    border: 1px solid var(--orm-border);
+    border-radius: 12px;
+    background: var(--orm-bg-muted);
+    color: var(--orm-text);
+    text-align: center;
+    font-size: .84rem;
+}
+.roadmechanic-workshop-page .orm-wsp-service:hover { border-color: var(--orm-red); color: var(--orm-red); }
+.roadmechanic-workshop-page .orm-wsp-service__icon {
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    color: var(--orm-red);
+    font-size: 1.05rem;
+}
+
+/* ----------------------------------------------------------------- brands */
+.roadmechanic-workshop-page .orm-wsp-brands {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: .6rem;
+}
+.roadmechanic-workshop-page .orm-wsp-brand {
+    display: flex; flex-direction: column; align-items: center; gap: .4rem;
+    padding: .75rem .4rem;
+    border: 1px solid var(--orm-border);
+    border-radius: 12px;
+    background: var(--orm-bg-muted);
+    font-size: .8rem;
+}
+.roadmechanic-workshop-page .orm-wsp-brand img { width: 40px; height: 40px; object-fit: contain; }
+.roadmechanic-workshop-page .orm-wsp-brand__mark {
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    font-weight: 800; color: var(--orm-text-muted);
+}
+.roadmechanic-workshop-page .orm-wsp-brand__name { color: var(--orm-text-muted); text-align: center; }
+
+/* ------------------------------------------------------------------ hours */
+.roadmechanic-workshop-page .orm-wsp-openflag {
+    margin-left: auto; font-size: .85rem; font-weight: 600; color: var(--orm-text-muted);
+}
+.roadmechanic-workshop-page .orm-wsp-openflag.is-open { color: var(--orm-green); }
+.roadmechanic-workshop-page .orm-wsp-hours {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: .1rem .75rem;
+}
+.roadmechanic-workshop-page .orm-wsp-hours__row {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding: .45rem .6rem;
+    border-radius: 8px;
+    font-size: .88rem;
+}
+.roadmechanic-workshop-page .orm-wsp-hours__row:nth-child(odd) { background: var(--orm-bg-muted); }
+.roadmechanic-workshop-page .orm-wsp-hours__row.is-today {
+    background: rgba(229, 27, 35, .08);
+    font-weight: 700;
+}
+.roadmechanic-workshop-page .orm-wsp-hours__row.is-closed .orm-wsp-hours__time { color: var(--orm-text-muted); }
+.roadmechanic-workshop-page .orm-wsp-hours__day { color: var(--orm-text); }
+.roadmechanic-workshop-page .orm-wsp-hours__time { color: var(--orm-text-muted); }
+.roadmechanic-workshop-page .orm-wsp-address { color: var(--orm-text-muted); margin: .75rem 0; }
+.roadmechanic-workshop-page .orm-wsp-address .fa { color: var(--orm-red); margin-right: .35rem; }
+.roadmechanic-workshop-page .orm-map--side { padding-top: 70%; margin-bottom: 0; }
+
+/* ---------------------------------------------------------------- reviews */
+.roadmechanic-workshop-page .orm-wsp-ratingbar {
+    background: var(--orm-bg-muted);
+    border: 1px solid var(--orm-border);
+    border-radius: 12px;
+    padding: .9rem 1rem;
+    margin-bottom: 1rem;
+}
+.roadmechanic-workshop-page .orm-wsp-ratingbar__score {
+    display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+}
+.roadmechanic-workshop-page .orm-wsp-ratingbar__score strong { font-size: 2rem; line-height: 1; }
+.roadmechanic-workshop-page .orm-wsp-reviews { display: flex; flex-direction: column; gap: .75rem; }
+.roadmechanic-workshop-page .orm-wsp-review {
+    display: flex; gap: .75rem;
+    padding: .85rem;
+    border: 1px solid var(--orm-border);
+    border-radius: 12px;
+}
+.roadmechanic-workshop-page .orm-wsp-review__avatar {
+    flex: 0 0 auto;
+    width: 38px; height: 38px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--orm-red); color: #fff; font-weight: 800;
+}
+.roadmechanic-workshop-page .orm-wsp-review__body { min-width: 0; }
+.roadmechanic-workshop-page .orm-wsp-review__body header {
+    display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap;
+}
+
+/* ---------------------------------------------------------------- sidebar */
+.roadmechanic-workshop-page .orm-wsp-contact {
+    list-style: none; padding: 0; margin: 1rem 0;
+    display: flex; flex-direction: column; gap: .2rem;
+}
+.roadmechanic-workshop-page .orm-wsp-contact li {
+    display: flex; align-items: center; gap: .65rem;
+    padding: .55rem .4rem;
+    border-radius: 10px;
+}
+.roadmechanic-workshop-page .orm-wsp-contact li:hover { background: var(--orm-bg-muted); }
+.roadmechanic-workshop-page .orm-wsp-contact .fa {
+    width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: rgba(229, 27, 35, .1);
+    color: var(--orm-red);
+    flex: 0 0 auto;
+}
+.roadmechanic-workshop-page .orm-wsp-contact a { display: flex; flex-direction: column; min-width: 0; }
+.roadmechanic-workshop-page .orm-wsp-contact strong {
+    color: var(--orm-text); font-size: .92rem;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.roadmechanic-workshop-page .orm-wsp-contact span { color: var(--orm-text-muted); font-size: .78rem; }
+
+.roadmechanic-workshop-page .orm-wsp-note {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .85rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--orm-border);
+    background: var(--orm-card);
+    color: var(--orm-text);
+}
+.roadmechanic-workshop-page .orm-wsp-note strong { display: block; font-size: .92rem; }
+.roadmechanic-workshop-page .orm-wsp-note span { color: var(--orm-text-muted); font-size: .82rem; }
+.roadmechanic-workshop-page .orm-wsp-note .fa { font-size: 1.1rem; }
+.roadmechanic-workshop-page .orm-wsp-note--verified { border-left: 4px solid var(--orm-green); }
+.roadmechanic-workshop-page .orm-wsp-note--verified > .fa { color: var(--orm-green); }
+.roadmechanic-workshop-page .orm-wsp-note--offer { border-left: 4px solid var(--orm-gold); }
+.roadmechanic-workshop-page .orm-wsp-note--offer > .fa { color: #a9812f; }
+.roadmechanic-workshop-page .orm-wsp-note__go { margin-left: auto; color: var(--orm-red); }
+
+/* ------------------------------------------------------------ responsive */
+@media (max-width: 1199.98px) {
+    .roadmechanic-workshop-page .orm-wsp-layout { grid-template-columns: minmax(0, 1fr); }
+    .roadmechanic-workshop-page .orm-wsp-sticky { position: static; }
+    .roadmechanic-workshop-page .orm-wsp-side { order: 2; }
+}
+
+@media (max-width: 767.98px) {
+    .roadmechanic-workshop-page .orm-wsp-hero { min-height: 320px; }
+    .roadmechanic-workshop-page .orm-wsp-hero__row { flex-direction: column; align-items: flex-start; }
+    .roadmechanic-workshop-page .orm-wsp-hero__offer { width: 100%; }
+    .roadmechanic-workshop-page .orm-wsp-hero__offer a { flex-direction: row; gap: .5rem; min-width: 0; }
+    .roadmechanic-workshop-page .orm-wsp-about { grid-template-columns: minmax(0, 1fr); }
+    .roadmechanic-workshop-page .orm-wsp-about__media { order: -1; }
+    .roadmechanic-workshop-page .orm-wsp-card { padding: 1rem; border-radius: 12px; }
+    .roadmechanic-workshop-page .orm-wsp-actions .orm-btn { min-width: calc(50% - .25rem); }
+    .roadmechanic-workshop-page .orm-wsp-gallery { margin-top: .75rem; }
+    .roadmechanic-workshop-page .orm-wsp-tabs { top: 0; }
+}
+
+@media (max-width: 400px) {
+    .roadmechanic-workshop-page .orm-wsp-services { grid-template-columns: 1fr 1fr; }
+    .roadmechanic-workshop-page .orm-wsp-brands { grid-template-columns: 1fr 1fr; }
+}
+
+
+/* ==========================================================================
+   Workshop detail refinements: single action bar, informational sidebar
+   ========================================================================== */
+
+.roadmechanic-workshop-page .orm-wsp-crumb {
+    background: var(--orm-card);
+    border-bottom: 1px solid var(--orm-border);
+    font-size: .82rem;
+    color: var(--orm-text-muted);
+}
+.roadmechanic-workshop-page .orm-wsp-crumb .orm-container {
+    display: flex; align-items: center; gap: .4rem; flex-wrap: wrap;
+    padding-top: .6rem; padding-bottom: .6rem;
+}
+.roadmechanic-workshop-page .orm-wsp-crumb a { color: var(--orm-text-muted); }
+.roadmechanic-workshop-page .orm-wsp-crumb a:hover { color: var(--orm-red); }
+.roadmechanic-workshop-page .orm-wsp-crumb .is-current { color: var(--orm-text); font-weight: 600; }
+
+/* hero: navy automotive scrim, logo card and status flags */
+.roadmechanic-workshop-page .orm-wsp-hero { min-height: 340px; background: #071a2b; }
+.roadmechanic-workshop-page .orm-wsp-hero__scrim {
+    background: linear-gradient(90deg, rgba(7, 26, 43, .96) 0%, rgba(7, 26, 43, .82) 42%, rgba(7, 26, 43, .35) 100%);
+}
+.roadmechanic-workshop-page .orm-wsp-hero__row { align-items: center; }
+.roadmechanic-workshop-page .orm-wsp-hero__logo {
+    flex: 0 0 auto;
+    width: 112px; height: 112px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid rgba(255, 255, 255, .6);
+    padding: .5rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+    margin-right: 1.1rem;
+}
+.roadmechanic-workshop-page .orm-wsp-hero__logo img {
+    width: 100%; height: 100%; object-fit: contain;
+}
+.roadmechanic-workshop-page .orm-wsp-hero__badges {
+    display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .6rem;
+}
+.roadmechanic-workshop-page .orm-wsp-flag {
+    display: inline-flex; align-items: center; gap: .3rem;
+    padding: .22rem .6rem;
+    border-radius: 999px;
+    font-size: .76rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, .14);
+    border: 1px solid rgba(255, 255, 255, .25);
+    color: #fff;
+}
+.roadmechanic-workshop-page .orm-wsp-flag--verified { background: var(--orm-green); border-color: transparent; }
+.roadmechanic-workshop-page .orm-wsp-flag--featured { background: var(--orm-gold); border-color: transparent; color: #171717; }
+.roadmechanic-workshop-page .orm-wsp-hero__badges--light .orm-wsp-flag {
+    background: var(--orm-bg-muted);
+    border-color: var(--orm-border);
+    color: var(--orm-text-muted);
+}
+.roadmechanic-workshop-page .orm-wsp-hero__badges--light .orm-wsp-flag--verified { background: var(--orm-green); color: #fff; }
+.roadmechanic-workshop-page .orm-wsp-hero__badges--light .orm-wsp-flag--featured { background: var(--orm-gold); color: #171717; }
+
+/* the single action bar */
+.roadmechanic-workshop-page .orm-wsp-actionbar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .6rem;
+    margin: 1rem 0 0;
+}
+.roadmechanic-workshop-page .orm-wsp-actionbar .orm-btn {
+    padding: .8rem 1rem;
+    font-size: .95rem;
+    border-radius: 10px;
+    box-shadow: var(--orm-shadow-sm);
+}
+.roadmechanic-workshop-page .orm-wsp-actionbar .orm-btn--outline { background: var(--orm-card); }
+.roadmechanic-workshop-page .orm-wsp-actionbar__main { font-weight: 700; }
+
+/* sidebar identity card */
+.roadmechanic-workshop-page .orm-wsp-idcard { display: flex; gap: .75rem; align-items: center; }
+.roadmechanic-workshop-page .orm-wsp-idcard__logo {
+    width: 58px; height: 58px; flex: 0 0 auto;
+    border: 1px solid var(--orm-border);
+    border-radius: 10px;
+    background: #fff;
+    padding: .25rem;
+}
+.roadmechanic-workshop-page .orm-wsp-idcard__logo img { width: 100%; height: 100%; object-fit: contain; }
+.roadmechanic-workshop-page .orm-wsp-idcard__name { display: block; font-size: 1rem; margin-bottom: .35rem; }
+.roadmechanic-workshop-page .orm-wsp-idcard__rating { margin: .75rem 0 .25rem; }
+.roadmechanic-workshop-page .orm-wsp-contact--info li { cursor: default; }
+.roadmechanic-workshop-page .orm-wsp-contact__text { display: flex; flex-direction: column; min-width: 0; }
+.roadmechanic-workshop-page .orm-wsp-contact__text strong {
+    color: var(--orm-text); font-size: .9rem; overflow-wrap: anywhere;
+}
+.roadmechanic-workshop-page .orm-wsp-contact__text span { color: var(--orm-text-muted); font-size: .76rem; }
+.roadmechanic-workshop-page .orm-wsp-hours--side .orm-wsp-hours__row { font-size: .82rem; padding: .35rem .5rem; }
+.roadmechanic-workshop-page .orm-wsp-hours--side { grid-template-columns: minmax(0, 1fr); }
+.roadmechanic-workshop-page .orm-wsp-card__rating { font-size: .85rem; color: var(--orm-text-muted); }
+.roadmechanic-workshop-page .orm-wsp-card__rating strong { color: var(--orm-text); font-size: 1rem; }
+.roadmechanic-workshop-page .orm-wsp-brand--more .orm-wsp-brand__mark { color: var(--orm-red); }
+
+.odex-road-mechanic .orm-offertile__actions { display: flex; gap: .4rem; margin-top: auto; }
+.odex-road-mechanic .orm-offertile__actions .orm-btn { flex: 1; }
+
+@media (max-width: 991.98px) {
+    .roadmechanic-workshop-page .orm-wsp-actionbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 767.98px) {
+    /* the sticky bottom bar is the mobile action bar, so the inline one goes away */
+    .roadmechanic-workshop-page .orm-wsp-actionbar { display: none; }
+    .roadmechanic-workshop-page .orm-wsp-hero__logo { width: 76px; height: 76px; margin-right: .75rem; }
+    .roadmechanic-workshop-page .orm-wsp-hero__row { align-items: flex-start; }
+    .roadmechanic-workshop-page .orm-wsp-crumb .orm-container { flex-wrap: nowrap; overflow-x: auto; }
+}

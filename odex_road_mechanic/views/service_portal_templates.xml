@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_services" name="Portal: Service Requests"
+              inherit_id="portal.portal_my_home" priority="48">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/odex_road_mechanic/static/src/img/road_mechanic_mark.png'"/>
+                <t t-set="title">My Requests</t>
+                <t t-set="text">Assistance, recovery and parts requests</t>
+                <t t-set="url" t-value="'/my-requests'"/>
+                <t t-set="placeholder_count" t-value="'orm_request_count'"/>
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/odex_road_mechanic/static/src/img/road_mechanic_mark.png'"/>
+                <t t-set="title">Notifications</t>
+                <t t-set="text">Offers, status updates and messages</t>
+                <t t-set="url" t-value="'/my/notifications'"/>
+                <t t-set="placeholder_count" t-value="'orm_notification_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- My requests -->
+    <template id="portal_my_requests" name="My Requests">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">
+                    My requests
+                    <a href="/my/notifications" class="orm-badge orm-badge--verified"
+                       t-if="unread_notifications">
+                        <i class="fa fa-bell"/> <t t-out="unread_notifications"/> new
+                    </a>
+                </h1>
+                <nav class="orm-tabs">
+                    <t t-foreach="[('all', 'All'), ('roadside', 'Roadside'), ('recovery', 'Recovery'), ('spare_part', 'Spare parts'), ('used_part', 'Used parts')]" t-as="tab">
+                        <a t-attf-href="/my-requests#{tab[0] != 'all' and '?request_type=' + tab[0] or ''}"
+                           t-attf-class="orm-tab #{active_type == tab[0] and 'is-active' or ''}"
+                           t-out="tab[1]"/>
+                    </t>
+                </nav>
+
+                <p class="orm-muted" t-if="not requests">
+                    No request yet. Start with
+                    <a href="/roadside-assistance">roadside assistance</a>,
+                    <a href="/recovery">recovery</a>,
+                    <a href="/spare-parts">spare parts</a> or
+                    <a href="/used-parts">used parts</a>.
+                </p>
+
+                <table class="orm-table" t-if="requests">
+                    <thead>
+                        <tr><th>Request ID</th><th>Type</th><th>Service / Part</th>
+                            <th>Location</th><th>Offers</th><th>Status</th><th>Date</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="requests" t-as="req">
+                            <td t-out="req.name"/>
+                            <td t-out="req.request_type_label"/>
+                            <td t-out="req.service_label or '-'"/>
+                            <td>
+                                <t t-out="req.location_address or '-'"/>
+                                <t t-if="req.dropoff_address"> → <t t-out="req.dropoff_address"/></t>
+                            </td>
+                            <td t-out="req.request_type in ('spare_part', 'used_part') and req.offer_count or '-'"/>
+                            <td><span class="orm-badge" t-out="req.state_label"/></td>
+                            <td t-out="req.create_date" t-options="{'widget': 'date'}"/>
+                            <td>
+                                <a t-attf-href="/request/#{req.id}"
+                                   class="orm-btn orm-btn--primary orm-btn--sm">View details</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- Notifications -->
+    <template id="portal_notifications" name="Notifications">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">Notifications</h1>
+                <p class="orm-muted" t-if="not notifications">Nothing yet.</p>
+                <div class="orm-rows" t-if="notifications">
+                    <t t-foreach="notifications" t-as="notification">
+                        <a t-att-href="notification.url or '#'"
+                           t-attf-class="orm-notification #{not notification.is_read and 'is-unread' or ''}">
+                            <span class="orm-notification__icon"><i class="fa fa-bell"/></span>
+                            <span class="orm-notification__body">
+                                <strong t-out="notification.title"/>
+                                <span t-out="notification.body"/>
+                                <small t-out="notification.create_date"
+                                       t-options="{'widget': 'datetime'}"/>
+                            </span>
+                        </a>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Provider: open requests -->
+    <template id="portal_provider_requests" name="Provider Requests">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">Platform requests</h1>
+                <nav class="orm-tabs">
+                    <a href="/my/provider/requests" t-attf-class="orm-tab #{active_scope == 'open' and active_type == 'all' and 'is-active' or ''}">Open</a>
+                    <a href="/my/provider/requests?request_type=roadside" t-attf-class="orm-tab #{active_type == 'roadside' and 'is-active' or ''}">Roadside</a>
+                    <a href="/my/provider/requests?request_type=recovery" t-attf-class="orm-tab #{active_type == 'recovery' and 'is-active' or ''}">Recovery</a>
+                    <a href="/my/provider/requests?request_type=spare_part" t-attf-class="orm-tab #{active_type == 'spare_part' and 'is-active' or ''}">Spare parts</a>
+                    <a href="/my/provider/requests?request_type=used_part" t-attf-class="orm-tab #{active_type == 'used_part' and 'is-active' or ''}">Used parts</a>
+                    <a href="/my/provider/requests?scope=offered" t-attf-class="orm-tab #{active_scope == 'offered' and 'is-active' or ''}">My offers</a>
+                    <a href="/my/provider/requests?scope=mine" t-attf-class="orm-tab #{active_scope == 'mine' and 'is-active' or ''}">Assigned to me</a>
+                </nav>
+
+                <p class="orm-muted" t-if="not requests">
+                    Nothing here yet. Requests appear when they match the services your workshop
+                    offers (set them in your listing, tab "Platform Services").
+                </p>
+                <table class="orm-table" t-if="requests">
+                    <thead>
+                        <tr><th>Request</th><th>Type</th><th>Service / Part</th><th>Vehicle</th>
+                            <th>Location</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="requests" t-as="req">
+                            <td>
+                                <t t-out="req.name"/><br/>
+                                <span class="orm-muted orm-small" t-out="req.create_date"
+                                      t-options="{'widget': 'date'}"/>
+                            </td>
+                            <td t-out="req.request_type_label"/>
+                            <td t-out="req.service_label or '-'"/>
+                            <td t-out="req.vehicle_label or '-'"/>
+                            <td t-out="req.location_address or '-'"/>
+                            <td><span class="orm-badge" t-out="req.state_label"/></td>
+                            <td><a t-attf-href="/my/provider/request/#{req.id}"
+                                   class="orm-btn orm-btn--primary orm-btn--sm">Open</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- Provider: request detail with offer form -->
+    <template id="portal_provider_request" name="Provider Request Detail">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <div class="orm-alert orm-alert--success" t-if="saved">Updated.</div>
+                <div class="orm-alert orm-alert--error" t-if="error">
+                    That could not be saved. Please check the values.
+                </div>
+
+                <div class="orm-panel orm-mb">
+                    <h1 class="orm-block__title">
+                        <t t-out="req.name"/>
+                        <span class="orm-badge" t-out="req.state_label"/>
+                    </h1>
+                    <t t-call="odex_road_mechanic.orm_status_timeline"/>
+                    <t t-call="odex_road_mechanic.orm_request_summary"/>
+                    <p class="orm-muted" t-if="req.description" t-out="req.description"/>
+                    <div class="orm-gallery" t-if="req.image_ids">
+                        <t t-foreach="req.image_ids" t-as="photo">
+                            <a class="orm-gallery__thumb" t-att-href="photo.image_url()" target="_blank">
+                                <img t-att-src="photo.thumb_url()" alt="Request photo" loading="lazy"/>
+                            </a>
+                        </t>
+                    </div>
+                    <div class="orm-actions orm-mt" t-if="is_assigned">
+                        <a t-attf-href="tel:#{req.phone}" class="orm-btn orm-btn--primary orm-btn--sm">
+                            <i class="fa fa-phone"/> Call customer
+                        </a>
+                        <a t-if="req.map_url" t-att-href="req.map_url" target="_blank" rel="noopener"
+                           class="orm-btn orm-btn--outline orm-btn--sm">Open location</a>
+                    </div>
+                    <p class="orm-muted orm-small" t-if="not is_assigned">
+                        Customer contact details are shared once you are assigned or your offer is accepted.
+                    </p>
+                </div>
+
+                <!-- Field services: accept and progress -->
+                <div class="orm-panel orm-mb" t-if="req.request_type in ('roadside', 'recovery')">
+                    <h2 class="orm-block__subtitle">Job status</h2>
+                    <form t-attf-action="/my/provider/request/#{req.id}/status" method="post"
+                          class="orm-actions">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <t t-if="not req.provider_id">
+                            <select name="workshop_id" class="orm-input" t-if="len(workshops) &gt; 1">
+                                <t t-foreach="workshops" t-as="workshop">
+                                    <option t-att-value="workshop.id" t-out="workshop.name"/>
+                                </t>
+                            </select>
+                            <input type="hidden" name="workshop_id" t-att-value="workshops[:1].id"
+                                   t-if="len(workshops) == 1"/>
+                            <button type="submit" name="action" value="accept"
+                                    class="orm-btn orm-btn--primary">Accept this request</button>
+                        </t>
+                        <t t-if="is_assigned">
+                            <button type="submit" name="action" value="on_the_way"
+                                    class="orm-btn orm-btn--outline orm-btn--sm">On the way</button>
+                            <button type="submit" name="action" value="arrived"
+                                    class="orm-btn orm-btn--outline orm-btn--sm">Arrived</button>
+                            <button t-if="req.request_type == 'roadside'" type="submit"
+                                    name="action" value="service_started"
+                                    class="orm-btn orm-btn--outline orm-btn--sm">Service started</button>
+                            <button t-if="req.request_type == 'recovery'" type="submit"
+                                    name="action" value="picked_up"
+                                    class="orm-btn orm-btn--outline orm-btn--sm">Vehicle picked up</button>
+                            <button t-if="req.request_type == 'recovery'" type="submit"
+                                    name="action" value="in_transit"
+                                    class="orm-btn orm-btn--outline orm-btn--sm">In transit</button>
+                            <button t-if="req.request_type == 'recovery'" type="submit"
+                                    name="action" value="delivered"
+                                    class="orm-btn orm-btn--outline orm-btn--sm">Delivered</button>
+                            <button type="submit" name="action" value="completed"
+                                    class="orm-btn orm-btn--primary orm-btn--sm">Completed</button>
+                        </t>
+                    </form>
+                </div>
+
+                <!-- Parts: offer form -->
+                <div class="orm-panel orm-mb" t-if="req.request_type in ('spare_part', 'used_part')">
+                    <h2 class="orm-block__subtitle">
+                        <t t-if="own_offer">Your offer</t>
+                        <t t-else="">Send an offer</t>
+                    </h2>
+                    <p class="orm-muted orm-small" t-if="own_offer">
+                        Status: <strong t-out="own_offer.state_label"/>. Updating resends it to the customer.
+                    </p>
+                    <form t-attf-action="/my/provider/request/#{req.id}/offer" method="post"
+                          class="orm-form" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <select name="workshop_id" class="orm-input" t-if="len(workshops) &gt; 1">
+                            <t t-foreach="workshops" t-as="workshop">
+                                <option t-att-value="workshop.id" t-out="workshop.name"/>
+                            </t>
+                        </select>
+                        <input type="hidden" name="workshop_id" t-att-value="workshops[:1].id"
+                               t-if="len(workshops) == 1"/>
+                        <label class="orm-check">
+                            <input type="checkbox" name="available" value="1"
+                                   t-att-checked="(not own_offer or own_offer.available) and 'checked' or None"/>
+                            <span>Part available</span>
+                        </label>
+                        <div class="orm-form__row">
+                            <div class="orm-form__field">
+                                <label for="of-price">Price (AED)</label>
+                                <input id="of-price" type="number" step="0.01" min="0" name="price"
+                                       class="orm-input" t-att-value="own_offer and own_offer.price or ''"/>
+                            </div>
+                            <div class="orm-form__field">
+                                <label for="of-brand">Brand</label>
+                                <input id="of-brand" type="text" name="brand" class="orm-input"
+                                       maxlength="80" t-att-value="own_offer and own_offer.brand or ''"/>
+                            </div>
+                        </div>
+                        <div class="orm-form__row">
+                            <div class="orm-form__field">
+                                <label for="of-condition">Condition</label>
+                                <select id="of-condition" name="condition" class="orm-input">
+                                    <t t-foreach="[('original', 'Original'), ('oem', 'OEM'), ('aftermarket', 'Aftermarket'), ('used', 'Used'), ('refurbished', 'Refurbished')]" t-as="cond">
+                                        <option t-att-value="cond[0]" t-out="cond[1]"
+                                                t-att-selected="own_offer and own_offer.condition == cond[0] and 'selected' or None"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="orm-form__field">
+                                <label for="of-warranty">Warranty</label>
+                                <input id="of-warranty" type="text" name="warranty" class="orm-input"
+                                       maxlength="60" placeholder="e.g. 3 months"
+                                       t-att-value="own_offer and own_offer.warranty or ''"/>
+                            </div>
+                        </div>
+                        <div class="orm-form__row">
+                            <div class="orm-form__field">
+                                <label class="orm-check">
+                                    <input type="checkbox" name="delivery_available" value="1"
+                                           t-att-checked="own_offer and own_offer.delivery_available and 'checked' or None"/>
+                                    <span>Delivery available</span>
+                                </label>
+                            </div>
+                            <div class="orm-form__field">
+                                <label for="of-delivery">Delivery time</label>
+                                <input id="of-delivery" type="text" name="delivery_time"
+                                       class="orm-input" maxlength="60" placeholder="e.g. within 24 hours"
+                                       t-att-value="own_offer and own_offer.delivery_time or ''"/>
+                            </div>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="of-message">Message to the customer</label>
+                            <textarea id="of-message" name="message" rows="3" class="orm-input"
+                                      maxlength="2000" t-out="own_offer and own_offer.message or ''"/>
+                        </div>
+                        <t t-set="upload_id" t-value="'of-photos'"/>
+                        <t t-set="upload_label" t-value="'Photos of the actual part'"/>
+                        <t t-call="odex_road_mechanic.orm_upload_field"/>
+                        <button type="submit" class="orm-btn orm-btn--primary">
+                            <t t-if="own_offer">Update and resend offer</t>
+                            <t t-else="">Send offer</t>
+                        </button>
+                    </form>
+                    <div class="orm-gallery orm-mt" t-if="own_offer and own_offer.image_ids">
+                        <t t-foreach="own_offer.image_ids" t-as="photo">
+                            <a class="orm-gallery__thumb" t-att-href="photo.image_url()" target="_blank">
+                                <img t-att-src="photo.thumb_url()" alt="Part photo" loading="lazy"/>
+                            </a>
+                        </t>
+                    </div>
+                </div>
+
+                <div class="orm-panel" id="orm-chat">
+                    <h2 class="orm-block__subtitle">Chat with the customer</h2>
+                    <t t-set="chat_side" t-value="'garage'"/>
+                    <t t-call="odex_road_mechanic.orm_chat_thread"/>
+                    <form t-attf-action="/my/provider/request/#{req.id}/message" method="post"
+                          class="orm-chat__form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <textarea name="body" rows="2" class="orm-input" maxlength="4000"
+                                  placeholder="Write a message..." required="required"/>
+                        <button type="submit" class="orm-btn orm-btn--primary">Send</button>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

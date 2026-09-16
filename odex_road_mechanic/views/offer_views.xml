@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_offer_list" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.offer.list</field>
+        <field name="model">odex.road.mechanic.offer</field>
+        <field name="arch" type="xml">
+            <list string="Offers" decoration-muted="is_expired or not is_active"
+                  decoration-success="is_running and website_published">
+                <field name="name"/>
+                <field name="workshop_id"/>
+                <field name="discount_label" string="Badge"/>
+                <field name="service_id" optional="show"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="is_running" string="Running"/>
+                <field name="is_expired" string="Expired" optional="hide"/>
+                <field name="is_active" widget="boolean_toggle"/>
+                <field name="website_published" widget="boolean_toggle"/>
+                <field name="is_featured" widget="boolean_toggle"
+                       groups="odex_road_mechanic.group_road_mechanic_manager"/>
+                <field name="priority" optional="hide"
+                       groups="odex_road_mechanic.group_road_mechanic_manager"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_offer_kanban" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.offer.kanban</field>
+        <field name="model">odex.road.mechanic.offer</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="discount_label"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="row g-0">
+                            <div class="col-4">
+                                <field name="image" widget="image" options="{'size': [120, 90]}"/>
+                            </div>
+                            <div class="col-8 ps-2">
+                                <div class="fw-bold"><field name="name"/></div>
+                                <div class="text-danger fw-bold"><field name="discount_label"/></div>
+                                <div class="text-muted"><field name="workshop_id"/></div>
+                                <div class="small">
+                                    <field name="start_date"/> - <field name="end_date"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_offer_search" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.offer.search</field>
+        <field name="model">odex.road.mechanic.offer</field>
+        <field name="arch" type="xml">
+            <search string="Offers">
+                <field name="name"/>
+                <field name="workshop_id"/>
+                <field name="service_id"/>
+                <field name="vehicle_brand_ids"/>
+                <filter name="f_active" string="Active" domain="[('is_active', '=', True)]"/>
+                <filter name="f_running" string="Running Now"
+                        domain="[('is_active', '=', True), ('is_expired', '=', False)]"/>
+                <filter name="f_expired" string="Expired" domain="[('is_expired', '=', True)]"/>
+                <separator/>
+                <filter name="f_draft" string="Draft" domain="[('website_published', '=', False)]"/>
+                <filter name="f_published" string="Published" domain="[('website_published', '=', True)]"/>
+                <filter name="f_featured" string="Featured" domain="[('is_featured', '=', True)]"/>
+                <separator/>
+                <filter name="f_start" string="Start Date" date="start_date"/>
+                <filter name="f_end" string="End Date" date="end_date"/>
+                <separator/>
+                <filter name="f_archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="g_workshop" string="Workshop" context="{'group_by': 'workshop_id'}"/>
+                    <filter name="g_service" string="Service" context="{'group_by': 'service_id'}"/>
+                    <filter name="g_type" string="Offer Type" context="{'group_by': 'discount_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_offer_form" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.offer.form</field>
+        <field name="model">odex.road.mechanic.offer</field>
+        <field name="arch" type="xml">
+            <form string="Offer">
+                <header>
+                    <button name="action_publish" type="object" string="Publish"
+                            class="btn-primary" invisible="website_published"/>
+                    <button name="action_unpublish" type="object" string="Unpublish"
+                            invisible="not website_published"/>
+                    <button name="action_open_website" type="object" string="View on Website"
+                            invisible="not website_published"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Expired" bg_color="text-bg-danger"
+                            invisible="not is_expired"/>
+                    <field name="is_expired" invisible="1"/>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. 10% off AC service"/></h1>
+                        <field name="short_description" placeholder="One line shown on the offer card"/>
+                    </div>
+                    <group>
+                        <group string="Offer">
+                            <field name="workshop_id" options="{'no_create': True}"/>
+                            <field name="discount_type"/>
+                            <field name="discount_value"
+                                   invisible="discount_type not in ('percentage', 'fixed')"/>
+                            <field name="original_price"
+                                   invisible="discount_type == 'free_service'"/>
+                            <field name="offer_price"
+                                   invisible="discount_type != 'special_price'"/>
+                            <field name="discount_label" readonly="1"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                        </group>
+                        <group string="Validity and ranking">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="is_running" readonly="1"/>
+                            <field name="is_active"/>
+                            <field name="website_published"/>
+                            <field name="is_featured"
+                                   groups="odex_road_mechanic.group_road_mechanic_manager"/>
+                            <field name="priority"
+                                   groups="odex_road_mechanic.group_road_mechanic_manager"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <group>
+                                <field name="description"
+                                       placeholder="What the customer gets, and what is included."/>
+                                <field name="terms_conditions"
+                                       placeholder="Conditions, exclusions, appointment required..."/>
+                            </group>
+                        </page>
+                        <page string="Applies To" name="applies">
+                            <group>
+                                <field name="service_id" options="{'no_create_edit': True}"/>
+                                <field name="vehicle_brand_ids" widget="many2many_tags"
+                                       options="{'no_create_edit': True}"/>
+                            </group>
+                        </page>
+                        <page string="Gallery" name="gallery">
+                            <field name="gallery_image_ids" mode="kanban">
+                                <kanban>
+                                    <templates>
+                                        <t t-name="card">
+                                            <div class="text-center">
+                                                <field name="image" widget="image"
+                                                       options="{'size': [200, 150]}"/>
+                                                <div><field name="name" placeholder="Caption"/></div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form>
+                                    <group>
+                                        <field name="image" widget="image"/>
+                                        <field name="name"/>
+                                        <field name="sequence"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Website" name="website">
+                            <group>
+                                <group>
+                                    <field name="slug" placeholder="Generated from the title"/>
+                                    <field name="website_url" widget="url" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="website_meta_title"/>
+                                    <field name="website_meta_description"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_offer" model="ir.actions.act_window">
+        <field name="name">Offers</field>
+        <field name="res_model">odex.road.mechanic.offer</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_offer_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a workshop offer</p>
+            <p>Offers belong to one workshop and only appear on that workshop's page.</p>
+        </field>
+    </record>
+
+    <record id="action_offer_running" model="ir.actions.act_window">
+        <field name="name">Running Offers</field>
+        <field name="res_model">odex.road.mechanic.offer</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('is_active', '=', True), ('is_expired', '=', False), ('website_published', '=', True)]</field>
+        <field name="search_view_id" ref="view_offer_search"/>
+    </record>
+
+    <record id="action_offer_expired" model="ir.actions.act_window">
+        <field name="name">Expired Offers</field>
+        <field name="res_model">odex.road.mechanic.offer</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_expired', '=', True)]</field>
+        <field name="search_view_id" ref="view_offer_search"/>
+    </record>
+
+    <record id="action_customers" model="ir.actions.act_window">
+        <field name="name">Customers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">['|', '|', ('orm_inquiry_ids', '!=', False), ('orm_review_ids', '!=', False), ('orm_request_ids', '!=', False)]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

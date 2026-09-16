@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Offer card, used on the homepage, the workshop page and /offers -->
+    <template id="orm_offer_tile" name="Road Mechanic Offer Tile">
+        <article class="orm-offertile">
+            <a class="orm-offertile__media" t-attf-href="/offer/#{offer.slug}">
+                <img t-att-src="offer.image_url()" loading="lazy" t-att-alt="offer.name"/>
+                <span class="orm-offertile__badge" t-out="offer.discount_label"/>
+            </a>
+            <div class="orm-offertile__body">
+                <h3 class="orm-offertile__title">
+                    <a t-attf-href="/offer/#{offer.slug}" t-out="offer.name"/>
+                </h3>
+                <p class="orm-offertile__sub" t-if="offer.service_id"
+                   t-out="offer.service_id.name"/>
+                <p class="orm-offertile__workshop" t-if="not hide_workshop">
+                    <i class="fa fa-wrench"/>
+                    <a t-attf-href="/workshop/#{offer.workshop_id.slug}"
+                       t-out="offer.workshop_id.name"/>
+                </p>
+                <p class="orm-offertile__meta" t-if="offer.workshop_id.location_id">
+                    <i class="fa fa-map-marker"/>
+                    <t t-out="offer.workshop_id.location_id.display_name"/>
+                </p>
+                <p class="orm-offertile__valid" t-if="offer.end_date">
+                    Valid until <t t-out="offer.end_date" t-options="{'widget': 'date'}"/>
+                </p>
+                <div class="orm-offertile__actions">
+                    <a t-attf-href="/offer/#{offer.slug}" class="orm-btn orm-btn--outline orm-btn--sm">
+                        View offer
+                    </a>
+                    <a t-if="offer.workshop_id.orm_booking_url()"
+                       t-attf-href="#{offer.workshop_id.orm_booking_url()}?offer=#{offer.id}"
+                       class="orm-btn orm-btn--primary orm-btn--sm">
+                        Book this offer
+                    </a>
+                </div>
+            </div>
+        </article>
+    </template>
+
+    <!-- Offers index -->
+    <template id="offers_page" name="Road Mechanic Offers">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Offers - Road Mechanic</t>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic">
+                    <section class="orm-subhero">
+                        <div class="orm-container">
+                            <p class="orm-hero__eyebrow">Road Mechanic</p>
+                            <h1 class="orm-subhero__title">
+                                Workshop offers
+                                <span class="orm-count">(<t t-out="total"/>)</span>
+                            </h1>
+                            <p class="orm-subhero__text">
+                                Live promotions from verified workshops across the UAE.
+                            </p>
+                        </div>
+                        <t t-call="odex_road_mechanic.orm_theme_toggle"/>
+                    </section>
+                    <section class="orm-section">
+                        <div class="orm-container">
+                            <t t-if="offers">
+                                <div class="orm-grid orm-grid--offers">
+                                    <t t-set="hide_workshop" t-value="False"/>
+                                    <t t-foreach="offers" t-as="offer">
+                                        <t t-call="odex_road_mechanic.orm_offer_tile"/>
+                                    </t>
+                                </div>
+                                <div class="orm-pager" t-if="pager">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                            <p class="orm-muted" t-else="">
+                                No offer is running right now. Check the
+                                <a href="/workshops">workshop directory</a> instead.
+                            </p>
+                        </div>
+                    </section>
+                    <t t-call="odex_road_mechanic.orm_register_cta"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Offer detail -->
+    <template id="offer_detail" name="Road Mechanic Offer Detail">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="offer.name"/>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic">
+                    <section class="orm-subhero">
+                        <div class="orm-container">
+                            <nav class="orm-breadcrumb">
+                                <a href="/offers">Offers</a><span>/</span>
+                                <a t-attf-href="/workshop/#{workshop.slug}" t-out="workshop.name"/>
+                                <span>/</span><span t-out="offer.name"/>
+                            </nav>
+                        </div>
+                        <t t-call="odex_road_mechanic.orm_theme_toggle"/>
+                    </section>
+
+                    <section class="orm-section">
+                        <div class="orm-container orm-layout orm-layout--detail">
+                            <div class="orm-layout__main">
+                                <div class="orm-offerhero">
+                                    <img t-att-src="offer.image_url('1200x700')"
+                                         t-att-alt="offer.name" class="orm-offerhero__img"/>
+                                    <span class="orm-offerhero__badge" t-out="offer.discount_label"/>
+                                </div>
+                                <h1 class="orm-detail-head__title" t-out="offer.name"/>
+                                <p class="orm-detail-head__short" t-if="offer.short_description"
+                                   t-out="offer.short_description"/>
+
+                                <ul class="orm-offerfacts">
+                                    <li t-if="offer.original_price and offer.offer_price">
+                                        <span class="orm-offerfacts__was">
+                                            <t t-out="offer.original_price"
+                                               t-options="{'widget': 'monetary', 'display_currency': offer.currency_id}"/>
+                                        </span>
+                                        <span class="orm-offerfacts__now">
+                                            <t t-out="offer.offer_price"
+                                               t-options="{'widget': 'monetary', 'display_currency': offer.currency_id}"/>
+                                        </span>
+                                    </li>
+                                    <li t-if="offer.saving_label">
+                                        <i class="fa fa-tag"/> <t t-out="offer.saving_label"/>
+                                    </li>
+                                    <li t-if="offer.start_date or offer.end_date">
+                                        <i class="fa fa-calendar"/>
+                                        <t t-if="offer.end_date">
+                                            Valid until <t t-out="offer.end_date"
+                                                           t-options="{'widget': 'date'}"/>
+                                        </t>
+                                        <t t-else="">Ongoing offer</t>
+                                    </li>
+                                    <li t-if="offer.service_id">
+                                        <i class="fa fa-cogs"/> <t t-out="offer.service_id.name"/>
+                                    </li>
+                                </ul>
+
+                                <div class="orm-actionbar">
+                                    <a t-if="workshop.orm_booking_url()"
+                                       t-attf-href="#{workshop.orm_booking_url()}?offer=#{offer.id}"
+                                       class="orm-btn orm-btn--primary">
+                                        <i class="fa fa-calendar-check-o"/> Book this offer
+                                    </a>
+                                    <a t-attf-href="/workshop/#{workshop.slug}#orm-inquiry"
+                                       class="orm-btn orm-btn--gold">
+                                        <i class="fa fa-envelope"/> Send inquiry
+                                    </a>
+                                    <a t-if="workshop.call_number()"
+                                       t-attf-href="tel:#{workshop.call_number()}"
+                                       class="orm-btn orm-btn--outline">
+                                        <i class="fa fa-phone"/> Call workshop
+                                    </a>
+                                    <a t-if="workshop.whatsapp_url" t-att-href="workshop.whatsapp_url"
+                                       target="_blank" rel="noopener" class="orm-btn orm-btn--whatsapp">
+                                        <i class="fa fa-whatsapp"/> WhatsApp
+                                    </a>
+                                    <a t-if="workshop.has_exact_location"
+                                       t-att-href="workshop.directions_url" target="_blank"
+                                       rel="noopener" class="orm-btn orm-btn--outline">
+                                        <i class="fa fa-location-arrow"/> Get directions
+                                    </a>
+                                </div>
+
+                                <section class="orm-block" t-if="offer.description">
+                                    <h2 class="orm-block__title">About this offer</h2>
+                                    <div class="orm-prose" t-out="offer.description"/>
+                                </section>
+
+                                <section class="orm-block" t-if="offer.vehicle_brand_ids">
+                                    <h2 class="orm-block__title">Applies to</h2>
+                                    <ul class="orm-chips">
+                                        <li t-foreach="offer.vehicle_brand_ids" t-as="brand">
+                                            <span class="orm-chip orm-chip--plain" t-out="brand.name"/>
+                                        </li>
+                                    </ul>
+                                </section>
+
+                                <section class="orm-block" t-if="offer.gallery_image_ids">
+                                    <h2 class="orm-block__title">Gallery</h2>
+                                    <div class="orm-gallery">
+                                        <t t-foreach="offer.gallery_image_ids" t-as="photo">
+                                            <a class="orm-gallery__thumb" t-att-href="photo.image_url()"
+                                               target="_blank">
+                                                <img t-att-src="photo.thumb_url()" loading="lazy"
+                                                     t-att-alt="photo.name or offer.name"/>
+                                            </a>
+                                        </t>
+                                    </div>
+                                </section>
+
+                                <section class="orm-block" t-if="offer.terms_conditions">
+                                    <h2 class="orm-block__title">Terms &amp; conditions</h2>
+                                    <p class="orm-hours" t-out="offer.terms_conditions"/>
+                                </section>
+
+                                <section class="orm-block" t-if="related_offers">
+                                    <h2 class="orm-block__title">More from this workshop</h2>
+                                    <div class="orm-grid orm-grid--offers">
+                                        <t t-set="hide_workshop" t-value="True"/>
+                                        <t t-foreach="related_offers" t-as="offer">
+                                            <t t-call="odex_road_mechanic.orm_offer_tile"/>
+                                        </t>
+                                    </div>
+                                </section>
+                            </div>
+
+                            <aside class="orm-layout__side orm-layout__side--detail">
+                                <div class="orm-panel">
+                                    <img t-att-src="workshop.image_url('logo')"
+                                         class="orm-panel__logo" t-att-alt="workshop.name"/>
+                                    <h2 class="orm-panel__title">
+                                        <a t-attf-href="/workshop/#{workshop.slug}"
+                                           t-out="workshop.name"/>
+                                    </h2>
+                                    <div class="orm-detail-head__meta">
+                                        <t t-call="odex_road_mechanic.orm_verified_badge"/>
+                                        <t t-set="rating_value" t-value="workshop.rating"/>
+                                        <t t-set="review_total" t-value="workshop.review_count"/>
+                                        <t t-call="odex_road_mechanic.orm_stars"/>
+                                    </div>
+                                    <p class="orm-panel__type" t-if="workshop.full_address"
+                                       t-out="workshop.full_address"/>
+                                    <div class="orm-map orm-mt" t-if="workshop.map_embed_url">
+                                        <iframe t-att-src="workshop.map_embed_url" loading="lazy"
+                                                title="Workshop location"/>
+                                    </div>
+                                    <a t-attf-href="/workshop/#{workshop.slug}"
+                                       class="orm-btn orm-btn--outline orm-btn--block orm-mt">
+                                        View workshop
+                                    </a>
+                                </div>
+                            </aside>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

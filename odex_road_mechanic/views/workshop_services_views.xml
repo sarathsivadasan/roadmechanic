@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_workshop_form_services" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.workshop.form.services</field>
+        <field name="model">odex.road.mechanic.workshop</field>
+        <field name="inherit_id" ref="odex_road_mechanic.view_workshop_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='services']" position="after">
+                <page string="Platform Services" name="platform_services">
+                    <group>
+                        <group string="Field services">
+                            <field name="provides_roadside"/>
+                            <field name="provides_recovery"/>
+                        </group>
+                        <group string="Parts marketplace">
+                            <field name="sells_spare_parts"/>
+                            <field name="sells_used_parts"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="request_count" readonly="1"/>
+                            <field name="offer_count" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

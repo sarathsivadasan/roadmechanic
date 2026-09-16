@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_services_root" name="Service Requests"
+              parent="odex_road_mechanic.menu_road_mechanic_root" sequence="12"/>
+
+    <menuitem id="menu_request_all" name="All Requests"
+              parent="menu_services_root" action="action_request_all" sequence="1"/>
+    <menuitem id="menu_request_roadside" name="Roadside Assistance"
+              parent="menu_services_root" action="action_request_roadside" sequence="2"/>
+    <menuitem id="menu_request_recovery" name="Vehicle Recovery"
+              parent="menu_services_root" action="action_request_recovery" sequence="3"/>
+    <menuitem id="menu_request_spare" name="Spare Parts"
+              parent="menu_services_root" action="action_request_spare" sequence="4"/>
+    <menuitem id="menu_request_used" name="Used Parts"
+              parent="menu_services_root" action="action_request_used" sequence="5"/>
+    <menuitem id="menu_part_offer" name="Supplier Offers"
+              parent="menu_services_root" action="action_part_offer" sequence="6"/>
+    <menuitem id="menu_notification" name="Notifications"
+              parent="menu_services_root" action="action_notification" sequence="7"/>
+
+    <menuitem id="menu_vehicles" name="Vehicles"
+              parent="menu_road_mechanic_root" action="action_vehicle" sequence="65"/>
+    <menuitem id="menu_messages" name="Conversations"
+              parent="menu_road_mechanic_root" action="action_message" sequence="35"/>
+
+</odoo>

@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Entry on /my -->
+    <template id="portal_my_home_road_mechanic" name="Portal: My Workshops"
+              inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/odex_road_mechanic/static/src/img/road_mechanic_mark.png'"/>
+                <t t-set="title">My Workshops</t>
+                <t t-set="text">Manage your Road Mechanic listings</t>
+                <t t-set="url" t-value="'/my/workshops'"/>
+                <t t-set="placeholder_count" t-value="'workshop_count'"/>
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/odex_road_mechanic/static/src/img/road_mechanic_mark.png'"/>
+                <t t-set="title">My Inquiries</t>
+                <t t-set="text">Questions you sent to workshops</t>
+                <t t-set="url" t-value="'/my/inquiries'"/>
+                <t t-set="placeholder_count" t-value="'orm_inquiry_count'"/>
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/odex_road_mechanic/static/src/img/road_mechanic_mark.png'"/>
+                <t t-set="title">My Reviews</t>
+                <t t-set="text">Ratings you left, and their approval status</t>
+                <t t-set="url" t-value="'/my/reviews'"/>
+                <t t-set="placeholder_count" t-value="'orm_review_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_workshops" name="My Workshops">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">My workshops</h1>
+                <t t-if="not workshops">
+                    <div class="orm-alert">
+                        No workshop is linked to your account yet.
+                        <a href="/register-workshop">Register your workshop</a> or contact us so we
+                        can link an existing listing to your login.
+                    </div>
+                </t>
+                <div class="orm-rows" t-if="workshops">
+                    <t t-foreach="workshops" t-as="workshop">
+                        <article class="orm-row">
+                            <a class="orm-row__media" t-attf-href="/my/workshop/#{workshop.id}">
+                                <img t-att-src="workshop.image_url('main_image')"
+                                     t-att-alt="workshop.name" loading="lazy"/>
+                            </a>
+                            <div class="orm-row__body">
+                                <h3 class="orm-row__title">
+                                    <a t-attf-href="/my/workshop/#{workshop.id}" t-out="workshop.name"/>
+                                    <t t-call="odex_road_mechanic.orm_verified_badge"/>
+                                </h3>
+                                <p class="orm-row__meta">
+                                    <i class="fa fa-info-circle"/>
+                                    Verification: <strong t-out="workshop.verification_status_label"/>
+                                </p>
+                                <p class="orm-row__meta">
+                                    <i class="fa fa-globe"/>
+                                    <t t-out="workshop.website_published and 'Published' or 'Not published'"/>
+                                </p>
+                                <div class="orm-row__rating">
+                                    <t t-set="rating_value" t-value="workshop.rating"/>
+                                    <t t-set="review_total" t-value="workshop.review_count"/>
+                                    <t t-call="odex_road_mechanic.orm_stars"/>
+                                </div>
+                            </div>
+                            <div class="orm-row__actions">
+                                <a t-attf-href="/my/workshop/#{workshop.id}"
+                                   class="orm-btn orm-btn--primary orm-btn--sm">Manage</a>
+                                <a t-if="workshop.website_published"
+                                   t-attf-href="/workshop/#{workshop.slug}"
+                                   class="orm-btn orm-btn--outline orm-btn--sm">View public page</a>
+                            </div>
+                        </article>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_workshop_form" name="Manage Workshop">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <div class="orm-alert orm-alert--success" t-if="saved">Changes saved.</div>
+                <div class="orm-alert orm-alert--error" t-if="error">
+                    Your changes could not be saved. Please check the values and try again.
+                </div>
+
+                <t t-set="tab" t-value="'profile'"/>
+                <t t-call="odex_road_mechanic.orm_workshop_portal_nav"/>
+                <div class="orm-panel orm-mb">
+                    <h1 class="orm-block__title" t-out="workshop.name"/>
+                    <p class="orm-muted">
+                        Verification:
+                        <strong t-out="workshop.verification_status_label"/>
+                        &#8226;
+                        <t t-out="workshop.website_published and 'Published' or 'Not published'"/>
+                    </p>
+                    <p class="orm-muted orm-small">
+                        Verification, featured placement, ranking and publication are controlled by
+                        the Road Mechanic team. You manage the content of your listing.
+                    </p>
+                    <form t-if="workshop.verification_status in ('draft', 'rejected')"
+                          t-attf-action="/my/workshop/#{workshop.id}/submit" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <button type="submit" class="orm-btn orm-btn--primary orm-btn--sm">
+                            Submit for verification
+                        </button>
+                    </form>
+                </div>
+
+                <form t-attf-action="/my/workshop/#{workshop.id}/save" method="post"
+                      class="orm-form orm-panel" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <h2 class="orm-block__subtitle">Contact</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="p-phone">Phone</label>
+                            <input id="p-phone" type="tel" name="phone" class="orm-input"
+                                   t-att-value="workshop.phone or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="p-mobile">Mobile</label>
+                            <input id="p-mobile" type="tel" name="mobile" class="orm-input"
+                                   t-att-value="workshop.mobile or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="p-whatsapp">WhatsApp</label>
+                            <input id="p-whatsapp" type="tel" name="whatsapp" class="orm-input"
+                                   t-att-value="workshop.whatsapp or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="p-email">Email</label>
+                            <input id="p-email" type="email" name="email" class="orm-input"
+                                   t-att-value="workshop.email or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="p-website">Website</label>
+                        <input id="p-website" type="url" name="website" class="orm-input"
+                               t-att-value="workshop.website or ''"/>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Address</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="p-street">Street</label>
+                            <input id="p-street" type="text" name="street" class="orm-input"
+                                   t-att-value="workshop.street or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="p-area">Area</label>
+                            <select id="p-area" name="location_id" class="orm-input">
+                                <option value="">Select area</option>
+                                <t t-foreach="orm_locations" t-as="location">
+                                    <option t-att-value="location.id"
+                                            t-att-selected="workshop.location_id.id == location.id and 'selected' or None"
+                                            t-out="location.display_name"/>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="p-lat">Latitude</label>
+                            <input id="p-lat" type="text" name="latitude" class="orm-input"
+                                   inputmode="decimal" t-att-value="workshop.latitude or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="p-lng">Longitude</label>
+                            <input id="p-lng" type="text" name="longitude" class="orm-input"
+                                   inputmode="decimal" t-att-value="workshop.longitude or ''"/>
+                        </div>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Opening hours</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="p-open">Opens at (e.g. 8.5 for 08:30)</label>
+                            <input id="p-open" type="text" name="opening_time" class="orm-input"
+                                   inputmode="decimal" t-att-value="workshop.opening_time or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="p-close">Closes at</label>
+                            <input id="p-close" type="text" name="closing_time" class="orm-input"
+                                   inputmode="decimal" t-att-value="workshop.closing_time or ''"/>
+                        </div>
+                    </div>
+                    <label class="orm-check">
+                        <input type="checkbox" name="open_24h" value="1"
+                               t-att-checked="workshop.open_24h and 'checked' or None"/>
+                        <span>Open 24 hours</span>
+                    </label>
+                    <div class="orm-form__field">
+                        <label for="p-hours">Working hours (shown on the listing)</label>
+                        <input id="p-hours" type="text" name="working_hours" class="orm-input"
+                               t-att-value="workshop.working_hours or ''"/>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Services and brands</h2>
+                    <div class="orm-form__field">
+                        <span class="orm-form__label">Services</span>
+                        <div class="orm-checklist orm-checklist--wide">
+                            <t t-foreach="orm_services" t-as="service">
+                                <label class="orm-check">
+                                    <input type="checkbox" name="service_ids" t-att-value="service.id"
+                                           t-att-checked="service.id in workshop.service_ids.ids and 'checked' or None"/>
+                                    <span t-out="service.name"/>
+                                </label>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="orm-form__field">
+                        <span class="orm-form__label">Vehicle brands</span>
+                        <div class="orm-checklist orm-checklist--wide">
+                            <t t-foreach="orm_brands" t-as="brand">
+                                <label class="orm-check">
+                                    <input type="checkbox" name="vehicle_brand_ids" t-att-value="brand.id"
+                                           t-att-checked="brand.id in workshop.vehicle_brand_ids.ids and 'checked' or None"/>
+                                    <span t-out="brand.name"/>
+                                </label>
+                            </t>
+                        </div>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Description</h2>
+                    <div class="orm-form__field">
+                        <label for="p-short">Short description</label>
+                        <input id="p-short" type="text" name="short_description" class="orm-input"
+                               t-att-value="workshop.short_description or ''"/>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="p-desc">Description</label>
+                        <textarea id="p-desc" name="description" rows="5" class="orm-input"/>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Photos</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="p-logo">Logo</label>
+                            <input id="p-logo" type="file" name="logo" class="orm-input" accept="image/*"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="p-main">Main workshop photo</label>
+                            <input id="p-main" type="file" name="main_image" class="orm-input" accept="image/*"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="p-gallery">Add gallery photos</label>
+                        <input id="p-gallery" type="file" name="gallery_images" class="orm-input"
+                               accept="image/*" multiple="multiple"/>
+                    </div>
+
+                    <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg">Save changes</button>
+                </form>
+
+                <div class="orm-panel orm-mt" t-if="workshop.gallery_image_ids">
+                    <h2 class="orm-block__subtitle">Gallery</h2>
+                    <div class="orm-gallery orm-gallery--manage">
+                        <t t-foreach="workshop.gallery_image_ids" t-as="photo">
+                            <div class="orm-gallery__manageitem">
+                                <img t-att-src="photo.thumb_url()" t-att-alt="photo.name or workshop.name"/>
+                                <form t-attf-action="/my/workshop/#{workshop.id}/gallery/#{photo.id}/delete"
+                                      method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="orm-btn orm-btn--outline orm-btn--sm">
+                                        Remove
+                                    </button>
+                                </form>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <div class="orm-panel orm-mt">
+                    <h2 class="orm-block__subtitle">Reviews</h2>
+                    <p class="orm-muted" t-if="not reviews">No reviews yet.</p>
+                    <article class="orm-review" t-foreach="reviews" t-as="review">
+                        <header class="orm-review__head">
+                            <strong t-out="review.customer_name"/>
+                            <span class="orm-stars">
+                                <t t-foreach="[1, 2, 3, 4, 5]" t-as="star">
+                                    <i t-attf-class="fa #{review.rating &gt;= star and 'fa-star' or 'fa-star-o'}"/>
+                                </t>
+                            </span>
+                            <span class="orm-badge" t-out="review.state_label"/>
+                        </header>
+                        <p class="orm-review__text" t-if="review.comment" t-out="review.comment"/>
+                    </article>
+                </div>
+
+                <div class="orm-panel orm-mt">
+                    <h2 class="orm-block__subtitle">Inquiries</h2>
+                    <p class="orm-muted" t-if="not inquiries">No inquiries yet.</p>
+                    <table class="orm-table" t-if="inquiries">
+                        <thead>
+                            <tr>
+                                <th>Date</th><th>Customer</th><th>Phone</th><th>Service</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="inquiries" t-as="inquiry">
+                                <td t-out="inquiry.create_date" t-options="{'widget': 'date'}"/>
+                                <td t-out="inquiry.customer_name"/>
+                                <td t-out="inquiry.phone"/>
+                                <td t-out="inquiry.service_id.name or '-'"/>
+                                <td t-out="inquiry.state_label"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <!-- Garage Partner: workshop management tabs -->
+    <template id="orm_workshop_portal_nav" name="Workshop Portal Navigation">
+        <nav class="orm-tabs orm-mb">
+            <a t-attf-href="/my/workshop/#{workshop.id}"
+               t-attf-class="orm-tab #{tab == 'profile' and 'is-active' or ''}">Workshop</a>
+            <a t-attf-href="/my/workshop/#{workshop.id}/offers"
+               t-attf-class="orm-tab #{tab == 'offers' and 'is-active' or ''}">Offers</a>
+            <a t-attf-href="/my/workshop/#{workshop.id}/location"
+               t-attf-class="orm-tab #{tab == 'location' and 'is-active' or ''}">Location &amp; map</a>
+            <a t-if="workshop.website_published" t-attf-href="/workshop/#{workshop.slug}"
+               class="orm-tab">Public page</a>
+        </nav>
+    </template>
+
+    <!-- Garage Partner: offers -->
+    <template id="portal_workshop_offers" name="My Workshop Offers">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">Offers - <t t-out="workshop.name"/></h1>
+                <t t-set="tab" t-value="'offers'"/>
+                <t t-call="odex_road_mechanic.orm_workshop_portal_nav"/>
+
+                <div class="orm-alert orm-alert--success" t-if="saved">Saved.</div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'name'">
+                    An offer needs a title.
+                </div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'dates'">
+                    The end date cannot be before the start date.
+                </div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'unknown'">
+                    That offer could not be saved. Check the values and try again.
+                </div>
+
+                <div class="orm-panel orm-mb" t-if="offers">
+                    <h2 class="orm-block__subtitle">Your offers</h2>
+                    <table class="orm-table">
+                        <thead>
+                            <tr><th>Offer</th><th>Badge</th><th>Valid</th><th>Status</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="offers" t-as="offer">
+                                <td>
+                                    <t t-out="offer.name"/>
+                                    <span class="orm-muted orm-small" t-if="offer.service_id">
+                                        <br/><t t-out="offer.service_id.name"/>
+                                    </span>
+                                </td>
+                                <td t-out="offer.discount_label"/>
+                                <td>
+                                    <t t-out="offer.start_date" t-options="{'widget': 'date'}"/>
+                                    <t t-if="offer.end_date"> - <t t-out="offer.end_date"
+                                        t-options="{'widget': 'date'}"/></t>
+                                </td>
+                                <td>
+                                    <span t-attf-class="orm-badge #{offer.is_running and offer.website_published and 'orm-badge--verified' or ''}">
+                                        <t t-if="not offer.website_published">Draft</t>
+                                        <t t-elif="offer.is_expired">Expired</t>
+                                        <t t-elif="offer.is_running">Live</t>
+                                        <t t-else="">Paused</t>
+                                    </span>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/my/workshop/#{workshop.id}/offers?offer_id=#{offer.id}"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">Edit</a>
+                                    <form t-attf-action="/my/workshop/#{workshop.id}/offers/#{offer.id}/delete"
+                                          method="post" class="d-inline">
+                                        <input type="hidden" name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="orm-btn orm-btn--outline orm-btn--sm">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="orm-muted" t-if="not offers">
+                    No offer yet. Create your first promotion below - it appears on your
+                    workshop page and, when published, in the homepage offers strip.
+                </p>
+
+                <form t-attf-action="/my/workshop/#{workshop.id}/offers/save" method="post"
+                      class="orm-form orm-panel" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="offer_id" t-att-value="edit_offer and edit_offer.id or ''"/>
+                    <h2 class="orm-block__subtitle">
+                        <t t-if="edit_offer">Edit offer</t>
+                        <t t-else="">New offer</t>
+                    </h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="of-name">Offer title *</label>
+                            <input id="of-name" type="text" name="name" class="orm-input"
+                                   required="required" maxlength="120"
+                                   placeholder="e.g. 10% off AC service"
+                                   t-att-value="edit_offer and edit_offer.name or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="of-service">Service</label>
+                            <select id="of-service" name="service_id" class="orm-input">
+                                <option value="">Any service</option>
+                                <t t-foreach="orm_services" t-as="service">
+                                    <option t-att-value="service.id" t-out="service.name"
+                                            t-att-selected="edit_offer and edit_offer.service_id.id == service.id and 'selected' or None"/>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="of-short">Short description</label>
+                        <input id="of-short" type="text" name="short_description" class="orm-input"
+                               maxlength="200"
+                               t-att-value="edit_offer and edit_offer.short_description or ''"/>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="of-type">Offer type</label>
+                            <select id="of-type" name="discount_type" class="orm-input">
+                                <t t-foreach="[('percentage', 'Percentage'), ('fixed', 'Fixed amount'), ('special_price', 'Special price'), ('free_service', 'Free service')]" t-as="dt">
+                                    <option t-att-value="dt[0]" t-out="dt[1]"
+                                            t-att-selected="edit_offer and edit_offer.discount_type == dt[0] and 'selected' or None"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="of-value">Discount value</label>
+                            <input id="of-value" type="number" step="0.01" min="0"
+                                   name="discount_value" class="orm-input"
+                                   t-att-value="edit_offer and edit_offer.discount_value or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="of-original">Original price</label>
+                            <input id="of-original" type="number" step="0.01" min="0"
+                                   name="original_price" class="orm-input"
+                                   t-att-value="edit_offer and edit_offer.original_price or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="of-price">Offer price</label>
+                            <input id="of-price" type="number" step="0.01" min="0"
+                                   name="offer_price" class="orm-input"
+                                   t-att-value="edit_offer and edit_offer.offer_price or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="of-start">Valid from</label>
+                            <input id="of-start" type="date" name="start_date" class="orm-input"
+                                   t-att-value="edit_offer and edit_offer.start_date or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="of-end">Valid until</label>
+                            <input id="of-end" type="date" name="end_date" class="orm-input"
+                                   t-att-value="edit_offer and edit_offer.end_date or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__field">
+                        <span class="orm-form__label">Vehicle brands (optional)</span>
+                        <div class="orm-checklist orm-checklist--wide">
+                            <t t-foreach="orm_brands" t-as="brand">
+                                <label class="orm-check">
+                                    <input type="checkbox" name="vehicle_brand_ids"
+                                           t-att-value="brand.id"
+                                           t-att-checked="edit_offer and brand.id in edit_offer.vehicle_brand_ids.ids and 'checked' or None"/>
+                                    <span t-out="brand.name"/>
+                                </label>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="of-desc">Description</label>
+                        <textarea id="of-desc" name="description" rows="4" class="orm-input"
+                                  maxlength="4000"/>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="of-terms">Terms &amp; conditions</label>
+                        <textarea id="of-terms" name="terms_conditions" rows="3" class="orm-input"
+                                  maxlength="2000"
+                                  t-out="edit_offer and edit_offer.terms_conditions or ''"/>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="of-image">Offer image</label>
+                            <input id="of-image" type="file" name="image" class="orm-input"
+                                   accept="image/*"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="of-gallery">Gallery photos</label>
+                            <input id="of-gallery" type="file" name="gallery_images"
+                                   class="orm-input" accept="image/*" multiple="multiple"/>
+                        </div>
+                    </div>
+                    <label class="orm-check">
+                        <input type="checkbox" name="is_active" value="1"
+                               t-att-checked="(not edit_offer or edit_offer.is_active) and 'checked' or None"/>
+                        <span>Offer is active</span>
+                    </label>
+                    <label class="orm-check">
+                        <input type="checkbox" name="website_published" value="1"
+                               t-att-checked="edit_offer and edit_offer.website_published and 'checked' or None"/>
+                        <span>Publish on the website</span>
+                    </label>
+                    <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg">
+                        <t t-if="edit_offer">Save offer</t>
+                        <t t-else="">Create offer</t>
+                    </button>
+                    <p class="orm-muted orm-small">
+                        Featured placement and ranking are decided by the Road Mechanic team.
+                    </p>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <!-- Garage Partner: exact location with a draggable pin -->
+    <template id="portal_workshop_location" name="Workshop Location and Map">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">Location &amp; map - <t t-out="workshop.name"/></h1>
+                <t t-set="tab" t-value="'location'"/>
+                <t t-call="odex_road_mechanic.orm_workshop_portal_nav"/>
+
+                <div class="orm-alert orm-alert--success" t-if="saved">Exact location saved.</div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'missing'">
+                    Drop the pin on the map or type both coordinates.
+                </div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'range'">
+                    Those coordinates are not valid.
+                </div>
+                <div class="orm-alert orm-alert--error" t-if="not workshop.has_exact_location">
+                    <i class="fa fa-map-marker"/>
+                    Customers cannot get directions to you yet. Drag the pin to your
+                    workshop entrance and save.
+                </div>
+
+                <form t-attf-action="/my/workshop/#{workshop.id}/location/save" method="post"
+                      class="orm-form orm-panel" data-orm-location-form="1"
+                      t-att-data-lat="workshop.latitude or ''"
+                      t-att-data-lng="workshop.longitude or ''">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <h2 class="orm-block__subtitle">Drag the pin to your exact entrance</h2>
+                    <p class="orm-muted orm-small">
+                        The pin is what "Get Directions" uses. The written address below is
+                        shown to customers but is never used for navigation.
+                    </p>
+                    <div class="orm-pinmap" data-orm-pinmap="1"></div>
+                    <div class="orm-actions orm-mb">
+                        <button type="button" class="orm-btn orm-btn--outline orm-btn--sm"
+                                data-orm-pin-locate="1">
+                            <i class="fa fa-crosshairs"/> Use my current location
+                        </button>
+                        <span class="orm-muted orm-small" data-orm-pin-status="1"/>
+                    </div>
+
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="loc-lat">Latitude *</label>
+                            <input id="loc-lat" type="text" name="latitude" class="orm-input"
+                                   inputmode="decimal" data-orm-pin-lat="1" required="required"
+                                   t-att-value="workshop.latitude or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="loc-lng">Longitude *</label>
+                            <input id="loc-lng" type="text" name="longitude" class="orm-input"
+                                   inputmode="decimal" data-orm-pin-lng="1" required="required"
+                                   t-att-value="workshop.longitude or ''"/>
+                        </div>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Postal address</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="loc-street">Building / street</label>
+                            <input id="loc-street" type="text" name="street" class="orm-input"
+                                   maxlength="200" t-att-value="workshop.street or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="loc-street2">Street 2</label>
+                            <input id="loc-street2" type="text" name="street2" class="orm-input"
+                                   maxlength="200" t-att-value="workshop.street2 or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="loc-area">Area</label>
+                            <select id="loc-area" name="location_id" class="orm-input">
+                                <option value="">Select area</option>
+                                <t t-foreach="orm_locations" t-as="location">
+                                    <option t-att-value="location.id" t-out="location.display_name"
+                                            t-att-selected="workshop.location_id.id == location.id and 'selected' or None"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="loc-city">City</label>
+                            <input id="loc-city" type="text" name="city" class="orm-input"
+                                   maxlength="100" t-att-value="workshop.city or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="loc-zip">Postal code</label>
+                        <input id="loc-zip" type="text" name="zip" class="orm-input"
+                               maxlength="20" t-att-value="workshop.zip or ''"/>
+                    </div>
+
+                    <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg">
+                        Save exact location
+                    </button>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <!-- Customer: inquiries -->
+    <template id="portal_my_inquiries" name="My Inquiries">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">My inquiries</h1>
+                <p class="orm-muted" t-if="not inquiries">
+                    You have not sent an inquiry yet.
+                    <a href="/workshops">Find a workshop</a> to get started.
+                </p>
+                <table class="orm-table" t-if="inquiries">
+                    <thead>
+                        <tr><th>Inquiry</th><th>Workshop</th><th>Vehicle</th><th>Service</th>
+                            <th>Date</th><th>Status</th><th>Last update</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="inquiries" t-as="inquiry">
+                            <td>#<t t-out="inquiry.id"/></td>
+                            <td>
+                                <a t-attf-href="/workshop/#{inquiry.workshop_id.slug}"
+                                   t-out="inquiry.workshop_id.name"/>
+                            </td>
+                            <td>
+                                <t t-out="inquiry.vehicle_brand_id.name or ''"/>
+                                <t t-out="inquiry.vehicle_model or ''"/>
+                            </td>
+                            <td t-out="inquiry.service_id.name or '-'"/>
+                            <td t-out="inquiry.create_date" t-options="{'widget': 'date'}"/>
+                            <td><span class="orm-badge" t-out="inquiry.state_label"/></td>
+                            <td t-out="inquiry.write_date" t-options="{'widget': 'date'}"/>
+                            <td>
+                                <a t-attf-href="/workshop/#{inquiry.workshop_id.slug}"
+                                   class="orm-btn orm-btn--outline orm-btn--sm">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- Customer: reviews -->
+    <template id="portal_my_reviews" name="My Reviews">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">My reviews</h1>
+                <div class="orm-alert orm-alert--success" t-if="saved">
+                    Review updated. It goes back through moderation before it appears publicly.
+                </div>
+                <p class="orm-muted" t-if="not reviews">
+                    You have not written a review yet.
+                </p>
+                <div class="orm-reviews" t-if="reviews">
+                    <article class="orm-review" t-foreach="reviews" t-as="review">
+                        <header class="orm-review__head">
+                            <strong>
+                                <a t-attf-href="/workshop/#{review.workshop_id.slug}"
+                                   t-out="review.workshop_id.name"/>
+                            </strong>
+                            <span class="orm-stars">
+                                <t t-foreach="[1, 2, 3, 4, 5]" t-as="star">
+                                    <i t-attf-class="fa #{review.rating &gt;= star and 'fa-star' or 'fa-star-o'}"/>
+                                </t>
+                            </span>
+                            <span class="orm-review__date" t-out="review.create_date"
+                                  t-options="{'widget': 'date'}"/>
+                            <span t-attf-class="orm-badge #{review.state == 'approved' and 'orm-badge--verified' or ''}"
+                                  t-out="review.state_label"/>
+                        </header>
+                        <h3 class="orm-review__title" t-if="review.title" t-out="review.title"/>
+                        <p class="orm-review__text" t-if="review.comment" t-out="review.comment"/>
+
+                        <details class="orm-mt">
+                            <summary class="orm-btn orm-btn--outline orm-btn--sm">Edit review</summary>
+                            <form t-attf-action="/my/review/#{review.id}/update" method="post"
+                                  class="orm-form orm-mt">
+                                <input type="hidden" name="csrf_token"
+                                       t-att-value="request.csrf_token()"/>
+                                <div class="orm-form__field">
+                                    <label t-attf-for="rev-rating-#{review.id}">Rating</label>
+                                    <select t-attf-id="rev-rating-#{review.id}" name="rating"
+                                            class="orm-input">
+                                        <t t-foreach="[5, 4, 3, 2, 1]" t-as="value">
+                                            <option t-att-value="value" t-out="value"
+                                                    t-att-selected="review.rating == value and 'selected' or None"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="orm-form__field">
+                                    <label t-attf-for="rev-title-#{review.id}">Title</label>
+                                    <input t-attf-id="rev-title-#{review.id}" type="text"
+                                           name="title" class="orm-input" maxlength="120"
+                                           t-att-value="review.title or ''"/>
+                                </div>
+                                <div class="orm-form__field">
+                                    <label t-attf-for="rev-comment-#{review.id}">Comment</label>
+                                    <textarea t-attf-id="rev-comment-#{review.id}" name="comment"
+                                              rows="3" class="orm-input" maxlength="3000"
+                                              t-out="review.comment or ''"/>
+                                </div>
+                                <button type="submit" class="orm-btn orm-btn--primary orm-btn--sm">
+                                    Update review
+                                </button>
+                            </form>
+                        </details>
+                    </article>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

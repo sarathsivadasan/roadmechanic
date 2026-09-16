@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_road_mechanic" model="ir.module.category">
+        <field name="name">Road Mechanic</field>
+        <field name="description">Road Mechanic workshop directory</field>
+        <field name="sequence">55</field>
+    </record>
+
+    <record id="group_road_mechanic_user" model="res.groups">
+        <field name="name">Road Mechanic Staff</field>
+        <field name="category_id" ref="module_category_road_mechanic"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Manage workshop content, reviews and inquiries. Cannot verify workshops or change ranking.</field>
+    </record>
+
+    <record id="group_road_mechanic_manager" model="res.groups">
+        <field name="name">Road Mechanic Admin</field>
+        <field name="category_id" ref="module_category_road_mechanic"/>
+        <field name="implied_ids" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="comment">Full control, including verification, publication, featured status and priority.</field>
+    </record>
+
+    <record id="group_garage_partner" model="res.groups">
+        <field name="name">Garage Partner</field>
+        <field name="category_id" ref="module_category_road_mechanic"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="comment">Workshop owner. Can manage their own workshop listing, and see their own reviews and inquiries. Cannot verify, feature, publish or rank a workshop.</field>
+    </record>
+
+    <record id="group_customer" model="res.groups">
+        <field name="name">Customer / Vehicle Owner</field>
+        <field name="category_id" ref="module_category_road_mechanic"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="comment">Vehicle owner. Can search the directory and follow their own inquiries and reviews.</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Record rules: workshops                                      -->
+    <!-- ============================================================ -->
+    <record id="rule_workshop_public_read" model="ir.rule">
+        <field name="name">Road Mechanic: published workshops are public</field>
+        <field name="model_id" ref="model_odex_road_mechanic_workshop"/>
+        <field name="domain_force">[('website_published', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_workshop_internal_published" model="ir.rule">
+        <field name="name">Road Mechanic: plain employees see published workshops</field>
+        <field name="model_id" ref="model_odex_road_mechanic_workshop"/>
+        <field name="domain_force">[('website_published', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_workshop_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: internal users see all workshops</field>
+        <field name="model_id" ref="model_odex_road_mechanic_workshop"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_workshop_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners manage their own workshop</field>
+        <field name="model_id" ref="model_odex_road_mechanic_workshop"/>
+        <field name="domain_force">['|', ('partner_id', '=', user.partner_id.id), ('partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Record rules: gallery images                                 -->
+    <!-- ============================================================ -->
+    <record id="rule_workshop_image_public_read" model="ir.rule">
+        <field name="name">Road Mechanic: gallery of published workshops is public</field>
+        <field name="model_id" ref="model_odex_road_mechanic_workshop_image"/>
+        <field name="domain_force">[('workshop_id.website_published', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_workshop_image_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners manage their own gallery</field>
+        <field name="model_id" ref="model_odex_road_mechanic_workshop_image"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Record rules: reviews                                        -->
+    <!-- ============================================================ -->
+    <record id="rule_review_public_read" model="ir.rule">
+        <field name="name">Road Mechanic: only approved reviews are public</field>
+        <field name="model_id" ref="model_odex_road_mechanic_review"/>
+        <field name="domain_force">[('state', '=', 'approved'), ('workshop_id.website_published', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_review_internal_approved" model="ir.rule">
+        <field name="name">Road Mechanic: plain employees see approved reviews</field>
+        <field name="model_id" ref="model_odex_road_mechanic_review"/>
+        <field name="domain_force">[('state', '=', 'approved')]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_review_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: internal users see all reviews</field>
+        <field name="model_id" ref="model_odex_road_mechanic_review"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_review_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners see reviews of their workshop</field>
+        <field name="model_id" ref="model_odex_road_mechanic_review"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_review_customer_own" model="ir.rule">
+        <field name="name">Road Mechanic: customers see their own reviews</field>
+        <field name="model_id" ref="model_odex_road_mechanic_review"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_customer'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Record rules: inquiries (never public)                       -->
+    <!-- ============================================================ -->
+    <record id="rule_inquiry_internal_all" model="ir.rule">
+        <field name="name">Road Mechanic: internal users see all inquiries</field>
+        <field name="model_id" ref="model_odex_road_mechanic_inquiry"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_inquiry_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners see inquiries sent to them</field>
+        <field name="model_id" ref="model_odex_road_mechanic_inquiry"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_inquiry_customer_own" model="ir.rule">
+        <field name="name">Road Mechanic: customers see their own inquiries</field>
+        <field name="model_id" ref="model_odex_road_mechanic_inquiry"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_customer'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Record rules: workshop offers                                -->
+    <!-- ============================================================ -->
+    <record id="rule_workshop_offer_public" model="ir.rule">
+        <field name="name">Road Mechanic: published running offers are public</field>
+        <field name="model_id" ref="model_odex_road_mechanic_offer"/>
+        <field name="domain_force">[('website_published', '=', True), ('is_active', '=', True), ('workshop_id.website_published', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_workshop_offer_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners manage their own offers</field>
+        <field name="model_id" ref="model_odex_road_mechanic_offer"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+    </record>
+
+    <record id="rule_workshop_offer_internal" model="ir.rule">
+        <field name="name">Road Mechanic: staff see all offers</field>
+        <field name="model_id" ref="model_odex_road_mechanic_offer"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_road_mechanic_user'))]"/>
+    </record>
+
+    <record id="rule_workshop_offer_image_public" model="ir.rule">
+        <field name="name">Road Mechanic: offer gallery follows the offer</field>
+        <field name="model_id" ref="model_odex_road_mechanic_offer_image"/>
+        <field name="domain_force">[('offer_id.website_published', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_public'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_workshop_offer_image_garage" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners manage their own offer gallery</field>
+        <field name="model_id" ref="model_odex_road_mechanic_offer_image"/>
+        <field name="domain_force">['|', ('offer_id.workshop_id.partner_id', '=', user.partner_id.id), ('offer_id.workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="location_dubai_al_quoz" model="odex.road.mechanic.location">
+            <field name="name">Al Quoz</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="location_dubai_ras_al_khor" model="odex.road.mechanic.location">
+            <field name="name">Ras Al Khor</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="location_dubai_al_qusais" model="odex.road.mechanic.location">
+            <field name="name">Al Qusais</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="location_dubai_deira" model="odex.road.mechanic.location">
+            <field name="name">Deira</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="location_dubai_jumeirah" model="odex.road.mechanic.location">
+            <field name="name">Jumeirah</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="location_dubai_al_nahda" model="odex.road.mechanic.location">
+            <field name="name">Al Nahda</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="location_dubai_al_barsha" model="odex.road.mechanic.location">
+            <field name="name">Al Barsha</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">7</field>
+        </record>
+        <record id="location_dubai_al_khabaisi" model="odex.road.mechanic.location">
+            <field name="name">Al Khabaisi</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">8</field>
+        </record>
+        <record id="location_dubai_umm_ramool" model="odex.road.mechanic.location">
+            <field name="name">Umm Ramool</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">9</field>
+        </record>
+        <record id="location_dubai_dubai_investment_park" model="odex.road.mechanic.location">
+            <field name="name">Dubai Investment Park</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="location_dubai_jebel_ali" model="odex.road.mechanic.location">
+            <field name="name">Jebel Ali</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">11</field>
+        </record>
+        <record id="location_dubai_al_aweer" model="odex.road.mechanic.location">
+            <field name="name">Al Aweer</field>
+            <field name="city">Dubai</field>
+            <field name="emirate">dubai</field>
+            <field name="sequence">12</field>
+        </record>
+        <record id="location_abu_dhabi_mussafah" model="odex.road.mechanic.location">
+            <field name="name">Mussafah</field>
+            <field name="city">Abu Dhabi</field>
+            <field name="emirate">abu_dhabi</field>
+            <field name="sequence">13</field>
+        </record>
+        <record id="location_abu_dhabi_al_mafraq" model="odex.road.mechanic.location">
+            <field name="name">Al Mafraq</field>
+            <field name="city">Abu Dhabi</field>
+            <field name="emirate">abu_dhabi</field>
+            <field name="sequence">14</field>
+        </record>
+        <record id="location_abu_dhabi_khalifa_city" model="odex.road.mechanic.location">
+            <field name="name">Khalifa City</field>
+            <field name="city">Abu Dhabi</field>
+            <field name="emirate">abu_dhabi</field>
+            <field name="sequence">15</field>
+        </record>
+        <record id="location_abu_dhabi_al_shamkha" model="odex.road.mechanic.location">
+            <field name="name">Al Shamkha</field>
+            <field name="city">Abu Dhabi</field>
+            <field name="emirate">abu_dhabi</field>
+            <field name="sequence">16</field>
+        </record>
+        <record id="location_abu_dhabi_musaffah_m9" model="odex.road.mechanic.location">
+            <field name="name">Musaffah M9</field>
+            <field name="city">Abu Dhabi</field>
+            <field name="emirate">abu_dhabi</field>
+            <field name="sequence">17</field>
+        </record>
+        <record id="location_sharjah_industrial_area_1" model="odex.road.mechanic.location">
+            <field name="name">Industrial Area 1</field>
+            <field name="city">Sharjah</field>
+            <field name="emirate">sharjah</field>
+            <field name="sequence">18</field>
+        </record>
+        <record id="location_sharjah_industrial_area_4" model="odex.road.mechanic.location">
+            <field name="name">Industrial Area 4</field>
+            <field name="city">Sharjah</field>
+            <field name="emirate">sharjah</field>
+            <field name="sequence">19</field>
+        </record>
+        <record id="location_sharjah_al_sajaa" model="odex.road.mechanic.location">
+            <field name="name">Al Sajaa</field>
+            <field name="city">Sharjah</field>
+            <field name="emirate">sharjah</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="location_sharjah_muwailih" model="odex.road.mechanic.location">
+            <field name="name">Muwailih</field>
+            <field name="city">Sharjah</field>
+            <field name="emirate">sharjah</field>
+            <field name="sequence">21</field>
+        </record>
+        <record id="location_sharjah_al_qasimia" model="odex.road.mechanic.location">
+            <field name="name">Al Qasimia</field>
+            <field name="city">Sharjah</field>
+            <field name="emirate">sharjah</field>
+            <field name="sequence">22</field>
+        </record>
+        <record id="location_ajman_al_jurf" model="odex.road.mechanic.location">
+            <field name="name">Al Jurf</field>
+            <field name="city">Ajman</field>
+            <field name="emirate">ajman</field>
+            <field name="sequence">23</field>
+        </record>
+        <record id="location_ajman_new_industrial_area" model="odex.road.mechanic.location">
+            <field name="name">New Industrial Area</field>
+            <field name="city">Ajman</field>
+            <field name="emirate">ajman</field>
+            <field name="sequence">24</field>
+        </record>
+        <record id="location_ajman_al_rashidiya" model="odex.road.mechanic.location">
+            <field name="name">Al Rashidiya</field>
+            <field name="city">Ajman</field>
+            <field name="emirate">ajman</field>
+            <field name="sequence">25</field>
+        </record>
+        <record id="location_umm_al_quwain_industrial_area" model="odex.road.mechanic.location">
+            <field name="name">Industrial Area</field>
+            <field name="city">Umm Al Quwain</field>
+            <field name="emirate">umm_al_quwain</field>
+            <field name="sequence">26</field>
+        </record>
+        <record id="location_umm_al_quwain_al_salamah" model="odex.road.mechanic.location">
+            <field name="name">Al Salamah</field>
+            <field name="city">Umm Al Quwain</field>
+            <field name="emirate">umm_al_quwain</field>
+            <field name="sequence">27</field>
+        </record>
+        <record id="location_ras_al_khaimah_al_nakheel" model="odex.road.mechanic.location">
+            <field name="name">Al Nakheel</field>
+            <field name="city">Ras Al Khaimah</field>
+            <field name="emirate">ras_al_khaimah</field>
+            <field name="sequence">28</field>
+        </record>
+        <record id="location_ras_al_khaimah_al_jazeera_al_hamra" model="odex.road.mechanic.location">
+            <field name="name">Al Jazeera Al Hamra</field>
+            <field name="city">Ras Al Khaimah</field>
+            <field name="emirate">ras_al_khaimah</field>
+            <field name="sequence">29</field>
+        </record>
+        <record id="location_ras_al_khaimah_al_dhait" model="odex.road.mechanic.location">
+            <field name="name">Al Dhait</field>
+            <field name="city">Ras Al Khaimah</field>
+            <field name="emirate">ras_al_khaimah</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="location_fujairah_industrial_area" model="odex.road.mechanic.location">
+            <field name="name">Industrial Area</field>
+            <field name="city">Fujairah</field>
+            <field name="emirate">fujairah</field>
+            <field name="sequence">31</field>
+        </record>
+        <record id="location_fujairah_al_faseel" model="odex.road.mechanic.location">
+            <field name="name">Al Faseel</field>
+            <field name="city">Fujairah</field>
+            <field name="emirate">fujairah</field>
+            <field name="sequence">32</field>
+        </record>
+    </data>
+</odoo>

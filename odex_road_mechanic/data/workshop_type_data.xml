@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="type_service_center" model="odex.road.mechanic.workshop.type">
+            <field name="name">Service Center</field><field name="sequence">1</field><field name="icon">fa-wrench</field>
+        </record>
+        <record id="type_repair_garage" model="odex.road.mechanic.workshop.type">
+            <field name="name">Repair Garage</field><field name="sequence">2</field><field name="icon">fa-cogs</field>
+        </record>
+        <record id="type_body_shop" model="odex.road.mechanic.workshop.type">
+            <field name="name">Body Shop</field><field name="sequence">3</field><field name="icon">fa-car</field>
+        </record>
+        <record id="type_tyre_alignment" model="odex.road.mechanic.workshop.type">
+            <field name="name">Tyre &amp; Alignment</field><field name="sequence">4</field><field name="icon">fa-circle-o-notch</field>
+        </record>
+        <record id="type_auto_electrical" model="odex.road.mechanic.workshop.type">
+            <field name="name">Auto Electrical</field><field name="sequence">5</field><field name="icon">fa-bolt</field>
+        </record>
+        <record id="type_detailing_center" model="odex.road.mechanic.workshop.type">
+            <field name="name">Detailing Center</field><field name="sequence">6</field><field name="icon">fa-magic</field>
+        </record>
+        <record id="type_car_care" model="odex.road.mechanic.workshop.type">
+            <field name="name">Car Care</field><field name="sequence">7</field><field name="icon">fa-shield</field>
+        </record>
+        <record id="type_roadside_assistance" model="odex.road.mechanic.workshop.type">
+            <field name="name">Roadside Assistance</field><field name="sequence">8</field><field name="icon">fa-life-ring</field>
+        </record>
+    </data>
+</odoo>
