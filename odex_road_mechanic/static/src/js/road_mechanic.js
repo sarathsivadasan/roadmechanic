@@ -543,3 +543,31 @@ publicWidget.registry.RoadMechanicWorkshopTabs = publicWidget.Widget.extend({
         button.textContent = open ? "Show less" : "Read more";
     },
 });
+
+
+/** Generic show/hide used by the review form and other optional blocks. */
+publicWidget.registry.RoadMechanicCollapse = publicWidget.Widget.extend({
+    selector: ".odex-road-mechanic",
+    events: {
+        "click [data-orm-collapse-toggle]": "_onToggle",
+    },
+
+    _onToggle(ev) {
+        ev.preventDefault();
+        const button = ev.currentTarget;
+        const target = this.el.querySelector("#" + button.dataset.ormCollapseToggle);
+        if (!target) {
+            return;
+        }
+        const open = target.classList.toggle("is-open");
+        button.setAttribute("aria-expanded", open ? "true" : "false");
+        const labels = (button.dataset.ormCollapseLabels || "").split("|");
+        if (labels.length === 2) {
+            button.querySelector("[data-orm-collapse-label]").textContent =
+                open ? labels[1] : labels[0];
+        }
+        if (open) {
+            target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+    },
+});

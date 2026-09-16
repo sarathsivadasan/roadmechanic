@@ -286,6 +286,76 @@ class RoadMechanicPortal(CustomerPortal, RoadMechanicMixin):
         return request.redirect('/my/workshop/%s/offers?saved=1' % workshop.id)
 
     # ------------------------------------------------------------------
+    # Garage Partner: opening hours
+    # ------------------------------------------------------------------
+    @http.route(['/my/workshop/<int:workshop_id>/hours'], type='http', auth='user',
+                website=True)
+    def orm_portal_hours(self, workshop_id, **post):
+        workshop = self._orm_owned_workshop(workshop_id)
+        labels = [('5', 'Saturday'), ('6', 'Sunday'), ('0', 'Monday'), ('1', 'Tuesday'),
+                  ('2', 'Wednesday'), ('3', 'Thursday'), ('4', 'Friday')]
+        lines = {line.dayofweek: line for line in workshop.working_day_ids}
+        rows = []
+        for code, label in labels:
+            line = lines.get(code)
+            rows.append({
+                'code': code,
+                'label': label,
+                'enabled': bool(line and line.active),
+                'morning_from': line.morning_from if line else 8.0,
+                'morning_to': line.morning_to if line else 13.0,
+                'afternoon_from': line.afternoon_from if line else 14.0,
+                'afternoon_to': line.afternoon_to if line else 20.0,
+            })
+        values = self._prepare_portal_layout_values()
+        values.update({
+            'workshop': workshop,
+            'hour_rows': rows,
+            'page_name': 'road_mechanic_workshop',
+            'saved': post.get('saved') == '1',
+            'error': post.get('error'),
+        })
+        return request.render('odex_road_mechanic.portal_workshop_hours', values)
+
+    @http.route(['/my/workshop/<int:workshop_id>/hours/save'], type='http', auth='user',
+                methods=['POST'], website=True)
+    def orm_portal_hours_save(self, workshop_id, **post):
+        workshop = self._orm_owned_workshop(workshop_id)
+        form = request.httprequest.form
+
+        def _float(raw, default=0.0):
+            try:
+                return float(raw)
+            except (TypeError, ValueError):
+                return default
+
+        WorkingDay = request.env['odex.road.mechanic.working.day'].sudo()
+        try:
+            for code in ('0', '1', '2', '3', '4', '5', '6'):
+                line = workshop.working_day_ids.filtered(
+                    lambda d, c=code: d.dayofweek == c)[:1]
+                enabled = form.get('day_%s_enabled' % code) == '1'
+                values = {
+                    'morning_from': _float(form.get('day_%s_mf' % code), 8.0),
+                    'morning_to': _float(form.get('day_%s_mt' % code), 13.0),
+                    'afternoon_from': _float(form.get('day_%s_af' % code), 14.0),
+                    'afternoon_to': _float(form.get('day_%s_at' % code), 20.0),
+                    'active': enabled,
+                }
+                if line:
+                    line.write(values)
+                elif enabled:
+                    WorkingDay.create(dict(values, workshop_id=workshop.id, dayofweek=code))
+            workshop.sudo().write({
+                'open_24h': post.get('open_24h') in ('1', 'on', 'true'),
+                'working_hours': (post.get('working_hours') or '').strip()[:500] or False,
+            })
+        except Exception:  # noqa: BLE001
+            _logger.exception('Road Mechanic: opening hours save failed')
+            return request.redirect('/my/workshop/%s/hours?error=1' % workshop.id)
+        return request.redirect('/my/workshop/%s/hours?saved=1' % workshop.id)
+
+    # ------------------------------------------------------------------
     # Garage Partner: exact location
     # ------------------------------------------------------------------
     @http.route(['/my/workshop/<int:workshop_id>/location'], type='http', auth='user',

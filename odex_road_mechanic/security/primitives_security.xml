@@ -36,4 +36,12 @@
     </record>
 
 
+    <record id="rule_working_day_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: garage partners manage their own schedule</field>
+        <field name="model_id" ref="model_odex_road_mechanic_working_day"/>
+        <field name="domain_force">['|', ('workshop_id.partner_id', '=', user.partner_id.id), ('workshop_id.partner_id', '=', user.partner_id.commercial_partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+    </record>
+
+
 </odoo>

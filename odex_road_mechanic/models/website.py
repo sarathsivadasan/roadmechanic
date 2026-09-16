@@ -1,3 +1,5 @@
+from markupsafe import Markup
+
 from odoo import api, fields, models
 
 
@@ -17,6 +19,22 @@ class Website(models.Model):
         help='How much the hero photo is darkened behind the heading, from 0 '
              '(photo untouched) to 95 (almost black). Keep it high enough for '
              'the white heading to stay readable.')
+    orm_color_primary = fields.Char(
+        string='Primary / CTA Colour', default='#e51b23',
+        help='Buttons, links and highlights. Hex value such as #e51b23.')
+    orm_color_accent = fields.Char(
+        string='Accent Colour', default='#d6b06a',
+        help='Featured badges and premium accents.')
+    orm_color_success = fields.Char(
+        string='Verified / Open Colour', default='#12a55b')
+    orm_color_light_bg = fields.Char(
+        string='Light Mode Background', default='#ffffff')
+    orm_color_light_surface = fields.Char(
+        string='Light Mode Panels', default='#f5f6f7')
+    orm_color_dark_bg = fields.Char(
+        string='Dark Mode Background', default='#0d0d0d')
+    orm_color_dark_surface = fields.Char(
+        string='Dark Mode Panels', default='#171717')
     orm_contact_phone = fields.Char(string='Road Mechanic Phone')
     orm_contact_whatsapp = fields.Char(string='Road Mechanic WhatsApp')
     orm_contact_email = fields.Char(string='Road Mechanic Email')
@@ -30,6 +48,47 @@ class Website(models.Model):
         return ('linear-gradient(90deg, rgba(10, 10, 10, %.2f) 0%%, '
                 'rgba(10, 10, 10, %.2f) 55%%, rgba(10, 10, 10, %.2f) 100%%)' % (
                     strength, strength * 0.62, strength * 0.28))
+
+    def orm_theme_style(self):
+        """Inline CSS variable overrides for the colours set in Settings.
+
+        Returned as markup so the page can drop it in a style tag. Only values
+        that differ from the stylesheet defaults are written, so an untouched
+        website keeps the shipped palette.
+        """
+        self.ensure_one()
+        light = {
+            '--orm-red': (self.orm_color_primary, '#e51b23'),
+            '--orm-gold': (self.orm_color_accent, '#d6b06a'),
+            '--orm-green': (self.orm_color_success, '#12a55b'),
+            '--orm-bg': (self.orm_color_light_bg, '#ffffff'),
+            '--orm-card': (self.orm_color_light_bg, '#ffffff'),
+            '--orm-bg-muted': (self.orm_color_light_surface, '#f5f6f7'),
+        }
+        dark = {
+            '--orm-bg': (self.orm_color_dark_bg, '#0d0d0d'),
+            '--orm-card': (self.orm_color_dark_surface, '#171717'),
+            '--orm-bg-muted': (self.orm_color_dark_bg, '#0d0d0d'),
+        }
+
+        def _rules(values):
+            out = []
+            for name, (value, default) in values.items():
+                value = (value or '').strip()
+                if value and value.lower() != default:
+                    out.append('%s: %s;' % (name, value))
+            return ' '.join(out)
+
+        light_rules = _rules(light)
+        dark_rules = _rules(dark)
+        if not light_rules and not dark_rules:
+            return ''
+        css = ''
+        if light_rules:
+            css += '.odex-road-mechanic{%s}' % light_rules
+        if dark_rules:
+            css += 'html[data-orm-theme="dark"] .odex-road-mechanic{%s}' % dark_rules
+        return Markup('<style>%s</style>') % Markup(css)
 
     def orm_hero_image_url(self):
         self.ensure_one()

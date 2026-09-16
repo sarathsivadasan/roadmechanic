@@ -46,6 +46,7 @@
             <t t-set="additional_title">Offers - Road Mechanic</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <p class="orm-hero__eyebrow">Road Mechanic</p>
@@ -90,6 +91,7 @@
             <t t-set="additional_title" t-value="offer.name"/>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <nav class="orm-breadcrumb">

@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class RoadMechanicVehicleBrand(models.Model):
@@ -41,6 +41,50 @@ class RoadMechanicVehicleBrand(models.Model):
             if duplicate:
                 raise ValidationError(
                     _('A vehicle brand named "%s" already exists.', record.name))
+
+    def logo_url(self, size='128x128'):
+        """Own logo first, then the matching Fleet brand image."""
+        self.ensure_one()
+        if self.logo:
+            return '/web/image/odex.road.mechanic.vehicle.brand/%s/logo/%s' % (self.id, size)
+        fleet_brand = self._fleet_brand()
+        if fleet_brand:
+            return '/web/image/fleet.vehicle.model.brand/%s/image_128/%s' % (
+                fleet_brand.id, size)
+        return False
+
+    def _fleet_brand(self):
+        """The Fleet brand with the same name, when the Fleet app is installed."""
+        self.ensure_one()
+        if 'fleet.vehicle.model.brand' not in self.env:
+            return False
+        brand = self.env['fleet.vehicle.model.brand'].sudo().search(
+            [('name', '=ilike', (self.name or '').strip())], limit=1)
+        return brand if brand and brand.image_128 else False
+
+    def action_import_fleet_logos(self):
+        """Copy the logo of the matching Fleet brand onto these records."""
+        if 'fleet.vehicle.model.brand' not in self.env:
+            raise UserError(_('The Fleet application is not installed, so there '
+                              'are no brand logos to import.'))
+        imported = 0
+        for record in self:
+            if record.logo:
+                continue
+            fleet_brand = record._fleet_brand()
+            if fleet_brand:
+                record.logo = fleet_brand.image_128
+                imported += 1
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Fleet logos'),
+                'message': _('%s logo(s) imported.', imported),
+                'type': 'success' if imported else 'warning',
+                'sticky': False,
+            },
+        }
 
     @api.depends('workshop_ids')
     def _compute_workshop_count(self):

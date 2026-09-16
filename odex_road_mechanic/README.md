@@ -278,3 +278,35 @@ and sidebar.
 * Reviews, the review form, the inquiry form, ratings input, lightbox and mobile
   bar all keep their original ids and data attributes, so the existing
   JavaScript widgets and POST routes work untouched.
+
+
+---
+
+# Release 18.0.3.0.0
+
+* **Listing type** on every company: Workshop, Spare Parts Supplier, Used Parts
+  Dealer, Roadside Assistance or Recovery. The directory at `/workshops` lists
+  workshops only; the other types appear on their own service page. The
+  registration form asks for it up front, plus optional extra capabilities.
+* **Provider directory** on `/roadside-assistance`, `/recovery`, `/spare-parts`
+  and `/used-parts`: the registered companies for that service, searchable by
+  name and area, each linking to its page for a call, WhatsApp or inquiry. The
+  request-and-offer form stays above it.
+* **Opening days** moved into the directory module. A workshop sets the days it
+  opens and the hours per day, in the backend (Working Hours tab) or in the
+  portal at `/my/workshop/<id>/hours`. Only the days actually configured are
+  shown to customers, and Open now follows them. The booking addon now cuts its
+  slots from these same days.
+* **Brand logos from Fleet**: a vehicle brand uses its own logo, else the image
+  of the Fleet brand with the same name when the Fleet app is installed. A
+  button on the brand list imports them in bulk.
+* **Brand colours in Settings**: primary, accent, verified, and the light and
+  dark backgrounds and panels. They are injected as CSS variable overrides, so
+  no code edit and no asset rebuild is needed.
+* Hero photo is no longer washed out - the scrim only darkens where the text
+  sits - and the logo sits next to the workshop name.
+* The review form is collapsed behind a "Write a review" button and opens on
+  click, or automatically when a submission comes back with an error.
+* Empty states are written for their context: no workshop for a service, none
+  in an area, no company for a platform service, and a different message when a
+  search returned nothing.

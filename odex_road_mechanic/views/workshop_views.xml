@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <list string="Workshops" decoration-success="is_verified" decoration-muted="not website_published">
                 <field name="name"/>
+                <field name="listing_type"/>
                 <field name="workshop_type_id" optional="show"/>
                 <field name="workshop_class" optional="show"/>
                 <field name="location_id" optional="show"/>
@@ -83,6 +84,10 @@
                 <filter name="filter_verified" string="Verified" domain="[('is_verified', '=', True)]"/>
                 <filter name="filter_featured" string="Featured" domain="[('is_featured', '=', True)]"/>
                 <filter name="filter_class_a" string="Class A" domain="[('workshop_class', '=', 'a')]"/>
+                <separator/>
+                <filter name="filter_workshops" string="Workshops" domain="[('listing_type', '=', 'workshop')]"/>
+                <filter name="filter_parts" string="Parts Suppliers" domain="[('listing_type', 'in', ('spare_parts', 'used_parts'))]"/>
+                <filter name="filter_field_services" string="Roadside / Recovery" domain="[('listing_type', 'in', ('roadside', 'recovery'))]"/>
                 <filter name="filter_published" string="Published" domain="[('website_published', '=', True)]"/>
                 <filter name="filter_unpublished" string="Not Published" domain="[('website_published', '=', False)]"/>
                 <separator/>
@@ -99,6 +104,7 @@
                     <filter name="group_location" string="Area" context="{'group_by': 'location_id'}"/>
                     <filter name="group_type" string="Workshop Type" context="{'group_by': 'workshop_type_id'}"/>
                     <filter name="group_class" string="Workshop Class" context="{'group_by': 'workshop_class'}"/>
+                    <filter name="group_listing" string="Listing Type" context="{'group_by': 'listing_type'}"/>
                     <filter name="group_status" string="Verification Status" context="{'group_by': 'verification_status'}"/>
                 </group>
             </search>
@@ -169,6 +175,7 @@
                     </div>
                     <group>
                         <group>
+                            <field name="listing_type"/>
                             <field name="workshop_type_id"/>
                             <field name="workshop_class"
                                    groups="odex_road_mechanic.group_road_mechanic_manager"/>
@@ -277,6 +284,23 @@
                             </field>
                         </page>
                         <page string="Working Hours" name="hours">
+                            <div class="mb-2">
+                                <button name="action_generate_default_days" type="object"
+                                        string="Generate Saturday - Thursday schedule"
+                                        class="btn-link"/>
+                            </div>
+                            <separator string="Opening Days"/>
+                            <field name="working_day_ids">
+                                <list editable="bottom">
+                                    <field name="dayofweek"/>
+                                    <field name="morning_from" widget="float_time"/>
+                                    <field name="morning_to" widget="float_time"/>
+                                    <field name="afternoon_from" widget="float_time"/>
+                                    <field name="afternoon_to" widget="float_time"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                            <separator string="Fallback"/>
                             <group>
                                 <group>
                                     <field name="open_24h"/>

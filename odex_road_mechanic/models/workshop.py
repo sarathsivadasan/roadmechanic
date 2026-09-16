@@ -119,6 +119,8 @@ class RoadMechanicWorkshop(models.Model):
     tz = fields.Selection(
         lambda self: [(t, t) for t in sorted(pytz.all_timezones)],
         string='Timezone', default=DEFAULT_TZ, required=True)
+    working_day_ids = fields.One2many(
+        'odex.road.mechanic.working.day', 'workshop_id', string='Opening Days')
     working_hours = fields.Text(
         string='Working Hours',
         help='Free text shown on the website, e.g. "Sat - Thu: 8:00 - 22:00".')
@@ -133,6 +135,17 @@ class RoadMechanicWorkshop(models.Model):
     # ------------------------------------------------------------------
     # Ranking / status
     # ------------------------------------------------------------------
+    listing_type = fields.Selection([
+        ('workshop', 'Workshop / Garage'),
+        ('spare_parts', 'Spare Parts Supplier'),
+        ('used_parts', 'Used Parts Dealer'),
+        ('roadside', 'Roadside Assistance'),
+        ('recovery', 'Recovery / Towing'),
+    ], string='Listing Type', default='workshop', required=True, index=True,
+        tracking=True,
+        help='Where this company is listed. Workshops appear in the directory, '
+             'the other types appear on their own service page.')
+    listing_type_label = fields.Char(compute='_compute_listing_type_label')
     workshop_class = fields.Selection([
         ('a', 'Class A'),
         ('b', 'Class B'),
@@ -227,6 +240,25 @@ class RoadMechanicWorkshop(models.Model):
         mapped = {workshop.id: count for workshop, count in data}
         for record in self:
             record.gallery_count = mapped.get(record.id, 0)
+
+    @api.depends('listing_type')
+    def _compute_listing_type_label(self):
+        labels = dict(self._fields['listing_type'].selection)
+        for record in self:
+            record.listing_type_label = labels.get(record.listing_type, '')
+
+    @api.onchange('listing_type')
+    def _onchange_listing_type(self):
+        """Keep the service capabilities in step with the chosen listing."""
+        mapping = {
+            'roadside': 'provides_roadside',
+            'recovery': 'provides_recovery',
+            'spare_parts': 'sells_spare_parts',
+            'used_parts': 'sells_used_parts',
+        }
+        field = mapping.get(self.listing_type)
+        if field and field in self._fields:
+            self[field] = True
 
     @api.depends('workshop_class')
     def _compute_workshop_class_label(self):
@@ -463,6 +495,8 @@ class RoadMechanicWorkshop(models.Model):
                 (4, 'Friday'), (5, 'Saturday'), (6, 'Sunday')]
         tz = self._booking_tz_name()
         today_index = datetime.now(pytz.timezone(tz)).weekday()
+        if self.working_day_ids:
+            return self._working_hours_from_days(days, today_index)
         if self.open_24h:
             label = _('Open 24 hours')
         elif self.opening_time or self.closing_time:
@@ -479,6 +513,48 @@ class RoadMechanicWorkshop(models.Model):
                 'closed': False,
             })
         return rows
+
+    def _working_hours_from_days(self, days, today_index):
+        """Rows built from the configured opening days."""
+        self.ensure_one()
+        lines = {int(line.dayofweek): line for line in self.working_day_ids if line.active}
+        rows = []
+        for index, name in days:
+            line = lines.get(index)
+            if not line:
+                rows.append({'day': name, 'hours': _('Closed'),
+                             'today': index == today_index, 'closed': True})
+                continue
+            blocks = ['%s - %s' % (self._format_hour(start), self._format_hour(end))
+                      for start, end in line.time_ranges()]
+            rows.append({
+                'day': name,
+                'hours': ', '.join(blocks) or _('Closed'),
+                'today': index == today_index,
+                'closed': not blocks,
+            })
+        return rows
+
+    def action_generate_default_days(self):
+        """Create a Saturday to Thursday schedule from the workshop hours."""
+        WorkingDay = self.env['odex.road.mechanic.working.day']
+        for workshop in self:
+            existing = set(workshop.working_day_ids.mapped('dayofweek'))
+            opening = workshop.opening_time or 8.0
+            closing = workshop.closing_time or 20.0
+            midday = min(max(opening + 1, 13.0), closing)
+            for dayofweek in ('5', '6', '0', '1', '2', '3'):
+                if dayofweek in existing:
+                    continue
+                WorkingDay.create({
+                    'workshop_id': workshop.id,
+                    'dayofweek': dayofweek,
+                    'morning_from': opening,
+                    'morning_to': midday,
+                    'afternoon_from': min(midday + 1, closing),
+                    'afternoon_to': closing,
+                })
+        return True
 
     def _booking_tz_name(self):
         self.ensure_one()
@@ -688,8 +764,30 @@ class RoadMechanicWorkshop(models.Model):
     # Public directory API (used by the website controllers)
     # ------------------------------------------------------------------
     @api.model
-    def _public_domain(self):
-        return [('website_published', '=', True)]
+    def _public_domain(self, listing_type='workshop'):
+        """Published companies of one listing type.
+
+        The directory shows workshops; a spare parts supplier or a recovery
+        company is listed on its own service page instead.
+        """
+        domain = [('website_published', '=', True)]
+        if listing_type:
+            domain.append(('listing_type', '=', listing_type))
+        return domain
+
+    @api.model
+    def _provider_domain(self, capability):
+        """Published companies that can serve one platform service."""
+        field = {
+            'roadside': 'provides_roadside',
+            'recovery': 'provides_recovery',
+            'spare_part': 'sells_spare_parts',
+            'used_part': 'sells_used_parts',
+        }.get(capability)
+        domain = [('website_published', '=', True)]
+        if field and field in self._fields:
+            domain.append((field, '=', True))
+        return domain
 
     @api.model
     def _build_search_domain(self, options):

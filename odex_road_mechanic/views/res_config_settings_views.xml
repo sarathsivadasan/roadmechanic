@@ -24,6 +24,39 @@
                              help="How much the hero photo is darkened behind the heading. 0 leaves the photo untouched, 95 is almost black.">
                         <field name="orm_hero_overlay"/>
                     </setting>
+                    <setting id="orm_colors_setting" string="Brand Colours"
+                             help="Hex values used across the Road Mechanic pages. Leave a field empty to keep the shipped colour.">
+                        <div class="content-group">
+                            <div class="row mt8">
+                                <label for="orm_color_primary" class="col-lg-5 o_light_label"/>
+                                <field name="orm_color_primary" placeholder="#e51b23"/>
+                            </div>
+                            <div class="row">
+                                <label for="orm_color_accent" class="col-lg-5 o_light_label"/>
+                                <field name="orm_color_accent" placeholder="#d6b06a"/>
+                            </div>
+                            <div class="row">
+                                <label for="orm_color_success" class="col-lg-5 o_light_label"/>
+                                <field name="orm_color_success" placeholder="#12a55b"/>
+                            </div>
+                            <div class="row">
+                                <label for="orm_color_light_bg" class="col-lg-5 o_light_label"/>
+                                <field name="orm_color_light_bg" placeholder="#ffffff"/>
+                            </div>
+                            <div class="row">
+                                <label for="orm_color_light_surface" class="col-lg-5 o_light_label"/>
+                                <field name="orm_color_light_surface" placeholder="#f5f6f7"/>
+                            </div>
+                            <div class="row">
+                                <label for="orm_color_dark_bg" class="col-lg-5 o_light_label"/>
+                                <field name="orm_color_dark_bg" placeholder="#0d0d0d"/>
+                            </div>
+                            <div class="row">
+                                <label for="orm_color_dark_surface" class="col-lg-5 o_light_label"/>
+                                <field name="orm_color_dark_surface" placeholder="#171717"/>
+                            </div>
+                        </div>
+                    </setting>
                     <setting id="orm_contact_setting" string="Directory Contact Details"
                              help="Shown on the Road Mechanic contact page.">
                         <div class="content-group">

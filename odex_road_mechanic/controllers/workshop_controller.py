@@ -38,6 +38,11 @@ class RoadMechanicMixin(object):
             'orm_brands': env['odex.road.mechanic.vehicle.brand'].search([]),
             'orm_locations': env['odex.road.mechanic.location'].search([]),
             'orm_emirates': env['odex.road.mechanic.workshop']._fields['emirate'].selection,
+            'orm_listing_types': env['odex.road.mechanic.workshop']._fields['listing_type'].selection,
+            'empty_title': _('No workshops match this search'),
+            'empty_text': _('Try a different service, area or clear the filters.'),
+            'empty_url': '/workshops',
+            'empty_action': _('See all workshops'),
             'orm_website': website,
             'orm_hero_image': website.orm_hero_image_url(),
             'orm_hero_overlay': website.orm_hero_overlay_css(),
@@ -309,6 +314,8 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
         values.update({
             'service': service,
             'main_object': service,
+            'empty_title': _('No workshop offers %s yet', service.name),
+            'empty_text': _('Try another area, or browse every workshop in the directory.'),
             'workshops': workshops,
             'total': total,
             'pager': pager,
@@ -342,6 +349,8 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
         values.update({
             'location': location,
             'main_object': location,
+            'empty_title': _('No workshop listed in %s yet', location.name),
+            'empty_text': _('Try a nearby area, or browse the whole directory.'),
             'workshops': workshops,
             'total': total,
             'pager': pager,
@@ -525,11 +534,29 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
                 return 0.0
 
         emirate = (post.get('emirate') or '').strip()
-        if emirate not in dict(env['odex.road.mechanic.workshop']._fields['emirate'].selection):
+        Workshop = env['odex.road.mechanic.workshop']
+        if emirate not in dict(Workshop._fields['emirate'].selection):
             emirate = False
+
+        listing_type = post.get('listing_type')
+        if listing_type not in dict(Workshop._fields['listing_type'].selection):
+            listing_type = 'workshop'
+        capability = {
+            'roadside': 'provides_roadside',
+            'recovery': 'provides_recovery',
+            'spare_parts': 'sells_spare_parts',
+            'used_parts': 'sells_used_parts',
+        }
+        capabilities = {field: False for field in capability.values()}
+        if listing_type in capability:
+            capabilities[capability[listing_type]] = True
+        for key, field in capability.items():
+            if post.get('offers_%s' % key) in ('1', 'on', 'true'):
+                capabilities[field] = True
 
         values = {
             'name': name[:120],
+            'listing_type': listing_type,
             'owner_name': (post.get('owner_name') or '').strip()[:120] or False,
             'phone': phone[:40],
             'mobile': (post.get('mobile') or '').strip()[:40] or False,
@@ -558,6 +585,7 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
             'website_published': False,
             'active': True,
         }
+        values.update(capabilities)
 
         files = request.httprequest.files
         logo = self._orm_read_image(files.get('logo'))

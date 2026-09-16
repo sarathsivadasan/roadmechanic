@@ -9,6 +9,7 @@
             <t t-set="additional_title">Road Mechanic - Find trusted workshops in the UAE</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
 
                     <section class="orm-hero"
                              t-attf-style="background-image: #{orm_hero_overlay}, url('#{orm_hero_image}');">
@@ -242,6 +243,7 @@
             <t t-set="additional_title">Workshops - Road Mechanic</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <p class="orm-hero__eyebrow">Road Mechanic directory</p>
@@ -283,6 +285,7 @@
             <t t-set="additional_title" t-value="workshop.name"/>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic odex-road-mechanic--detail roadmechanic-workshop-page">
+                    <t t-out="website.orm_theme_style()"/>
 
                     <!-- ============================ HERO ============================ -->
                     <nav class="orm-wsp-crumb" aria-label="Breadcrumb">
@@ -530,9 +533,9 @@
                                 <div class="orm-wsp-brands">
                                     <div class="orm-wsp-brand" t-foreach="workshop.vehicle_brand_ids[:7]"
                                          t-as="brand">
-                                        <img t-if="brand.logo" loading="lazy"
-                                             t-attf-src="/web/image/odex.road.mechanic.vehicle.brand/#{brand.id}/logo/120x120"
-                                             t-att-alt="brand.name"/>
+                                        <t t-set="brand_logo" t-value="brand.logo_url()"/>
+                                        <img t-if="brand_logo" loading="lazy"
+                                             t-att-src="brand_logo" t-att-alt="brand.name"/>
                                         <span class="orm-wsp-brand__mark" t-else=""
                                               t-out="brand.name[:2].upper()"/>
                                         <span class="orm-wsp-brand__name" t-out="brand.name"/>
@@ -632,8 +635,18 @@
                                     No approved reviews yet. Be the first to share your experience.
                                 </p>
 
-                                <h3 class="orm-wsp-card__subtitle" id="orm-write-review">Write a review</h3>
-                                <form action="/road-mechanic/review" method="post" class="orm-form">
+                                <div class="orm-wsp-card__subtitle" id="orm-write-review">
+                                    <button type="button" class="orm-collapse-toggle"
+                                            data-orm-collapse-toggle="orm-review-form"
+                                            data-orm-collapse-labels="Write a review|Hide the form"
+                                            aria-expanded="false">
+                                        <i class="fa fa-pencil"/>
+                                        <span data-orm-collapse-label="1">Write a review</span>
+                                    </button>
+                                </div>
+                                <form action="/road-mechanic/review" method="post"
+                                      id="orm-review-form"
+                                      t-attf-class="orm-form orm-collapse #{review_sent or form_error in ('duplicate', 'rating') and 'is-open' or ''}">
                                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                     <input type="hidden" name="workshop_slug" t-att-value="workshop.slug"/>
                                     <input type="text" name="orm_website_url" class="orm-hp" tabindex="-1"
@@ -955,6 +968,7 @@
             <t t-set="additional_title">Services - Road Mechanic</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <p class="orm-hero__eyebrow">Road Mechanic</p>
@@ -995,6 +1009,7 @@
             <t t-set="additional_title" t-value="service.name"/>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <nav class="orm-breadcrumb" aria-label="Breadcrumb">
@@ -1036,6 +1051,7 @@
             <t t-set="additional_title" t-value="location.display_name"/>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <nav class="orm-breadcrumb" aria-label="Breadcrumb">
@@ -1081,6 +1097,7 @@
             <t t-set="additional_title">About - Road Mechanic</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <p class="orm-hero__eyebrow">UAE Auto Solutions</p>
@@ -1153,6 +1170,7 @@
             <t t-set="additional_title">Contact - Road Mechanic</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <p class="orm-hero__eyebrow">Road Mechanic - UAE Auto Solutions</p>
@@ -1221,6 +1239,7 @@
             <t t-set="additional_title">Register your workshop - Road Mechanic</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <p class="orm-hero__eyebrow">For workshop owners</p>
@@ -1253,7 +1272,44 @@
                                 <input type="text" name="orm_website_url" class="orm-hp" tabindex="-1"
                                        autocomplete="off" aria-hidden="true"/>
 
-                                <h2 class="orm-block__subtitle">Workshop</h2>
+                                <h2 class="orm-block__subtitle">What are you listing?</h2>
+                                <div class="orm-form__field">
+                                    <label for="reg-listing">Listing type *</label>
+                                    <select id="reg-listing" name="listing_type" class="orm-input"
+                                            required="required">
+                                        <t t-foreach="orm_listing_types" t-as="ltype">
+                                            <option t-att-value="ltype[0]" t-out="ltype[1]"/>
+                                        </t>
+                                    </select>
+                                    <p class="orm-muted orm-small">
+                                        Workshops appear in the directory. Spare parts, used parts,
+                                        roadside assistance and recovery companies are listed on
+                                        their own service page.
+                                    </p>
+                                </div>
+                                <div class="orm-form__field">
+                                    <span class="orm-form__label">Also available for</span>
+                                    <div class="orm-checklist orm-checklist--wide">
+                                        <label class="orm-check">
+                                            <input type="checkbox" name="offers_roadside" value="1"/>
+                                            <span>Roadside assistance requests</span>
+                                        </label>
+                                        <label class="orm-check">
+                                            <input type="checkbox" name="offers_recovery" value="1"/>
+                                            <span>Recovery and towing requests</span>
+                                        </label>
+                                        <label class="orm-check">
+                                            <input type="checkbox" name="offers_spare_parts" value="1"/>
+                                            <span>Spare parts requests</span>
+                                        </label>
+                                        <label class="orm-check">
+                                            <input type="checkbox" name="offers_used_parts" value="1"/>
+                                            <span>Used parts requests</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h2 class="orm-block__subtitle">Company</h2>
                                 <div class="orm-form__row">
                                     <div class="orm-form__field">
                                         <label for="reg-name">Workshop name *</label>

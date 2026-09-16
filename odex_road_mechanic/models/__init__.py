@@ -4,6 +4,7 @@ from . import service
 from . import vehicle_brand
 from . import location
 from . import vehicle
+from . import working_day
 from . import workshop
 from . import workshop_image
 from . import offer

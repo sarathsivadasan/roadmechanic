@@ -12,9 +12,6 @@ access_quotation_manager,road.mechanic.quotation.manager,model_odex_road_mechani
 access_quotation_line_portal,road.mechanic.quotation.line.portal,model_odex_road_mechanic_quotation_line,base.group_portal,1,0,0,0
 access_quotation_line_garage,road.mechanic.quotation.line.garage,model_odex_road_mechanic_quotation_line,odex_road_mechanic.group_garage_partner,1,1,1,1
 access_quotation_line_user,road.mechanic.quotation.line.user,model_odex_road_mechanic_quotation_line,odex_road_mechanic.group_road_mechanic_user,1,1,1,1
-access_working_day_portal,road.mechanic.working.day.portal,model_odex_road_mechanic_working_day,base.group_portal,1,0,0,0
-access_working_day_garage,road.mechanic.working.day.garage,model_odex_road_mechanic_working_day,odex_road_mechanic.group_garage_partner,1,1,1,1
-access_working_day_user,road.mechanic.working.day.user,model_odex_road_mechanic_working_day,odex_road_mechanic.group_road_mechanic_user,1,1,1,1
 access_closed_date_portal,road.mechanic.closed.date.portal,model_odex_road_mechanic_closed_date,base.group_portal,1,0,0,0
 access_closed_date_garage,road.mechanic.closed.date.garage,model_odex_road_mechanic_closed_date,odex_road_mechanic.group_garage_partner,1,1,1,1
 access_closed_date_user,road.mechanic.closed.date.user,model_odex_road_mechanic_closed_date,odex_road_mechanic.group_road_mechanic_user,1,1,1,1

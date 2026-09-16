@@ -13,6 +13,27 @@ class ResConfigSettings(models.TransientModel):
     orm_hero_overlay = fields.Integer(
         related='website_id.orm_hero_overlay', readonly=False,
         string='Hero Overlay Darkness')
+    orm_color_primary = fields.Char(
+        related='website_id.orm_color_primary', readonly=False,
+        string='Primary / CTA Colour')
+    orm_color_accent = fields.Char(
+        related='website_id.orm_color_accent', readonly=False,
+        string='Accent Colour')
+    orm_color_success = fields.Char(
+        related='website_id.orm_color_success', readonly=False,
+        string='Verified / Open Colour')
+    orm_color_light_bg = fields.Char(
+        related='website_id.orm_color_light_bg', readonly=False,
+        string='Light Mode Background')
+    orm_color_light_surface = fields.Char(
+        related='website_id.orm_color_light_surface', readonly=False,
+        string='Light Mode Panels')
+    orm_color_dark_bg = fields.Char(
+        related='website_id.orm_color_dark_bg', readonly=False,
+        string='Dark Mode Background')
+    orm_color_dark_surface = fields.Char(
+        related='website_id.orm_color_dark_surface', readonly=False,
+        string='Dark Mode Panels')
     orm_contact_phone = fields.Char(
         related='website_id.orm_contact_phone', readonly=False,
         string='Road Mechanic Phone')

@@ -326,6 +326,8 @@
                t-attf-class="orm-tab #{tab == 'profile' and 'is-active' or ''}">Workshop</a>
             <a t-attf-href="/my/workshop/#{workshop.id}/offers"
                t-attf-class="orm-tab #{tab == 'offers' and 'is-active' or ''}">Offers</a>
+            <a t-attf-href="/my/workshop/#{workshop.id}/hours"
+               t-attf-class="orm-tab #{tab == 'hours' and 'is-active' or ''}">Working hours</a>
             <a t-attf-href="/my/workshop/#{workshop.id}/location"
                t-attf-class="orm-tab #{tab == 'location' and 'is-active' or ''}">Location &amp; map</a>
             <a t-if="workshop.website_published" t-attf-href="/workshop/#{workshop.slug}"
@@ -741,6 +743,76 @@
                         </details>
                     </article>
                 </div>
+            </div>
+        </t>
+    </template>
+
+
+    <!-- Garage Partner: opening days and hours -->
+    <template id="portal_workshop_hours" name="Workshop Opening Hours">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic odex-road-mechanic--portal">
+                <h1 class="orm-block__title">Working hours - <t t-out="workshop.name"/></h1>
+                <t t-set="tab" t-value="'hours'"/>
+                <t t-call="odex_road_mechanic.orm_workshop_portal_nav"/>
+
+                <div class="orm-alert orm-alert--success" t-if="saved">Opening hours saved.</div>
+                <div class="orm-alert orm-alert--error" t-if="error">
+                    Those hours could not be saved. Check the values and try again.
+                </div>
+
+                <form t-attf-action="/my/workshop/#{workshop.id}/hours/save" method="post"
+                      class="orm-form orm-panel">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <p class="orm-muted orm-small">
+                        Tick the days you open. Only the ticked days are shown to customers, and
+                        the Open now badge follows these hours. Times are decimal, so 8.5 means
+                        08:30. Leave the afternoon equal to the morning end for one continuous
+                        block.
+                    </p>
+
+                    <label class="orm-check">
+                        <input type="checkbox" name="open_24h" value="1"
+                               t-att-checked="workshop.open_24h and 'checked' or None"/>
+                        <span>Open 24 hours, every day</span>
+                    </label>
+
+                    <div class="orm-schedule">
+                        <t t-foreach="hour_rows" t-as="row">
+                            <div class="orm-schedule__row">
+                                <label class="orm-check orm-schedule__day">
+                                    <input type="checkbox" t-attf-name="day_#{row['code']}_enabled"
+                                           value="1"
+                                           t-att-checked="row['enabled'] and 'checked' or None"/>
+                                    <span t-out="row['label']"/>
+                                </label>
+                                <input type="number" step="0.25" min="0" max="24"
+                                       t-attf-name="day_#{row['code']}_mf" class="orm-input"
+                                       t-att-value="row['morning_from']"/>
+                                <input type="number" step="0.25" min="0" max="24"
+                                       t-attf-name="day_#{row['code']}_mt" class="orm-input"
+                                       t-att-value="row['morning_to']"/>
+                                <input type="number" step="0.25" min="0" max="24"
+                                       t-attf-name="day_#{row['code']}_af" class="orm-input"
+                                       t-att-value="row['afternoon_from']"/>
+                                <input type="number" step="0.25" min="0" max="24"
+                                       t-attf-name="day_#{row['code']}_at" class="orm-input"
+                                       t-att-value="row['afternoon_to']"/>
+                            </div>
+                        </t>
+                    </div>
+
+                    <div class="orm-form__field">
+                        <label for="wh-note">Note shown under the hours</label>
+                        <input id="wh-note" type="text" name="working_hours" class="orm-input"
+                               maxlength="500" placeholder="e.g. Friday prayer break 12:30 - 14:00"
+                               t-att-value="workshop.working_hours or ''"/>
+                    </div>
+
+                    <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg">
+                        Save working hours
+                    </button>
+                </form>
             </div>
         </t>
     </template>

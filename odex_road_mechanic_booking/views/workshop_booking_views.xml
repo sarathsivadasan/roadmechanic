@@ -28,22 +28,11 @@
                             <field name="allow_pickup" invisible="not booking_enabled"/>
                         </group>
                     </group>
-                    <div class="mb-2" invisible="not booking_enabled">
-                        <button name="action_generate_default_days" type="object"
-                                string="Generate Saturday - Thursday schedule" class="btn-link"/>
+                    <div class="alert alert-info" role="alert"
+                         invisible="not booking_enabled">
+                        Slots are generated from the opening days on the
+                        <b>Working Hours</b> tab, cut into the slot length below.
                     </div>
-                    <separator string="Working Days"/>
-                    <field name="working_day_ids" invisible="not booking_enabled">
-                        <list editable="bottom">
-                            <field name="dayofweek"/>
-                            <field name="morning_from" widget="float_time"/>
-                            <field name="morning_to" widget="float_time"/>
-                            <field name="afternoon_from" widget="float_time"/>
-                            <field name="afternoon_to" widget="float_time"/>
-                            <field name="capacity"/>
-                            <field name="active" widget="boolean_toggle"/>
-                        </list>
-                    </field>
                     <separator string="Closed Dates and Blocked Slots"/>
                     <field name="closed_date_ids" invisible="not booking_enabled">
                         <list editable="bottom">

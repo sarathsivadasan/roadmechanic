@@ -72,3 +72,6 @@ access_workshop_offer_manager,road.mechanic.offer.manager,model_odex_road_mechan
 access_workshop_offer_image_public,road.mechanic.offer.image.public,model_odex_road_mechanic_offer_image,base.group_public,1,0,0,0
 access_workshop_offer_image_portal,road.mechanic.offer.image.portal,model_odex_road_mechanic_offer_image,base.group_portal,1,1,1,1
 access_workshop_offer_image_user,road.mechanic.offer.image.user,model_odex_road_mechanic_offer_image,odex_road_mechanic.group_road_mechanic_user,1,1,1,1
+access_working_day_portal,road.mechanic.working.day.portal,model_odex_road_mechanic_working_day,base.group_portal,1,0,0,0
+access_working_day_garage,road.mechanic.working.day.garage,model_odex_road_mechanic_working_day,odex_road_mechanic.group_garage_partner,1,1,1,1
+access_working_day_user,road.mechanic.working.day.user,model_odex_road_mechanic_working_day,odex_road_mechanic.group_road_mechanic_user,1,1,1,1

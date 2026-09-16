@@ -6,6 +6,10 @@
         <field name="model">odex.road.mechanic.vehicle.brand</field>
         <field name="arch" type="xml">
             <list string="Vehicle Brands" editable="bottom">
+                <header>
+                    <button name="action_import_fleet_logos" type="object"
+                            string="Import logos from Fleet" class="btn-secondary"/>
+                </header>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="slug" readonly="1"/>

@@ -45,10 +45,38 @@ class RoadMechanicServiceMixin(object):
             return request.env['res.partner']
         return request.env.user.partner_id
 
+    def _providers(self, request_type, **post):
+        """Published companies registered for this service, newest first.
+
+        Verified and featured ones rank first through the model's own order.
+        """
+        Workshop = request.env['odex.road.mechanic.workshop']
+        domain = Workshop._provider_domain(request_type)
+        search = (post.get('provider_search') or '').strip()[:80]
+        if search:
+            domain += ['|', '|',
+                       ('name', 'ilike', search),
+                       ('location_id.name', 'ilike', search),
+                       ('area', 'ilike', search)]
+        if post.get('provider_area') and str(post['provider_area']).isdigit():
+            domain.append(('location_id', '=', int(post['provider_area'])))
+        if post.get('provider_emirate'):
+            emirate = post['provider_emirate']
+            if emirate in dict(Workshop._fields['emirate'].selection):
+                domain.append(('emirate', '=', emirate))
+        total = Workshop.search_count(domain)
+        return {
+            'providers': Workshop.search(domain, limit=12),
+            'provider_total': total,
+            'provider_search': search,
+            'provider_area': post.get('provider_area') or '',
+            'provider_emirate': post.get('provider_emirate') or '',
+        }
+
     def _service_values(self, request_type, **post):
         env = request.env
         partner = self._customer_partner()
-        return {
+        values = {
             'request_type': request_type,
             'request_type_label': dict(REQUEST_TYPES)[request_type],
             'roadside_services': ROADSIDE_SERVICES,
@@ -64,6 +92,9 @@ class RoadMechanicServiceMixin(object):
             'error': post.get('error'),
             'submitted_request': self._submitted_request(post.get('done'), post.get('token')),
         }
+        values['page_url'] = PAGE_BY_TYPE.get(request_type, '/')
+        values.update(self._providers(request_type, **post))
+        return values
 
     def _submitted_request(self, request_id, token):
         if not request_id or not token:

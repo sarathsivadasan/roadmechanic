@@ -1,4 +1,3 @@
-from . import working_day
 from . import closed_date
 from . import workshop
 from . import booking

@@ -11,6 +11,7 @@
             <t t-set="is_field" t-value="request_type in ('roadside', 'recovery')"/>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic odex-road-mechanic--service">
+                    <t t-out="website.orm_theme_style()"/>
 
                     <section class="orm-hero orm-hero--service">
                         <div class="orm-container orm-hero__inner">
@@ -458,6 +459,72 @@
                         </div>
                     </section>
 
+
+                    <!-- Registered providers for this service -->
+                    <section class="orm-section orm-section--muted" id="orm-providers">
+                        <div class="orm-container">
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title">
+                                    <i class="fa fa-building-o orm-section__icon"/>
+                                    <t t-if="request_type == 'roadside'">Roadside assistance companies</t>
+                                    <t t-elif="request_type == 'recovery'">Recovery and towing companies</t>
+                                    <t t-elif="request_type == 'spare_part'">Spare parts suppliers</t>
+                                    <t t-else="">Used parts dealers</t>
+                                    <span class="orm-count">(<t t-out="provider_total"/>)</span>
+                                </h2>
+                            </header>
+                            <p class="orm-muted">
+                                Contact a company directly, or post the request above and let every
+                                matching company come back to you.
+                            </p>
+
+                            <form class="orm-providers__search" method="get">
+                                <input type="search" name="provider_search" class="orm-input"
+                                       placeholder="Company name or area"
+                                       t-att-value="provider_search"/>
+                                <select name="provider_area" class="orm-input">
+                                    <option value="">All areas</option>
+                                    <t t-foreach="orm_locations" t-as="location">
+                                        <option t-att-value="location.id"
+                                                t-att-selected="str(provider_area) == str(location.id) and 'selected' or None"
+                                                t-out="location.display_name"/>
+                                    </t>
+                                </select>
+                                <button type="submit" class="orm-btn orm-btn--primary">
+                                    <i class="fa fa-search"/> Find companies
+                                </button>
+                            </form>
+
+                            <div class="orm-grid orm-grid--cards" t-if="providers">
+                                <t t-foreach="providers" t-as="workshop">
+                                    <t t-call="odex_road_mechanic.orm_workshop_card"/>
+                                </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <t t-if="provider_search or provider_area">
+                                    <strong>No company matches this search.</strong>
+                                    <p class="orm-muted">
+                                        Clear the filters, or post your request above and matching
+                                        companies will answer.
+                                    </p>
+                                    <a t-attf-href="#{page_url}#orm-providers"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">Clear search</a>
+                                </t>
+                                <t t-else="">
+                                    <strong>No company is registered for this service yet.</strong>
+                                    <p class="orm-muted">
+                                        Post your request above - our team routes it to the right
+                                        provider.
+                                    </p>
+                                    <a href="/register-workshop"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">
+                                        Register your company
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- How it works -->
                     <section class="orm-section orm-section--muted">
                         <div class="orm-container">
@@ -506,6 +573,7 @@
             <t t-set="additional_title" t-value="req.name"/>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic odex-road-mechanic--service">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <p class="orm-hero__eyebrow" t-out="req.request_type_label"/>
@@ -637,6 +705,7 @@
             <t t-set="additional_title">Offers</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic odex-road-mechanic--service">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <nav class="orm-breadcrumb">
@@ -678,6 +747,7 @@
             <t t-set="additional_title">Chat</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic odex-road-mechanic--service">
+                    <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
                             <nav class="orm-breadcrumb">

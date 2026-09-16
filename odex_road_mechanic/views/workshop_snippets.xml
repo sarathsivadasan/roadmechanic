@@ -359,9 +359,9 @@
         <div class="orm-empty">
             <img src="/odex_road_mechanic/static/src/img/road_mechanic_mark.png" alt="Road Mechanic"
                  class="orm-empty__mark"/>
-            <h3 class="orm-empty__title">No workshops match this search</h3>
-            <p class="orm-empty__text">Try a different service, area or clear the filters.</p>
-            <a href="/workshops" class="orm-btn orm-btn--outline">See all workshops</a>
+            <h3 class="orm-empty__title" t-out="empty_title"/>
+            <p class="orm-empty__text" t-out="empty_text"/>
+            <a t-att-href="empty_url" class="orm-btn orm-btn--outline" t-out="empty_action"/>
         </div>
     </template>
 

@@ -1419,3 +1419,58 @@ html[data-orm-theme="dark"] .orm-rating-input label { color: #3f3f46; }
     .roadmechanic-workshop-page .orm-wsp-hero__row { align-items: flex-start; }
     .roadmechanic-workshop-page .orm-wsp-crumb .orm-container { flex-wrap: nowrap; overflow-x: auto; }
 }
+
+
+/* ==========================================================================
+   Refinements: clearer hero photo, tighter logo block, provider directory,
+   collapsible review form
+   ========================================================================== */
+
+/* the scrim was hiding the workshop photo: keep it only where text sits */
+.roadmechanic-workshop-page .orm-wsp-hero__scrim {
+    background:
+        linear-gradient(180deg, rgba(7, 26, 43, .10) 0%, rgba(7, 26, 43, .18) 45%, rgba(7, 26, 43, .88) 100%),
+        linear-gradient(90deg, rgba(7, 26, 43, .74) 0%, rgba(7, 26, 43, .30) 48%, rgba(7, 26, 43, 0) 78%);
+}
+.roadmechanic-workshop-page .orm-wsp-hero__img { filter: saturate(1.05) contrast(1.04); }
+.roadmechanic-workshop-page .orm-wsp-hero__title { text-shadow: 0 2px 14px rgba(0, 0, 0, .65); }
+.roadmechanic-workshop-page .orm-wsp-hero__meta { text-shadow: 0 1px 8px rgba(0, 0, 0, .6); }
+
+/* logo sat far from the name on wide screens */
+.roadmechanic-workshop-page .orm-wsp-hero__row { gap: .9rem; }
+.roadmechanic-workshop-page .orm-wsp-hero__logo { margin-right: 0; }
+.roadmechanic-workshop-page .orm-wsp-hero__text { flex: 1 1 auto; min-width: 0; }
+
+/* collapsible review form */
+.odex-road-mechanic .orm-collapse { display: none; }
+.odex-road-mechanic .orm-collapse.is-open { display: block; }
+.odex-road-mechanic .orm-collapse-toggle {
+    display: inline-flex; align-items: center; gap: .4rem;
+    background: none;
+    border: 1px solid var(--orm-red);
+    color: var(--orm-red);
+    border-radius: var(--orm-radius-sm);
+    padding: .5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.odex-road-mechanic .orm-collapse-toggle:hover { background: var(--orm-red); color: #fff; }
+
+/* provider directory on the service pages */
+.odex-road-mechanic .orm-providers { margin-top: 1.25rem; }
+.odex-road-mechanic .orm-providers__search {
+    display: flex; gap: .5rem; flex-wrap: wrap;
+    background: var(--orm-card);
+    border: 1px solid var(--orm-border);
+    border-radius: var(--orm-radius);
+    padding: .6rem;
+    margin-bottom: 1rem;
+}
+.odex-road-mechanic .orm-providers__search .orm-input { flex: 1 1 200px; width: auto; }
+.odex-road-mechanic .orm-providers__empty {
+    border: 1px dashed var(--orm-border);
+    border-radius: var(--orm-radius);
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--orm-text-muted);
+}
