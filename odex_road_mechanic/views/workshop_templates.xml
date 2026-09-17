@@ -144,9 +144,9 @@
                                     View all workshops <i class="fa fa-arrow-right"/>
                                 </a>
                             </header>
-                            <div class="orm-rows" t-if="all_workshops">
+                            <div class="orm-grid orm-grid--results" t-if="all_workshops">
                                 <t t-foreach="all_workshops" t-as="workshop">
-                                    <t t-call="odex_road_mechanic.orm_workshop_row"/>
+                                    <t t-call="odex_road_mechanic.orm_workshop_card"/>
                                 </t>
                             </div>
                             <div class="orm-providers__empty" t-else="">
@@ -171,9 +171,9 @@
                                     View all spare parts <i class="fa fa-arrow-right"/>
                                 </a>
                             </header>
-                            <div class="orm-rows" t-if="all_suppliers">
+                            <div class="orm-grid orm-grid--results" t-if="all_suppliers">
                                 <t t-foreach="all_suppliers" t-as="workshop">
-                                    <t t-call="odex_road_mechanic.orm_workshop_row"/>
+                                    <t t-call="odex_road_mechanic.orm_workshop_card"/>
                                 </t>
                             </div>
                             <div class="orm-providers__empty" t-else="">
@@ -1316,7 +1316,7 @@
                                 </p>
                                 <h2>For workshop owners</h2>
                                 <p>
-                                    Listing is free. Register your workshop, add your photos, services
+                                    Listing is free. Register your company, add your photos, services
                                     and working hours, and submit it for verification.
                                 </p>
                             </div>
@@ -1374,7 +1374,7 @@
                                     you already own, sign in and open "My workshops".
                                 </p>
                                 <a href="/register-workshop" class="orm-btn orm-btn--primary">
-                                    Register your workshop
+                                    Register your company
                                 </a>
                             </div>
                             <div class="orm-panel">
@@ -1402,17 +1402,21 @@
     <!-- ============================================================== -->
     <template id="register_workshop" name="Road Mechanic Workshop Registration">
         <t t-call="website.layout">
-            <t t-set="additional_title">Register your workshop - Road Mechanic</t>
+            <t t-set="additional_title">Register your company - Road Mechanic</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
                     <t t-out="website.orm_theme_style()"/>
                     <section class="orm-subhero">
                         <div class="orm-container">
-                            <p class="orm-hero__eyebrow">For workshop owners</p>
-                            <h1 class="orm-subhero__title">Register your workshop</h1>
-                            <p class="orm-subhero__text">
-                                Submit your details for verification. Listings appear publicly once
-                                our team approves them.
+                            <p class="orm-hero__eyebrow" data-orm-reg-eyebrow="1">
+                                For business owners
+                            </p>
+                            <h1 class="orm-subhero__title" data-orm-reg-title="1">
+                                Register your company
+                            </h1>
+                            <p class="orm-subhero__text" data-orm-reg-lead="1">
+                                Workshop or spare parts supplier - submit your details for
+                                verification. Listings appear publicly once our team approves them.
                             </p>
                         </div>
                         <t t-call="odex_road_mechanic.orm_theme_toggle"/>
@@ -1535,7 +1539,7 @@
                                     </div>
                                 </div>
                                 <div class="orm-form__row">
-                                    <div class="orm-form__field">
+                                    <div class="orm-form__field" data-orm-workshop-only="1">
                                         <label for="reg-type">Workshop type</label>
                                         <select id="reg-type" name="workshop_type_id" class="orm-input">
                                             <option value="">Select type</option>
@@ -1590,8 +1594,13 @@
                                     </div>
                                 </div>
 
-                                <h2 class="orm-block__subtitle">Services and brands</h2>
-                                <div class="orm-form__field">
+                                <h2 class="orm-block__subtitle" data-orm-workshop-only="1">
+                                    Services and brands
+                                </h2>
+                                <h2 class="orm-block__subtitle" data-orm-parts-only="1">
+                                    Parts and brands
+                                </h2>
+                                <div class="orm-form__field" data-orm-workshop-only="1">
                                     <span class="orm-form__label">Services offered</span>
                                     <div class="orm-checklist orm-checklist--wide">
                                         <t t-foreach="orm_services" t-as="service">
@@ -1616,7 +1625,7 @@
 
                                 <h2 class="orm-block__subtitle">Details</h2>
                                 <div class="orm-form__field">
-                                    <label for="reg-hours">Working hours</label>
+                                    <label for="reg-hours">Opening hours</label>
                                     <input id="reg-hours" type="text" name="working_hours" class="orm-input"
                                            placeholder="Sat - Thu: 8:00 - 22:00" maxlength="500"/>
                                 </div>
@@ -1632,25 +1641,30 @@
                                 </div>
 
                                 <h2 class="orm-block__subtitle">Photos and documents</h2>
+                                <p class="orm-muted orm-small">
+                                    A trade licence is required for every company, workshop or
+                                    spare parts supplier. It is used for verification only and is
+                                    never published.
+                                </p>
                                 <div class="orm-form__row">
                                     <div class="orm-form__field">
-                                        <label for="reg-logo">Workshop logo</label>
+                                        <label for="reg-logo">Company logo</label>
                                         <input id="reg-logo" type="file" name="logo" class="orm-input"
                                                accept="image/*"/>
                                     </div>
                                     <div class="orm-form__field">
-                                        <label for="reg-main">Main workshop photo</label>
+                                        <label for="reg-main">Main photo</label>
                                         <input id="reg-main" type="file" name="main_image" class="orm-input"
                                                accept="image/*"/>
                                     </div>
                                 </div>
                                 <div class="orm-form__field">
-                                    <label for="reg-gallery">Additional workshop photos</label>
+                                    <label for="reg-gallery">Additional photos</label>
                                     <input id="reg-gallery" type="file" name="gallery_images" class="orm-input"
                                            accept="image/*" multiple="multiple"/>
                                 </div>
                                 <div class="orm-form__field">
-                                    <label for="reg-tl">Trade licence document</label>
+                                    <label for="reg-tl">Trade licence document *</label>
                                     <input id="reg-tl" type="file" name="trade_licence" class="orm-input"/>
                                     <p class="orm-muted orm-small">
                                         Used for verification only. It is never shown on the website.

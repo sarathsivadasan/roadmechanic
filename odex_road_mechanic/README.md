@@ -395,3 +395,28 @@ Assistance, Recovery, Request a part and Services.
   limits, so the page issues small queries only.
 * "Own a workshop?" became "Are you an automotive service provider?" with
   **List your business** and **Become a partner**, covering all four types.
+
+
+---
+
+# Release 18.0.4.1.0
+
+* **Registration is per company type.** Choosing Spare Parts Supplier hides
+  workshop type and the services checklist and shows parts categories and
+  delivery instead; choosing Workshop does the reverse. The heading, eyebrow and
+  intro text change with the selection, and the server ignores the fields that
+  do not belong to the chosen type, so a supplier can never end up with workshop
+  services attached.
+* The page is now **Register your company**, as is the website menu entry.
+* **Trade licence upload is required for both types** and called out as such.
+  Logo, main photo and gallery labels dropped the word "workshop".
+* Home page sections 3 and 4 use cards in a grid rather than full width rows, so
+  several companies fit across one row.
+
+
+* 18.0.4.1.1 - the hero "Verified companies" panel had its own hardcoded light
+  and dark backgrounds, so it ignored the colours set in Website settings. It
+  now reads `--orm-card`, `--orm-border`, `--orm-text` and `--orm-text-muted`
+  like every other panel. The only colours still fixed on purpose are the white
+  plate behind a company logo and the toggle knob, which need to stay white for
+  legibility whatever the palette.

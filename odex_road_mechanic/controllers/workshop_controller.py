@@ -584,7 +584,8 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
             'website': (post.get('website') or '').strip()[:200] or False,
             'trade_licence_number': (post.get('trade_licence_number') or '').strip()[:60] or False,
             'workshop_type_id': _rel(
-                'odex.road.mechanic.workshop.type', post.get('workshop_type_id')),
+                'odex.road.mechanic.workshop.type', post.get('workshop_type_id'))
+                if listing_type == 'workshop' else False,
             'location_id': _rel(
                 'odex.road.mechanic.location', post.get('location_id')),
             'emirate': emirate,
@@ -597,7 +598,8 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
             'short_description': (post.get('short_description') or '').strip()[:200] or False,
             'description': plaintext2html(
                 (post.get('description') or '').strip()[:5000]) if post.get('description') else False,
-            'service_ids': [(6, 0, _multi('odex.road.mechanic.service', 'service_ids'))],
+            'service_ids': [(6, 0, _multi('odex.road.mechanic.service', 'service_ids')
+                             if listing_type == 'workshop' else [])],
             'vehicle_brand_ids': [
                 (6, 0, _multi('odex.road.mechanic.vehicle.brand', 'vehicle_brand_ids'))],
             'part_category_ids': [

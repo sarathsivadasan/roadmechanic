@@ -31,7 +31,7 @@
         </record>
 
         <record id="menu_website_register_workshop" model="website.menu">
-            <field name="name">Register Your Workshop</field>
+            <field name="name">Register Your Company</field>
             <field name="url">/register-workshop</field>
             <field name="parent_id" ref="website.main_menu"/>
             <field name="sequence">25</field>

@@ -35,8 +35,8 @@
                 <h1 class="orm-block__title">My workshops</h1>
                 <t t-if="not workshops">
                     <div class="orm-alert">
-                        No workshop is linked to your account yet.
-                        <a href="/register-workshop">Register your workshop</a> or contact us so we
+                        No company is linked to your account yet.
+                        <a href="/register-workshop">Register your company</a> or contact us so we
                         can link an existing listing to your login.
                     </div>
                 </t>

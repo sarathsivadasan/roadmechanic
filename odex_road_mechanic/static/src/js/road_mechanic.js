@@ -573,7 +573,11 @@ publicWidget.registry.RoadMechanicCollapse = publicWidget.Widget.extend({
 });
 
 
-/** Registration: the delivery question only applies to a parts supplier. */
+/**
+ * Registration: the form and its heading follow the kind of company being
+ * listed, so a spare parts supplier never sees workshop services and a garage
+ * never sees parts categories.
+ */
 publicWidget.registry.RoadMechanicListingType = publicWidget.Widget.extend({
     selector: ".odex-road-mechanic",
     events: {
@@ -586,12 +590,36 @@ publicWidget.registry.RoadMechanicListingType = publicWidget.Widget.extend({
     },
 
     _sync() {
-        const block = this.el.querySelector("[data-orm-parts-only]");
         const selected = this.el.querySelector("[data-orm-listing]:checked");
-        if (!block) {
+        if (!selected) {
             return;
         }
-        block.style.display = selected && selected.value === "spare_parts" ? "" : "none";
+        const isParts = selected.value === "spare_parts";
+        this.el.querySelectorAll("[data-orm-parts-only]").forEach((node) => {
+            node.style.display = isParts ? "" : "none";
+        });
+        this.el.querySelectorAll("[data-orm-workshop-only]").forEach((node) => {
+            node.style.display = isParts ? "none" : "";
+        });
+
+        const texts = {
+            eyebrow: isParts ? "For spare parts suppliers" : "For workshop owners",
+            title: isParts ? "Register your parts business" : "Register your workshop",
+            lead: isParts
+                ? "List the parts you carry and let customers reach you directly, or answer the part requests customers post."
+                : "Submit your details for verification. Your workshop appears publicly once our team approves it.",
+        };
+        const map = {
+            "[data-orm-reg-eyebrow]": texts.eyebrow,
+            "[data-orm-reg-title]": texts.title,
+            "[data-orm-reg-lead]": texts.lead,
+        };
+        Object.entries(map).forEach(([selector, value]) => {
+            const node = this.el.querySelector(selector);
+            if (node) {
+                node.textContent = value;
+            }
+        });
     },
 
     _onChange() {
