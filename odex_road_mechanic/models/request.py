@@ -163,6 +163,8 @@ class RoadMechanicRequest(models.Model):
     part_name = fields.Char(string='Part Name')
     part_number = fields.Char(string='Part Number / OEM Number')
     part_brand = fields.Char(string='Preferred Brand')
+    part_category_id = fields.Many2one(
+        'odex.road.mechanic.part.category', string='Part Category', index=True)
     quantity = fields.Integer(string='Quantity', default=1)
     part_condition = fields.Selection(PART_CONDITIONS, string='Required Condition')
     delivery_required = fields.Boolean(string='Delivery Required')
@@ -186,7 +188,7 @@ class RoadMechanicRequest(models.Model):
     eta_minutes = fields.Integer(string='Estimated Response (minutes)')
     offer_ids = fields.One2many(
         'odex.road.mechanic.part.offer', 'request_id', string='Offers')
-    offer_count = fields.Integer(compute='_compute_counts', store=True)
+    offer_count = fields.Integer(compute='_compute_counts')
     accepted_offer_id = fields.Many2one(
         'odex.road.mechanic.part.offer', string='Accepted Offer', copy=False, readonly=True)
     best_price = fields.Float(string='Best Offer', compute='_compute_counts')
@@ -369,8 +371,15 @@ class RoadMechanicRequest(models.Model):
 
     def matching_providers(self, limit=20):
         self.ensure_one()
-        return self.env['odex.road.mechanic.workshop'].sudo().search(
-            self._provider_domain(), limit=limit)
+        domain = self._provider_domain()
+        if self.part_category_id and self.request_type in PART_TYPES:
+            # suppliers of that category first, everyone else only if none match
+            focused = self.env['odex.road.mechanic.workshop'].sudo().search(
+                domain + [('part_category_ids', 'in', self.part_category_id.ids)],
+                limit=limit)
+            if focused:
+                return focused
+        return self.env['odex.road.mechanic.workshop'].sudo().search(domain, limit=limit)
 
     def _notify_matching_providers(self):
         """Create a notification for every provider that can serve the request."""

@@ -284,6 +284,17 @@
                                                        class="orm-input" maxlength="80"/>
                                             </div>
                                         </div>
+                                        <div class="orm-form__field">
+                                            <label for="sv-category">Part category</label>
+                                            <select id="sv-category" name="part_category_id"
+                                                    class="orm-input">
+                                                <option value="">Select category</option>
+                                                <t t-foreach="orm_part_categories" t-as="category">
+                                                    <option t-att-value="category.id"
+                                                            t-out="category.name"/>
+                                                </t>
+                                            </select>
+                                        </div>
                                         <div class="orm-form__row">
                                             <div class="orm-form__field">
                                                 <label for="sv-brand">Preferred brand</label>
@@ -776,6 +787,349 @@
                             </div>
                         </div>
                     </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <!-- Assistance or recovery requested from one company -->
+    <template id="company_request_page" name="Road Mechanic Company Request">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="request_type_label"/>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic odex-road-mechanic--service">
+                    <t t-out="website.orm_theme_style()"/>
+                    <section class="orm-subhero">
+                        <div class="orm-container">
+                            <nav class="orm-breadcrumb">
+                                <a href="/workshops">Workshops</a><span>/</span>
+                                <a t-attf-href="/workshop/#{workshop.slug}" t-out="workshop.name"/>
+                                <span>/</span><span t-out="request_type_label"/>
+                            </nav>
+                            <h1 class="orm-subhero__title">
+                                <t t-out="request_type_label"/> from <t t-out="workshop.name"/>
+                            </h1>
+                            <p class="orm-subhero__text">
+                                Tell them where you are and what happened. Your request goes to
+                                this company directly.
+                            </p>
+                        </div>
+                        <t t-call="odex_road_mechanic.orm_theme_toggle"/>
+                    </section>
+
+                    <section class="orm-section">
+                        <div class="orm-container orm-container--narrow">
+                            <div class="orm-panel orm-panel--success orm-mb" t-if="submitted_request">
+                                <h2 class="orm-block__title">
+                                    <i class="fa fa-check-circle text-success"/> Request sent
+                                </h2>
+                                <t t-set="req" t-value="submitted_request"/>
+                                <t t-set="steps" t-value="submitted_request.flow_steps()"/>
+                                <t t-call="odex_road_mechanic.orm_status_timeline"/>
+                                <t t-call="odex_road_mechanic.orm_request_summary"/>
+                                <div class="orm-actions">
+                                    <a t-attf-href="/request/#{submitted_request.id}?token=#{submitted_request.access_token}"
+                                       class="orm-btn orm-btn--primary">Track this request</a>
+                                    <a t-attf-href="/chat/#{submitted_request.id}?token=#{submitted_request.access_token}"
+                                       class="orm-btn orm-btn--outline">
+                                        <i class="fa fa-comments-o"/> Chat
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="orm-alert orm-alert--error" t-if="error == 'contact'">
+                                Please enter your name and a valid mobile number.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'location'">
+                                Your location is required so they can reach you.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'dropoff'">
+                                A drop-off location is required for a recovery.
+                            </div>
+
+                            <div class="orm-panel orm-mb">
+                                <div class="orm-wsp-idcard">
+                                    <div class="orm-wsp-idcard__logo" t-if="workshop.logo">
+                                        <img t-att-src="workshop.image_url('logo')"
+                                             t-att-alt="workshop.name"/>
+                                    </div>
+                                    <div>
+                                        <strong class="orm-wsp-idcard__name" t-out="workshop.name"/>
+                                        <p class="orm-muted orm-small" t-if="workshop.full_address"
+                                           t-out="workshop.full_address"/>
+                                    </div>
+                                </div>
+                                <div class="orm-actions orm-mt">
+                                    <a t-if="workshop.call_number()"
+                                       t-attf-href="tel:#{workshop.call_number()}"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">
+                                        <i class="fa fa-phone"/> Call now
+                                    </a>
+                                    <a t-if="workshop.whatsapp_url" t-att-href="workshop.whatsapp_url"
+                                       target="_blank" rel="noopener"
+                                       class="orm-btn orm-btn--whatsapp orm-btn--sm">
+                                        <i class="fa fa-whatsapp"/> WhatsApp
+                                    </a>
+                                </div>
+                            </div>
+
+                            <form action="/road-mechanic/service-request/submit" method="post"
+                                  class="orm-form orm-panel" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="hidden" name="request_type" t-att-value="request_type"/>
+                                <input type="hidden" name="workshop_slug" t-att-value="workshop.slug"/>
+                                <input type="text" name="orm_website_url" class="orm-hp" tabindex="-1"
+                                       autocomplete="off" aria-hidden="true"/>
+
+                                <h2 class="orm-block__subtitle">
+                                    <t t-if="request_type == 'recovery'">Recovery type</t>
+                                    <t t-else="">What do you need?</t>
+                                </h2>
+                                <div class="orm-choice">
+                                    <t t-if="request_type == 'recovery'">
+                                        <t t-foreach="recovery_types" t-as="rec">
+                                            <label class="orm-choice__item">
+                                                <input type="radio" name="recovery_type"
+                                                       t-att-value="rec[0]"
+                                                       t-att-checked="rec[0] == 'breakdown' and 'checked' or None"/>
+                                                <span class="orm-choice__box">
+                                                    <i class="fa fa-truck"/><span t-out="rec[1]"/>
+                                                </span>
+                                            </label>
+                                        </t>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-foreach="roadside_services" t-as="svc">
+                                            <label class="orm-choice__item">
+                                                <input type="radio" name="roadside_service"
+                                                       t-att-value="svc[0]"
+                                                       t-att-checked="svc[0] == 'battery_jump' and 'checked' or None"/>
+                                                <span class="orm-choice__box">
+                                                    <i class="fa fa-wrench"/><span t-out="svc[1]"/>
+                                                </span>
+                                            </label>
+                                        </t>
+                                    </t>
+                                </div>
+
+                                <h2 class="orm-block__subtitle">
+                                    <t t-if="request_type == 'recovery'">Pickup location *</t>
+                                    <t t-else="">Where are you? *</t>
+                                </h2>
+                                <div class="orm-form__field">
+                                    <input type="text" name="location_address" class="orm-input"
+                                           required="required" maxlength="250"
+                                           data-orm-location-address="1"
+                                           placeholder="Street, area, landmark"/>
+                                    <input type="hidden" name="latitude" data-orm-location-lat="1"/>
+                                    <input type="hidden" name="longitude" data-orm-location-lng="1"/>
+                                    <button type="button" class="orm-btn orm-btn--outline orm-btn--sm"
+                                            data-orm-geolocate="1">
+                                        <i class="fa fa-crosshairs"/> Use my current location
+                                    </button>
+                                    <span class="orm-muted orm-small" data-orm-geo-status="1"/>
+                                </div>
+                                <div class="orm-form__field" t-if="request_type == 'recovery'">
+                                    <label for="cr-drop">Drop-off location *</label>
+                                    <input id="cr-drop" type="text" name="dropoff_address"
+                                           class="orm-input" required="required" maxlength="250"/>
+                                </div>
+                                <div class="orm-map orm-map--picker" data-orm-map="1" hidden="hidden">
+                                    <iframe data-orm-map-frame="1" title="Selected location" src=""/>
+                                </div>
+
+                                <h2 class="orm-block__subtitle">Your vehicle</h2>
+                                <div class="orm-form__row">
+                                    <div class="orm-form__field">
+                                        <label for="cr-brand">Make</label>
+                                        <select id="cr-brand" name="vehicle_brand_id" class="orm-input">
+                                            <option value="">Select make</option>
+                                            <t t-foreach="orm_brands" t-as="brand">
+                                                <option t-att-value="brand.id" t-out="brand.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="orm-form__field">
+                                        <label for="cr-model">Model</label>
+                                        <input id="cr-model" type="text" name="vehicle_model"
+                                               class="orm-input" maxlength="80"/>
+                                    </div>
+                                </div>
+                                <div class="orm-form__row">
+                                    <div class="orm-form__field">
+                                        <label for="cr-plate">Plate number</label>
+                                        <input id="cr-plate" type="text" name="vehicle_plate"
+                                               class="orm-input" maxlength="32"/>
+                                    </div>
+                                    <div class="orm-form__field" t-if="request_type == 'recovery'">
+                                        <label for="cr-cond">Vehicle condition</label>
+                                        <select id="cr-cond" name="vehicle_condition" class="orm-input">
+                                            <t t-foreach="vehicle_conditions" t-as="cond">
+                                                <option t-att-value="cond[0]" t-out="cond[1]"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="orm-form__field">
+                                    <label for="cr-desc">What happened?</label>
+                                    <textarea id="cr-desc" name="description" rows="3"
+                                              class="orm-input" maxlength="3000"/>
+                                </div>
+                                <t t-set="upload_id" t-value="'cr-photos'"/>
+                                <t t-set="upload_label" t-value="'Photos of the vehicle or the problem'"/>
+                                <t t-call="odex_road_mechanic.orm_upload_field"/>
+
+                                <h2 class="orm-block__subtitle">Your contact details</h2>
+                                <div class="orm-form__row">
+                                    <div class="orm-form__field">
+                                        <label for="cr-name">Name *</label>
+                                        <input id="cr-name" type="text" name="customer_name"
+                                               class="orm-input" required="required" maxlength="120"
+                                               t-att-value="partner and partner.name or ''"/>
+                                    </div>
+                                    <div class="orm-form__field">
+                                        <label for="cr-phone">Mobile number *</label>
+                                        <input id="cr-phone" type="tel" name="phone" class="orm-input"
+                                               required="required" maxlength="40"
+                                               t-att-value="partner and (partner.mobile or partner.phone) or ''"/>
+                                    </div>
+                                </div>
+                                <div class="orm-form__field">
+                                    <label for="cr-email">Email</label>
+                                    <input id="cr-email" type="email" name="email" class="orm-input"
+                                           maxlength="120"
+                                           t-att-value="partner and partner.email or ''"/>
+                                </div>
+
+                                <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg">
+                                    <t t-if="request_type == 'recovery'">Request recovery</t>
+                                    <t t-else="">Request assistance</t>
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Spare parts suppliers, listed like the workshop directory -->
+    <template id="spare_parts_directory" name="Road Mechanic Spare Parts Directory">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Spare parts - Road Mechanic</t>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
+                    <section class="orm-subhero">
+                        <div class="orm-container">
+                            <p class="orm-hero__eyebrow">Road Mechanic</p>
+                            <h1 class="orm-subhero__title">Spare parts suppliers</h1>
+                            <p class="orm-subhero__text">
+                                Find a supplier, or post what you need and let them come back with
+                                offers.
+                            </p>
+                            <form class="orm-search" action="/spare-parts" method="get" role="search">
+                                <div class="orm-search__field">
+                                    <label class="orm-search__label" for="sp-search">Supplier or part</label>
+                                    <i class="fa fa-search orm-search__icon" aria-hidden="true"/>
+                                    <input id="sp-search" type="search" name="search"
+                                           class="orm-search__input" t-att-value="search"
+                                           placeholder="Supplier name or area"/>
+                                </div>
+                                <div class="orm-search__field">
+                                    <label class="orm-search__label" for="sp-area">Area</label>
+                                    <i class="fa fa-map-marker orm-search__icon" aria-hidden="true"/>
+                                    <select id="sp-area" name="location_id" class="orm-search__input">
+                                        <option value="">All areas</option>
+                                        <t t-foreach="orm_locations" t-as="location">
+                                            <option t-att-value="location.id"
+                                                    t-att-selected="str(filters.get('location_id') or '') == str(location.id) and 'selected' or None"
+                                                    t-out="location.display_name"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <button type="submit" class="orm-btn orm-btn--primary orm-search__submit">
+                                    <i class="fa fa-search"/> Search
+                                </button>
+                            </form>
+                        </div>
+                        <t t-call="odex_road_mechanic.orm_theme_toggle"/>
+                    </section>
+
+                    <nav class="orm-services" aria-label="Spare parts categories">
+                        <a href="/spare-parts"
+                           t-attf-class="orm-services__item #{not active_category and 'orm-services__item--active' or ''}">
+                            <span class="orm-services__icon"><i class="fa fa-cubes"/></span>
+                            <span class="orm-services__name">All parts</span>
+                        </a>
+                        <t t-foreach="orm_part_categories" t-as="category">
+                            <a t-attf-href="/spare-parts?category_id=#{category.id}"
+                               t-attf-class="orm-services__item #{active_category == category.id and 'orm-services__item--active' or ''}">
+                                <span class="orm-services__icon">
+                                    <i t-attf-class="fa #{category.icon or 'fa-cog'}"/>
+                                </span>
+                                <span class="orm-services__name" t-out="category.name"/>
+                            </a>
+                        </t>
+                    </nav>
+
+                    <section class="orm-section">
+                        <div class="orm-container">
+                            <div class="orm-toolbar">
+                                <h2 class="orm-toolbar__title">
+                                    Spare parts suppliers
+                                    <span class="orm-count">(<t t-out="total"/> found)</span>
+                                </h2>
+                                <div class="orm-toolbar__controls">
+                                    <a href="/spare-parts?delivery=1"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">
+                                        <i class="fa fa-truck"/> Delivers parts
+                                    </a>
+                                    <a href="/spare-parts?verified=1"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">
+                                        <i class="fa fa-check-circle"/> Verified only
+                                    </a>
+                                    <a href="/spare-parts/request" class="orm-btn orm-btn--primary orm-btn--sm">
+                                        <i class="fa fa-bullhorn"/> Post a parts request
+                                    </a>
+                                </div>
+                            </div>
+
+                            <t t-if="suppliers">
+                                <div class="orm-grid orm-grid--results">
+                                    <t t-foreach="suppliers" t-as="workshop">
+                                        <t t-call="odex_road_mechanic.orm_workshop_card"/>
+                                    </t>
+                                </div>
+                                <div class="orm-pager" t-if="pager">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </t>
+                            <div class="orm-providers__empty" t-else="">
+                                <t t-if="search or filters.get('location_id') or filters.get('delivery')">
+                                    <strong>No supplier matches this search.</strong>
+                                    <p class="orm-muted">
+                                        Clear the filters, or post the part you need and every
+                                        supplier gets it at once.
+                                    </p>
+                                    <a href="/spare-parts" class="orm-btn orm-btn--outline orm-btn--sm">
+                                        Clear search
+                                    </a>
+                                </t>
+                                <t t-else="">
+                                    <strong>No spare parts supplier is listed yet.</strong>
+                                    <p class="orm-muted">
+                                        Post the part you need, or register your parts business.
+                                    </p>
+                                    <a href="/register-workshop" class="orm-btn orm-btn--outline orm-btn--sm">
+                                        Register your company
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                    <t t-call="odex_road_mechanic.orm_register_cta"/>
                 </div>
             </div>
         </t>

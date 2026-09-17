@@ -137,6 +137,12 @@
               action="action_service"
               sequence="40"/>
 
+    <menuitem id="menu_road_mechanic_part_categories"
+              name="Spare Parts Categories"
+              parent="menu_road_mechanic_root"
+              action="action_part_category"
+              sequence="45"/>
+
     <menuitem id="menu_road_mechanic_types"
               name="Workshop Types"
               parent="menu_road_mechanic_root"
@@ -173,6 +179,12 @@
               parent="menu_road_mechanic_configuration"
               action="action_service"
               sequence="10"/>
+
+    <menuitem id="menu_road_mechanic_configuration_part_categories"
+              name="Spare Parts Categories"
+              parent="menu_road_mechanic_configuration"
+              action="action_part_category"
+              sequence="15"/>
 
     <menuitem id="menu_road_mechanic_configuration_types"
               name="Workshop Types"

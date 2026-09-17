@@ -39,6 +39,8 @@ class RoadMechanicMixin(object):
             'orm_locations': env['odex.road.mechanic.location'].search([]),
             'orm_emirates': env['odex.road.mechanic.workshop']._fields['emirate'].selection,
             'orm_listing_types': env['odex.road.mechanic.workshop']._fields['listing_type'].selection,
+            'orm_part_categories': env['odex.road.mechanic.part.category'].search(
+                [('show_on_directory', '=', True)]),
             'empty_title': _('No workshops match this search'),
             'empty_text': _('Try a different service, area or clear the filters.'),
             'empty_url': '/workshops',
@@ -541,18 +543,14 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
         listing_type = post.get('listing_type')
         if listing_type not in dict(Workshop._fields['listing_type'].selection):
             listing_type = 'workshop'
-        capability = {
-            'roadside': 'provides_roadside',
-            'recovery': 'provides_recovery',
-            'spare_parts': 'sells_spare_parts',
-            'used_parts': 'sells_used_parts',
+        capabilities = {
+            'provides_roadside': post.get('offers_roadside') in ('1', 'on', 'true'),
+            'provides_recovery': post.get('offers_recovery') in ('1', 'on', 'true'),
+            'sells_spare_parts': listing_type == 'spare_parts',
+            'offers_delivery': (listing_type == 'spare_parts'
+                                and post.get('offers_delivery') in ('1', 'on', 'true')),
+            'delivery_note': (post.get('delivery_note') or '').strip()[:120] or False,
         }
-        capabilities = {field: False for field in capability.values()}
-        if listing_type in capability:
-            capabilities[capability[listing_type]] = True
-        for key, field in capability.items():
-            if post.get('offers_%s' % key) in ('1', 'on', 'true'):
-                capabilities[field] = True
 
         values = {
             'name': name[:120],
@@ -581,6 +579,9 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
             'service_ids': [(6, 0, _multi('odex.road.mechanic.service', 'service_ids'))],
             'vehicle_brand_ids': [
                 (6, 0, _multi('odex.road.mechanic.vehicle.brand', 'vehicle_brand_ids'))],
+            'part_category_ids': [
+                (6, 0, _multi('odex.road.mechanic.part.category', 'part_category_ids')
+                 if listing_type == 'spare_parts' else [])],
             'verification_status': 'submitted',
             'website_published': False,
             'active': True,

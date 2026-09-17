@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_part_category_list" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.part.category.list</field>
+        <field name="model">odex.road.mechanic.part.category</field>
+        <field name="arch" type="xml">
+            <list string="Spare Parts Categories" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="icon"/>
+                <field name="slug" readonly="1"/>
+                <field name="supplier_count" string="Suppliers"/>
+                <field name="show_on_directory" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_part_category_form" model="ir.ui.view">
+        <field name="name">odex.road.mechanic.part.category.form</field>
+        <field name="model">odex.road.mechanic.part.category</field>
+        <field name="arch" type="xml">
+            <form string="Spare Parts Category">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_suppliers" type="object" class="oe_stat_button"
+                                icon="fa-cubes">
+                            <field name="supplier_count" widget="statinfo" string="Suppliers"/>
+                        </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Brake System"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="icon" placeholder="fa-cog"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="slug" placeholder="Generated from the name"/>
+                            <field name="show_on_directory"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <group string="SEO">
+                        <field name="website_meta_title"/>
+                        <field name="website_meta_description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_part_category" model="ir.actions.act_window">
+        <field name="name">Spare Parts Categories</field>
+        <field name="res_model">odex.road.mechanic.part.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a spare parts category</p>
+            <p>Categories work for suppliers the way services work for workshops:
+               they drive the spare parts directory filters and route parts requests.</p>
+        </field>
+    </record>
+
+</odoo>

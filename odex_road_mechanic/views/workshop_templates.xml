@@ -508,6 +508,28 @@
                             </section>
 
                             <!-- SERVICES -->
+                            <section class="orm-wsp-card" id="orm-parts"
+                                     t-if="workshop.part_category_ids">
+                                <header class="orm-wsp-card__head">
+                                    <span class="orm-wsp-card__icon"><i class="fa fa-cubes"/></span>
+                                    <h2 class="orm-wsp-card__title">Parts we supply</h2>
+                                    <span class="orm-wsp-card__rating" t-if="workshop.offers_delivery">
+                                        <i class="fa fa-truck"/>
+                                        <t t-out="workshop.delivery_note or 'Delivery available'"/>
+                                    </span>
+                                </header>
+                                <div class="orm-wsp-services">
+                                    <a t-foreach="workshop.part_category_ids" t-as="category"
+                                       t-attf-href="/spare-parts?category_id=#{category.id}"
+                                       class="orm-wsp-service">
+                                        <span class="orm-wsp-service__icon">
+                                            <i t-attf-class="fa #{category.icon or 'fa-cog'}"/>
+                                        </span>
+                                        <span class="orm-wsp-service__name" t-out="category.name"/>
+                                    </a>
+                                </div>
+                            </section>
+
                             <section class="orm-wsp-card" id="orm-services" t-if="workshop.service_ids">
                                 <header class="orm-wsp-card__head">
                                     <span class="orm-wsp-card__icon"><i class="fa fa-cogs"/></span>
@@ -1274,39 +1296,61 @@
 
                                 <h2 class="orm-block__subtitle">What are you listing?</h2>
                                 <div class="orm-form__field">
-                                    <label for="reg-listing">Listing type *</label>
-                                    <select id="reg-listing" name="listing_type" class="orm-input"
-                                            required="required">
-                                        <t t-foreach="orm_listing_types" t-as="ltype">
-                                            <option t-att-value="ltype[0]" t-out="ltype[1]"/>
-                                        </t>
-                                    </select>
+                                    <span class="orm-form__label">This company is a *</span>
+                                    <div class="orm-choice orm-choice--inline">
+                                        <label class="orm-choice__item">
+                                            <input type="radio" name="listing_type" value="workshop"
+                                                   checked="checked" data-orm-listing="1"/>
+                                            <span class="orm-choice__box">
+                                                <i class="fa fa-wrench"/>
+                                                <span>Workshop / Garage</span>
+                                            </span>
+                                        </label>
+                                        <label class="orm-choice__item">
+                                            <input type="radio" name="listing_type" value="spare_parts"
+                                                   data-orm-listing="1"/>
+                                            <span class="orm-choice__box">
+                                                <i class="fa fa-cubes"/>
+                                                <span>Spare Parts Supplier</span>
+                                            </span>
+                                        </label>
+                                    </div>
                                     <p class="orm-muted orm-small">
-                                        Workshops appear in the directory. Spare parts, used parts,
-                                        roadside assistance and recovery companies are listed on
-                                        their own service page.
+                                        Workshops are listed in the workshop directory, suppliers in
+                                        the spare parts directory.
                                     </p>
                                 </div>
                                 <div class="orm-form__field">
-                                    <span class="orm-form__label">Also available for</span>
+                                    <span class="orm-form__label">Do you also offer</span>
+                                    <label class="orm-check">
+                                        <input type="checkbox" name="offers_roadside" value="1"/>
+                                        <span>Roadside assistance - customers can request help from
+                                            your listing</span>
+                                    </label>
+                                    <label class="orm-check">
+                                        <input type="checkbox" name="offers_recovery" value="1"/>
+                                        <span>Recovery and towing - customers can request a pickup
+                                            from your listing</span>
+                                    </label>
+                                </div>
+                                <div class="orm-form__field" data-orm-parts-only="1">
+                                    <span class="orm-form__label">Parts categories you supply</span>
                                     <div class="orm-checklist orm-checklist--wide">
-                                        <label class="orm-check">
-                                            <input type="checkbox" name="offers_roadside" value="1"/>
-                                            <span>Roadside assistance requests</span>
-                                        </label>
-                                        <label class="orm-check">
-                                            <input type="checkbox" name="offers_recovery" value="1"/>
-                                            <span>Recovery and towing requests</span>
-                                        </label>
-                                        <label class="orm-check">
-                                            <input type="checkbox" name="offers_spare_parts" value="1"/>
-                                            <span>Spare parts requests</span>
-                                        </label>
-                                        <label class="orm-check">
-                                            <input type="checkbox" name="offers_used_parts" value="1"/>
-                                            <span>Used parts requests</span>
-                                        </label>
+                                        <t t-foreach="orm_part_categories" t-as="category">
+                                            <label class="orm-check">
+                                                <input type="checkbox" name="part_category_ids"
+                                                       t-att-value="category.id"/>
+                                                <span t-out="category.name"/>
+                                            </label>
+                                        </t>
                                     </div>
+                                    <label class="orm-check">
+                                        <input type="checkbox" name="offers_delivery" value="1"/>
+                                        <span>We deliver parts to the customer</span>
+                                    </label>
+                                    <input type="text" name="delivery_note" class="orm-input"
+                                           maxlength="120"
+                                           placeholder="Delivery details, e.g. free in Sharjah within 24h"/>
                                 </div>
 
                                 <h2 class="orm-block__subtitle">Company</h2>

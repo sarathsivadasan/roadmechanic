@@ -108,6 +108,11 @@ class RoadMechanicWorkshop(models.Model):
         'odex.road.mechanic.service',
         'odex_rm_workshop_service_rel', 'workshop_id', 'service_id',
         string='Services')
+    part_category_ids = fields.Many2many(
+        'odex.road.mechanic.part.category',
+        'odex_rm_workshop_part_cat_rel', 'workshop_id', 'category_id',
+        string='Spare Parts Categories',
+        help='Spare parts suppliers only: the kinds of parts this company sells.')
     vehicle_brand_ids = fields.Many2many(
         'odex.road.mechanic.vehicle.brand',
         'odex_rm_workshop_brand_rel', 'workshop_id', 'brand_id',
@@ -138,14 +143,19 @@ class RoadMechanicWorkshop(models.Model):
     listing_type = fields.Selection([
         ('workshop', 'Workshop / Garage'),
         ('spare_parts', 'Spare Parts Supplier'),
-        ('used_parts', 'Used Parts Dealer'),
-        ('roadside', 'Roadside Assistance'),
-        ('recovery', 'Recovery / Towing'),
     ], string='Listing Type', default='workshop', required=True, index=True,
         tracking=True,
-        help='Where this company is listed. Workshops appear in the directory, '
-             'the other types appear on their own service page.')
+        help='Workshops are listed in the workshop directory, spare parts '
+             'suppliers in the spare parts directory. Roadside assistance and '
+             'recovery are capabilities a company of either type can offer.')
     listing_type_label = fields.Char(compute='_compute_listing_type_label')
+    offers_delivery = fields.Boolean(
+        string='Delivers Parts', index=True,
+        help='Spare parts suppliers only: shown on the listing and on the '
+             'company page so customers know delivery is available.')
+    delivery_note = fields.Char(
+        string='Delivery Details',
+        help='e.g. "Free delivery in Sharjah within 24 hours".')
     workshop_class = fields.Selection([
         ('a', 'Class A'),
         ('b', 'Class B'),
@@ -250,15 +260,8 @@ class RoadMechanicWorkshop(models.Model):
     @api.onchange('listing_type')
     def _onchange_listing_type(self):
         """Keep the service capabilities in step with the chosen listing."""
-        mapping = {
-            'roadside': 'provides_roadside',
-            'recovery': 'provides_recovery',
-            'spare_parts': 'sells_spare_parts',
-            'used_parts': 'sells_used_parts',
-        }
-        field = mapping.get(self.listing_type)
-        if field and field in self._fields:
-            self[field] = True
+        if self.listing_type == 'spare_parts' and 'sells_spare_parts' in self._fields:
+            self.sells_spare_parts = True
 
     @api.depends('workshop_class')
     def _compute_workshop_class_label(self):

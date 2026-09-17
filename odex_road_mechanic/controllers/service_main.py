@@ -21,10 +21,8 @@ EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]{2,}$')
 PHONE_RE = re.compile(r'^[\d\s\+\-\(\)]{7,20}$')
 
 PAGE_BY_TYPE = {
-    'roadside': '/roadside-assistance',
-    'recovery': '/recovery',
-    'spare_part': '/spare-parts',
-    'used_part': '/used-parts',
+    'spare_part': '/spare-parts/request',
+    'used_part': '/spare-parts/request',
 }
 
 
@@ -84,6 +82,8 @@ class RoadMechanicServiceMixin(object):
             'vehicle_conditions': VEHICLE_CONDITIONS,
             'part_conditions': PART_CONDITIONS,
             'orm_brands': env['odex.road.mechanic.vehicle.brand'].search([]),
+            'orm_part_categories': env['odex.road.mechanic.part.category'].search(
+                [('show_on_directory', '=', True)]),
             'orm_locations': env['odex.road.mechanic.location'].search([]),
             'orm_services': env['odex.road.mechanic.service'].search([]),
             'partner': partner,
@@ -109,32 +109,85 @@ class RoadMechanicServiceMixin(object):
 class RoadMechanicServiceWebsite(http.Controller, RoadMechanicServiceMixin):
 
     # ------------------------------------------------------------------
-    # The four public pages
+    # Spare parts directory, built like the workshop directory
     # ------------------------------------------------------------------
-    @http.route(['/roadside-assistance'], type='http', auth='public',
+    @http.route(['/spare-parts', '/spare-parts/page/<int:page>'], type='http',
+                auth='public', website=True, sitemap=True)
+    def orm_spare_parts(self, page=1, **post):
+        Workshop = request.env['odex.road.mechanic.workshop']
+        domain = Workshop._public_domain(listing_type='spare_parts')
+        search = (post.get('search') or '').strip()[:80]
+        if search:
+            domain += ['|', '|',
+                       ('name', 'ilike', search),
+                       ('location_id.name', 'ilike', search),
+                       ('area', 'ilike', search)]
+        if post.get('location_id') and str(post['location_id']).isdigit():
+            domain.append(('location_id', '=', int(post['location_id'])))
+        if post.get('emirate') in dict(Workshop._fields['emirate'].selection):
+            domain.append(('emirate', '=', post['emirate']))
+        if post.get('category_id') and str(post['category_id']).isdigit():
+            domain.append(('part_category_ids', 'in', [int(post['category_id'])]))
+        if post.get('delivery') in ('1', 'on', 'true'):
+            domain.append(('offers_delivery', '=', True))
+        if post.get('verified') in ('1', 'on', 'true'):
+            domain.append(('is_verified', '=', True))
+
+        step = max(4, request.website.orm_listing_page_size or 12)
+        try:
+            page = max(1, int(page))
+        except (TypeError, ValueError):
+            page = 1
+        total = Workshop.search_count(domain)
+        suppliers = Workshop.search(domain, limit=step, offset=(page - 1) * step)
+        url_args = {k: post[k] for k in ('search', 'location_id', 'emirate',
+                                         'category_id', 'delivery', 'verified')
+                    if post.get(k)}
+        values = self._service_values('spare_part', **post)
+        values.update({
+            'suppliers': suppliers,
+            'total': total,
+            'pager': request.website.pager(
+                url='/spare-parts', total=total, page=page, step=step, scope=5,
+                url_args=url_args),
+            'search': search,
+            'filters': post,
+            'active_category': int(post['category_id'])
+                               if post.get('category_id') and str(post['category_id']).isdigit()
+                               else 0,
+        })
+        return request.render('odex_road_mechanic.spare_parts_directory', values)
+
+    @http.route(['/spare-parts/request'], type='http', auth='public',
                 website=True, sitemap=True)
-    def orm_roadside(self, **post):
-        return request.render(
-            'odex_road_mechanic.service_page',
-            self._service_values('roadside', **post))
-
-    @http.route(['/recovery'], type='http', auth='public', website=True, sitemap=True)
-    def orm_recovery(self, **post):
-        return request.render(
-            'odex_road_mechanic.service_page',
-            self._service_values('recovery', **post))
-
-    @http.route(['/spare-parts'], type='http', auth='public', website=True, sitemap=True)
-    def orm_spare_parts(self, **post):
+    def orm_spare_parts_request(self, **post):
         return request.render(
             'odex_road_mechanic.service_page',
             self._service_values('spare_part', **post))
 
-    @http.route(['/used-parts'], type='http', auth='public', website=True, sitemap=True)
-    def orm_used_parts(self, **post):
-        return request.render(
-            'odex_road_mechanic.service_page',
-            self._service_values('used_part', **post))
+    # ------------------------------------------------------------------
+    # Assistance and recovery are requested from a company
+    # ------------------------------------------------------------------
+    @http.route(['/request/assistance/<string:workshop_slug>',
+                 '/request/recovery/<string:workshop_slug>'],
+                type='http', auth='public', website=True, sitemap=False)
+    def orm_company_request(self, workshop_slug, **post):
+        workshop = self._orm_published_workshop(workshop_slug)
+        request_type = 'recovery' if '/request/recovery/' in request.httprequest.path \
+            else 'roadside'
+        capability = 'provides_recovery' if request_type == 'recovery' \
+            else 'provides_roadside'
+        if not workshop[capability]:
+            raise NotFound()
+        values = self._service_values(request_type, **post)
+        values.update({
+            'workshop': workshop,
+            'main_object': workshop,
+            'page_url': '/request/%s/%s' % (
+                'recovery' if request_type == 'recovery' else 'assistance',
+                workshop.slug),
+        })
+        return request.render('odex_road_mechanic.company_request_page', values)
 
     # ------------------------------------------------------------------
     # Submission
@@ -145,7 +198,14 @@ class RoadMechanicServiceWebsite(http.Controller, RoadMechanicServiceMixin):
         request_type = post.get('request_type')
         if request_type not in dict(REQUEST_TYPES):
             raise NotFound()
-        page = PAGE_BY_TYPE[request_type]
+        provider = False
+        if post.get('workshop_slug'):
+            provider = request.env['odex.road.mechanic.workshop'].search(
+                [('slug', '=', post['workshop_slug']),
+                 ('website_published', '=', True)], limit=1)
+        page = provider and '/request/%s/%s' % (
+            'recovery' if request_type == 'recovery' else 'assistance', provider.slug
+        ) or PAGE_BY_TYPE.get(request_type, '/spare-parts/request')
         if post.get('orm_website_url'):  # honeypot
             return request.redirect(page)
 
@@ -218,6 +278,8 @@ class RoadMechanicServiceWebsite(http.Controller, RoadMechanicServiceMixin):
             'part_name': part_name[:120] or False,
             'part_number': (post.get('part_number') or '').strip()[:80] or False,
             'part_brand': (post.get('part_brand') or '').strip()[:80] or False,
+            'part_category_id': _rel(
+                'odex.road.mechanic.part.category', post.get('part_category_id')),
             'quantity': quantity,
             'part_condition': _sel(post.get('part_condition'), PART_CONDITIONS),
             'delivery_required': post.get('delivery_required') in ('1', 'on', 'true'),
@@ -226,6 +288,8 @@ class RoadMechanicServiceWebsite(http.Controller, RoadMechanicServiceMixin):
             'source': 'website',
             'state': 'submitted',
         }
+        if provider:
+            values['provider_id'] = provider.id
         if partner and post.get('vehicle_id'):
             vehicle = request.env['odex.road.mechanic.vehicle'].sudo().browse(
                 int(post['vehicle_id']) if str(post['vehicle_id']).isdigit() else 0).exists()

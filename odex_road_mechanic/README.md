@@ -310,3 +310,53 @@ and sidebar.
 * Empty states are written for their context: no workshop for a service, none
   in an area, no company for a platform service, and a different message when a
   search returned nothing.
+
+
+---
+
+# Release 18.0.3.1.0
+
+* **Fixed the 403 on workshop pages.** The page reads the opening days, and the
+  public group had no access to that model after it moved into the directory.
+  Public, portal and internal users can now read the opening days of published
+  workshops; editing is still limited to the owner and the Road Mechanic team.
+* `/roadside-assistance`, `/recovery` and `/used-parts` are gone. Assistance and
+  recovery are now requested from a company: any listing that offers them shows
+  an **Assistance** or **Recovery** button, which opens a request form already
+  targeted at that company, with the provider assigned on submission.
+* **Registration** asks one question - Workshop or Spare Parts Supplier - plus
+  two tick boxes for roadside assistance and recovery, and, for suppliers, a
+  delivery question with a free-text detail line.
+* **`/spare-parts` is now a directory** built like the workshop directory:
+  search, area filter, delivers-parts and verified-only filters, pagination, and
+  the same company cards. The post-a-request marketplace moved to
+  `/spare-parts/request`.
+* The workshop directory lists workshops only; suppliers appear in the spare
+  parts directory.
+* Delivery shows as a green line on the card and on the company page.
+
+
+---
+
+# Release 18.0.3.2.0 - spare parts categories
+
+Categories are to a spare parts supplier what services are to a workshop: a
+master model an administrator manages, not a hardcoded list.
+
+* Model `odex.road.mechanic.part.category` with name, icon, description, image,
+  sequence, slug, active and "show in directory". Add, rename or retire any of
+  them from **Road Mechanic - Spare Parts Categories**; new ones appear on the
+  website with no code change.
+* Ships with Engine, Transmission, Exterior Body, Interior Parts, Suspension,
+  Steering, Brake System, Electrical & Lights, AC & Cooling, Fuel & Exhaust and
+  Filters.
+* A supplier picks its categories at registration, and the Road Mechanic team
+  can adjust them on the workshop form (the field replaces Services when the
+  listing is a spare parts supplier).
+* `/spare-parts` gains a category strip that filters the directory, the same way
+  the service strip works on the workshop directory.
+* Supplier cards list their categories where a workshop card lists services, and
+  the company page shows a "Parts we supply" section with the delivery note.
+* A parts request can name a category. When it does, the request is sent first
+  to suppliers of that category, and only falls back to every supplier when none
+  carry it.

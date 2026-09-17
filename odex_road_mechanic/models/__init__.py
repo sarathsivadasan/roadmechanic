@@ -1,6 +1,7 @@
 from . import slug_mixin
 from . import workshop_type
 from . import service
+from . import part_category
 from . import vehicle_brand
 from . import location
 from . import vehicle

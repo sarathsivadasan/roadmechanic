@@ -86,8 +86,10 @@
                 <filter name="filter_class_a" string="Class A" domain="[('workshop_class', '=', 'a')]"/>
                 <separator/>
                 <filter name="filter_workshops" string="Workshops" domain="[('listing_type', '=', 'workshop')]"/>
-                <filter name="filter_parts" string="Parts Suppliers" domain="[('listing_type', 'in', ('spare_parts', 'used_parts'))]"/>
-                <filter name="filter_field_services" string="Roadside / Recovery" domain="[('listing_type', 'in', ('roadside', 'recovery'))]"/>
+                <filter name="filter_parts" string="Parts Suppliers" domain="[('listing_type', '=', 'spare_parts')]"/>
+                <filter name="filter_roadside" string="Roadside Assistance" domain="[('provides_roadside', '=', True)]"/>
+                <filter name="filter_recovery" string="Recovery" domain="[('provides_recovery', '=', True)]"/>
+                <filter name="filter_delivery" string="Delivers Parts" domain="[('offers_delivery', '=', True)]"/>
                 <filter name="filter_published" string="Published" domain="[('website_published', '=', True)]"/>
                 <filter name="filter_unpublished" string="Not Published" domain="[('website_published', '=', False)]"/>
                 <separator/>
@@ -176,6 +178,9 @@
                     <group>
                         <group>
                             <field name="listing_type"/>
+                            <field name="offers_delivery" invisible="listing_type != 'spare_parts'"/>
+                            <field name="delivery_note"
+                                   invisible="listing_type != 'spare_parts' or not offers_delivery"/>
                             <field name="workshop_type_id"/>
                             <field name="workshop_class"
                                    groups="odex_road_mechanic.group_road_mechanic_manager"/>
@@ -248,7 +253,11 @@
                         <page string="Services" name="services">
                             <group>
                                 <field name="service_ids" widget="many2many_tags"
-                                       options="{'no_create_edit': True}"/>
+                                       options="{'no_create_edit': True}"
+                                       invisible="listing_type != 'workshop'"/>
+                                <field name="part_category_ids" widget="many2many_tags"
+                                       options="{'no_create_edit': True}"
+                                       invisible="listing_type != 'spare_parts'"/>
                                 <field name="vehicle_brand_ids" widget="many2many_tags"
                                        options="{'no_create_edit': True}"/>
                             </group>

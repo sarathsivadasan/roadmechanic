@@ -33,7 +33,7 @@
                     </a>
                 </h1>
                 <nav class="orm-tabs">
-                    <t t-foreach="[('all', 'All'), ('roadside', 'Roadside'), ('recovery', 'Recovery'), ('spare_part', 'Spare parts'), ('used_part', 'Used parts')]" t-as="tab">
+                    <t t-foreach="[('all', 'All'), ('roadside', 'Roadside'), ('recovery', 'Recovery'), ('spare_part', 'Spare parts')]" t-as="tab">
                         <a t-attf-href="/my-requests#{tab[0] != 'all' and '?request_type=' + tab[0] or ''}"
                            t-attf-class="orm-tab #{active_type == tab[0] and 'is-active' or ''}"
                            t-out="tab[1]"/>
@@ -41,11 +41,10 @@
                 </nav>
 
                 <p class="orm-muted" t-if="not requests">
-                    No request yet. Start with
-                    <a href="/roadside-assistance">roadside assistance</a>,
-                    <a href="/recovery">recovery</a>,
-                    <a href="/spare-parts">spare parts</a> or
-                    <a href="/used-parts">used parts</a>.
+                    No request yet. Find a company in the
+                    <a href="/workshops">workshop directory</a> and ask for assistance or
+                    recovery, or post what you need in
+                    <a href="/spare-parts">spare parts</a>.
                 </p>
 
                 <table class="orm-table" t-if="requests">

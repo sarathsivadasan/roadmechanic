@@ -36,6 +36,17 @@
     </record>
 
 
+    <record id="rule_working_day_public" model="ir.rule">
+        <field name="name">Road Mechanic: opening days of published workshops are public</field>
+        <field name="model_id" ref="model_odex_road_mechanic_working_day"/>
+        <field name="domain_force">[('workshop_id.website_published', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_public')), (4, ref('base.group_portal')), (4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
     <record id="rule_working_day_garage_partner" model="ir.rule">
         <field name="name">Road Mechanic: garage partners manage their own schedule</field>
         <field name="model_id" ref="model_odex_road_mechanic_working_day"/>

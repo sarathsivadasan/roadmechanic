@@ -571,3 +571,30 @@ publicWidget.registry.RoadMechanicCollapse = publicWidget.Widget.extend({
         }
     },
 });
+
+
+/** Registration: the delivery question only applies to a parts supplier. */
+publicWidget.registry.RoadMechanicListingType = publicWidget.Widget.extend({
+    selector: ".odex-road-mechanic",
+    events: {
+        "change [data-orm-listing]": "_onChange",
+    },
+
+    start() {
+        this._sync();
+        return this._super(...arguments);
+    },
+
+    _sync() {
+        const block = this.el.querySelector("[data-orm-parts-only]");
+        const selected = this.el.querySelector("[data-orm-listing]:checked");
+        if (!block) {
+            return;
+        }
+        block.style.display = selected && selected.value === "spare_parts" ? "" : "none";
+    },
+
+    _onChange() {
+        this._sync();
+    },
+});

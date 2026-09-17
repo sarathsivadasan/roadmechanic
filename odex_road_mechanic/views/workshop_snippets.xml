@@ -139,19 +139,42 @@
                     <t t-set="review_total" t-value="workshop.review_count"/>
                     <t t-call="odex_road_mechanic.orm_stars"/>
                 </div>
-                <ul class="orm-tags" t-if="workshop.service_ids">
-                    <li class="orm-tag" t-foreach="workshop.service_ids[:3]" t-as="service"
-                        t-out="service.name"/>
-                    <li class="orm-tag orm-tag--more" t-if="len(workshop.service_ids) &gt; 3">
-                        +<t t-out="len(workshop.service_ids) - 3"/>
+                <t t-set="card_tags"
+                   t-value="workshop.part_category_ids if workshop.listing_type == 'spare_parts' else workshop.service_ids"/>
+                <ul class="orm-tags" t-if="card_tags">
+                    <li class="orm-tag" t-foreach="card_tags[:3]" t-as="tag" t-out="tag.name"/>
+                    <li class="orm-tag orm-tag--more" t-if="len(card_tags) &gt; 3">
+                        +<t t-out="len(card_tags) - 3"/>
                     </li>
                 </ul>
                 <a t-attf-href="/workshop/#{workshop.slug}" class="orm-btn orm-btn--outline orm-btn--block">
                     View details <i class="fa fa-arrow-right" aria-hidden="true"/>
                 </a>
                 <t t-call="odex_road_mechanic.orm_contact_buttons"/>
+                <t t-call="odex_road_mechanic.orm_service_buttons"/>
             </div>
         </article>
+    </template>
+
+    <!-- Assistance, recovery and delivery shortcuts, only when the company offers them -->
+    <template id="orm_service_buttons" name="Road Mechanic Service Buttons">
+        <div class="orm-actions orm-actions--service"
+             t-if="workshop.provides_roadside or workshop.provides_recovery">
+            <a t-if="workshop.provides_roadside"
+               t-attf-href="/request/assistance/#{workshop.slug}"
+               class="orm-btn orm-btn--gold orm-btn--sm">
+                <i class="fa fa-life-ring"/> Assistance
+            </a>
+            <a t-if="workshop.provides_recovery"
+               t-attf-href="/request/recovery/#{workshop.slug}"
+               class="orm-btn orm-btn--dark orm-btn--sm">
+                <i class="fa fa-truck"/> Recovery
+            </a>
+        </div>
+        <p class="orm-card__delivery" t-if="workshop.offers_delivery">
+            <i class="fa fa-truck"/>
+            <t t-out="workshop.delivery_note or 'Delivers parts'"/>
+        </p>
     </template>
 
     <!-- Workshop row (list layout) -->
@@ -181,6 +204,10 @@
                     <li class="orm-tag" t-foreach="workshop.service_ids[:4]" t-as="service"
                         t-out="service.name"/>
                 </ul>
+                <p class="orm-card__delivery" t-if="workshop.offers_delivery">
+                    <i class="fa fa-truck"/>
+                    <t t-out="workshop.delivery_note or 'Delivers parts'"/>
+                </p>
             </div>
             <div class="orm-row__hours">
                 <p class="orm-row__status">
@@ -213,6 +240,16 @@
                 <a t-if="workshop.whatsapp_url" t-att-href="workshop.whatsapp_url"
                    target="_blank" rel="noopener" class="orm-btn orm-btn--whatsapp orm-btn--sm">
                     <i class="fa fa-whatsapp" aria-hidden="true"/> WhatsApp
+                </a>
+                <a t-if="workshop.provides_roadside"
+                   t-attf-href="/request/assistance/#{workshop.slug}"
+                   class="orm-btn orm-btn--gold orm-btn--sm">
+                    <i class="fa fa-life-ring"/> Assistance
+                </a>
+                <a t-if="workshop.provides_recovery"
+                   t-attf-href="/request/recovery/#{workshop.slug}"
+                   class="orm-btn orm-btn--dark orm-btn--sm">
+                    <i class="fa fa-truck"/> Recovery
                 </a>
             </div>
         </article>

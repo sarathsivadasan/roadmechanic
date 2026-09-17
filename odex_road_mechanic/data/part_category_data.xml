@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="part_category_engine" model="odex.road.mechanic.part.category">
+            <field name="name">Engine</field>
+            <field name="icon">fa-cogs</field>
+            <field name="sequence">1</field>
+            <field name="description">Engine assemblies, blocks, heads, belts and internals.</field>
+        </record>
+        <record id="part_category_transmission" model="odex.road.mechanic.part.category">
+            <field name="name">Transmission</field>
+            <field name="icon">fa-random</field>
+            <field name="sequence">2</field>
+            <field name="description">Gearboxes, clutches, drive shafts and differentials.</field>
+        </record>
+        <record id="part_category_exterior_body" model="odex.road.mechanic.part.category">
+            <field name="name">Exterior Body</field>
+            <field name="icon">fa-car</field>
+            <field name="sequence">3</field>
+            <field name="description">Bumpers, doors, bonnets, fenders, mirrors and glass.</field>
+        </record>
+        <record id="part_category_interior_parts" model="odex.road.mechanic.part.category">
+            <field name="name">Interior Parts</field>
+            <field name="icon">fa-th-large</field>
+            <field name="sequence">4</field>
+            <field name="description">Seats, dashboards, trims, handles and interior panels.</field>
+        </record>
+        <record id="part_category_suspension" model="odex.road.mechanic.part.category">
+            <field name="name">Suspension</field>
+            <field name="icon">fa-arrows-v</field>
+            <field name="sequence">5</field>
+            <field name="description">Shock absorbers, springs, arms, bushes and links.</field>
+        </record>
+        <record id="part_category_steering" model="odex.road.mechanic.part.category">
+            <field name="name">Steering</field>
+            <field name="icon">fa-life-ring</field>
+            <field name="sequence">6</field>
+            <field name="description">Racks, pumps, columns, tie rods and steering wheels.</field>
+        </record>
+        <record id="part_category_brake_system" model="odex.road.mechanic.part.category">
+            <field name="name">Brake System</field>
+            <field name="icon">fa-ban</field>
+            <field name="sequence">7</field>
+            <field name="description">Pads, discs, drums, calipers, ABS parts and lines.</field>
+        </record>
+        <record id="part_category_electrical_lights" model="odex.road.mechanic.part.category">
+            <field name="name">Electrical &amp; Lights</field>
+            <field name="icon">fa-bolt</field>
+            <field name="sequence">8</field>
+            <field name="description">Alternators, starters, sensors, wiring, headlights and lamps.</field>
+        </record>
+        <record id="part_category_ac_cooling" model="odex.road.mechanic.part.category">
+            <field name="name">AC &amp; Cooling</field>
+            <field name="icon">fa-snowflake-o</field>
+            <field name="sequence">9</field>
+            <field name="description">Compressors, condensers, radiators, fans and hoses.</field>
+        </record>
+        <record id="part_category_fuel_exhaust" model="odex.road.mechanic.part.category">
+            <field name="name">Fuel &amp; Exhaust</field>
+            <field name="icon">fa-tint</field>
+            <field name="sequence">10</field>
+            <field name="description">Pumps, injectors, tanks, manifolds, catalysts and silencers.</field>
+        </record>
+        <record id="part_category_filters" model="odex.road.mechanic.part.category">
+            <field name="name">Filters</field>
+            <field name="icon">fa-filter</field>
+            <field name="sequence">11</field>
+            <field name="description">Oil, air, fuel and cabin filters.</field>
+        </record>
+    </data>
+</odoo>

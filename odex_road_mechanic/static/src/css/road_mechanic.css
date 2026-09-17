@@ -1474,3 +1474,15 @@ html[data-orm-theme="dark"] .orm-rating-input label { color: #3f3f46; }
     text-align: center;
     color: var(--orm-text-muted);
 }
+
+
+/* service shortcuts and delivery note on company cards */
+.odex-road-mechanic .orm-actions--service { margin-top: .4rem; }
+.odex-road-mechanic .orm-card__delivery {
+    display: flex; align-items: center; gap: .35rem;
+    margin: .25rem 0 0;
+    font-size: .8rem;
+    color: var(--orm-green);
+    font-weight: 600;
+}
+.odex-road-mechanic .orm-card__delivery .fa { color: var(--orm-green); }

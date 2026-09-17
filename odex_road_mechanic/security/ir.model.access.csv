@@ -72,6 +72,13 @@ access_workshop_offer_manager,road.mechanic.offer.manager,model_odex_road_mechan
 access_workshop_offer_image_public,road.mechanic.offer.image.public,model_odex_road_mechanic_offer_image,base.group_public,1,0,0,0
 access_workshop_offer_image_portal,road.mechanic.offer.image.portal,model_odex_road_mechanic_offer_image,base.group_portal,1,1,1,1
 access_workshop_offer_image_user,road.mechanic.offer.image.user,model_odex_road_mechanic_offer_image,odex_road_mechanic.group_road_mechanic_user,1,1,1,1
+access_working_day_public,road.mechanic.working.day.public,model_odex_road_mechanic_working_day,base.group_public,1,0,0,0
+access_working_day_internal,road.mechanic.working.day.internal,model_odex_road_mechanic_working_day,base.group_user,1,0,0,0
 access_working_day_portal,road.mechanic.working.day.portal,model_odex_road_mechanic_working_day,base.group_portal,1,0,0,0
 access_working_day_garage,road.mechanic.working.day.garage,model_odex_road_mechanic_working_day,odex_road_mechanic.group_garage_partner,1,1,1,1
 access_working_day_user,road.mechanic.working.day.user,model_odex_road_mechanic_working_day,odex_road_mechanic.group_road_mechanic_user,1,1,1,1
+access_part_category_public,road.mechanic.part.category.public,model_odex_road_mechanic_part_category,base.group_public,1,0,0,0
+access_part_category_portal,road.mechanic.part.category.portal,model_odex_road_mechanic_part_category,base.group_portal,1,0,0,0
+access_part_category_internal,road.mechanic.part.category.internal,model_odex_road_mechanic_part_category,base.group_user,1,0,0,0
+access_part_category_user,road.mechanic.part.category.user,model_odex_road_mechanic_part_category,odex_road_mechanic.group_road_mechanic_user,1,1,1,0
+access_part_category_manager,road.mechanic.part.category.manager,model_odex_road_mechanic_part_category,odex_road_mechanic.group_road_mechanic_manager,1,1,1,1
