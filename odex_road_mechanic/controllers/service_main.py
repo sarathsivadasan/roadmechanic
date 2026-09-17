@@ -21,6 +21,8 @@ EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]{2,}$')
 PHONE_RE = re.compile(r'^[\d\s\+\-\(\)]{7,20}$')
 
 PAGE_BY_TYPE = {
+    'roadside': '/roadside-assistance',
+    'recovery': '/recovery',
     'spare_part': '/spare-parts/request',
     'used_part': '/spare-parts/request',
 }
@@ -157,6 +159,28 @@ class RoadMechanicServiceWebsite(http.Controller, RoadMechanicServiceMixin):
                                else 0,
         })
         return request.render('odex_road_mechanic.spare_parts_directory', values)
+
+    @http.route(['/roadside-assistance', '/recovery'], type='http', auth='public',
+                website=True, sitemap=True)
+    def orm_field_service_directory(self, **post):
+        """Companies offering roadside assistance or recovery.
+
+        These pages list providers; the request itself still starts from one
+        company so it lands in their queue.
+        """
+        recovery = request.httprequest.path.startswith('/recovery')
+        request_type = 'recovery' if recovery else 'roadside'
+        values = self._service_values(request_type, **post)
+        values.update({
+            'directory_title': _('Recovery & pickup companies') if recovery
+                               else _('Roadside assistance companies'),
+            'directory_lead': _('Reach a recovery company directly, or ask the one '
+                                'closest to you for a pickup.') if recovery
+                              else _('Get help where you are. Call, message or send '
+                                     'a request to a provider near you.'),
+            'directory_action': 'recovery' if recovery else 'assistance',
+        })
+        return request.render('odex_road_mechanic.provider_directory', values)
 
     @http.route(['/spare-parts/request'], type='http', auth='public',
                 website=True, sitemap=True)

@@ -360,3 +360,38 @@ master model an administrator manages, not a hardcoded list.
 * A parts request can name a category. When it does, the request is sent first
   to suppliers of that category, and only falls back to every supplier when none
   carry it.
+
+
+---
+
+# Release 18.0.4.0.0 - home page for the whole platform
+
+The home page now represents all four categories instead of workshops alone,
+in exactly eight sections, reusing the existing cards, rows, routes and theme
+tokens - no new component or duplicate query.
+
+Hero: "Find automotive services near you", with the existing search bar
+untouched, and a quick-category strip for Workshops, Spare Parts, Roadside
+Assistance, Recovery, Request a part and Services.
+
+1. **Verified workshops** - one row, up to 6, to `/workshops?verified=1`
+2. **Verified spare parts** - one row, to `/spare-parts?verified=1`
+3. **All workshops** - the main listing rows, to `/workshops`
+4. **Spare parts** - the main listing rows, to `/spare-parts`
+5. **Roadside assistance** - providers row, to `/roadside-assistance`
+6. **Recovery & pickup** - providers row, to `/recovery`
+7. **Workshop offers** - offers row, to `/offers?listing=workshop`
+8. **Spare parts offers** - offers row, to `/offers?listing=spare_parts`
+
+* `/roadside-assistance` and `/recovery` are back, this time as **provider
+  directories** with search and area filter. Requests still start from one
+  company, so they land in that company's queue.
+* `/offers` gained workshop / spare parts tabs, filtered on the listing type of
+  the company running the offer.
+* One row sections use a snapping horizontal rail: 4 to 6 cards on desktop, one
+  swipeable card at a time on a phone, no page level horizontal overflow.
+* Every section has its own empty state with a useful next step. Nothing is
+  hardcoded: all eight sections read from the existing models with per-section
+  limits, so the page issues small queries only.
+* "Own a workshop?" became "Are you an automotive service provider?" with
+  **List your business** and **Become a partner**, covering all four types.

@@ -51,9 +51,19 @@
                         <div class="orm-container">
                             <p class="orm-hero__eyebrow">Road Mechanic</p>
                             <h1 class="orm-subhero__title">
-                                Workshop offers
+                                <t t-if="listing == 'spare_parts'">Spare parts offers</t>
+                                <t t-elif="listing == 'workshop'">Workshop offers</t>
+                                <t t-else="">All offers</t>
                                 <span class="orm-count">(<t t-out="total"/>)</span>
                             </h1>
+                            <nav class="orm-tabs orm-mt">
+                                <a href="/offers"
+                                   t-attf-class="orm-tab #{not listing and 'is-active' or ''}">All</a>
+                                <a href="/offers?listing=workshop"
+                                   t-attf-class="orm-tab #{listing == 'workshop' and 'is-active' or ''}">Workshops</a>
+                                <a href="/offers?listing=spare_parts"
+                                   t-attf-class="orm-tab #{listing == 'spare_parts' and 'is-active' or ''}">Spare parts</a>
+                            </nav>
                             <p class="orm-subhero__text">
                                 Live promotions from verified workshops across the UAE.
                             </p>

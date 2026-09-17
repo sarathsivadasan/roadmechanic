@@ -1486,3 +1486,31 @@ html[data-orm-theme="dark"] .orm-rating-input label { color: #3f3f46; }
     font-weight: 600;
 }
 .odex-road-mechanic .orm-card__delivery .fa { color: var(--orm-green); }
+
+
+/* ------------------------------------------------ one row home sections */
+.odex-road-mechanic .orm-rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(240px, 1fr);
+    gap: var(--orm-gap);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: .35rem;
+    scrollbar-width: thin;
+}
+.odex-road-mechanic .orm-rail > * { scroll-snap-align: start; }
+.odex-road-mechanic .orm-actions--cta { gap: .6rem; flex-wrap: wrap; }
+.odex-road-mechanic .orm-cta .orm-btn--outline { border-color: #fff; color: #fff; }
+.odex-road-mechanic .orm-cta .orm-btn--outline:hover { background: #fff; color: #171717; }
+
+/* the rails hold at most six cards, so cap the track on wide screens */
+@media (min-width: 1400px) {
+    .odex-road-mechanic .orm-rail { grid-auto-columns: minmax(250px, 1fr); }
+}
+@media (max-width: 991.98px) {
+    .odex-road-mechanic .orm-rail { grid-auto-columns: minmax(230px, 78%); }
+}
+@media (max-width: 575.98px) {
+    .odex-road-mechanic .orm-rail { grid-auto-columns: minmax(210px, 86%); }
+}

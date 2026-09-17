@@ -378,15 +378,20 @@
         <section class="orm-cta">
             <div class="orm-cta__inner">
                 <div>
-                    <h2 class="orm-cta__title">Own a workshop?</h2>
+                    <h2 class="orm-cta__title">Are you an automotive service provider?</h2>
                     <p class="orm-cta__text">
-                        List your workshop on Road Mechanic, get verified and reach car owners
-                        across the UAE.
+                        List your business on Road Mechanic and connect with customers looking for
+                        workshops, spare parts, roadside assistance and recovery services.
                     </p>
                 </div>
-                <a href="/register-workshop" class="orm-btn orm-btn--primary orm-btn--lg">
-                    Register your workshop
-                </a>
+                <div class="orm-actions orm-actions--cta">
+                    <a href="/register-workshop" class="orm-btn orm-btn--primary orm-btn--lg">
+                        List your business
+                    </a>
+                    <a href="/about" class="orm-btn orm-btn--outline orm-btn--lg">
+                        Become a partner
+                    </a>
+                </div>
             </div>
         </section>
     </template>

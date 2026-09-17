@@ -150,20 +150,37 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
         return request.render('odex_road_mechanic.homepage', self._orm_home_values())
 
     def _orm_home_values(self):
+        """One limited query per home page section, nothing loaded twice."""
         Workshop = request.env['odex.road.mechanic.workshop']
-        published = [('website_published', '=', True)]
+        Offer = request.env['odex.road.mechanic.offer']
+        workshops = Workshop._public_domain(listing_type='workshop')
+        suppliers = Workshop._public_domain(listing_type='spare_parts')
+        offer_domain = Offer._public_domain()
+
         values = self._orm_common_values()
         values.update({
-            'top_verified': Workshop.search(
-                expression.AND([published, [('is_verified', '=', True)]]), limit=5),
-            'featured_workshops': Workshop.search(
-                expression.AND([published, [('is_featured', '=', True)]]), limit=6),
-            'all_workshops': Workshop.search(published, limit=8),
-            'home_offers': request.env['odex.road.mechanic.offer'].search(
-                request.env['odex.road.mechanic.offer']._public_domain(), limit=8),
-            'total_workshops': Workshop.search_count(published),
-            'verified_count': Workshop.search_count(
-                expression.AND([published, [('is_verified', '=', True)]])),
+            # 1 + 2: verified, one row each
+            'verified_workshops': Workshop.search(
+                expression.AND([workshops, [('is_verified', '=', True)]]), limit=6),
+            'verified_suppliers': Workshop.search(
+                expression.AND([suppliers, [('is_verified', '=', True)]]), limit=6),
+            # 3 + 4: the main listings, kept short on the home page
+            'all_workshops': Workshop.search(workshops, limit=5),
+            'all_suppliers': Workshop.search(suppliers, limit=5),
+            'total_workshops': Workshop.search_count(workshops),
+            'total_suppliers': Workshop.search_count(suppliers),
+            # 5 + 6: providers of the two field services
+            'roadside_providers': Workshop.search(
+                Workshop._provider_domain('roadside'), limit=6),
+            'recovery_providers': Workshop.search(
+                Workshop._provider_domain('recovery'), limit=6),
+            # 7 + 8: offers split by the kind of company running them
+            'workshop_offers': Offer.search(
+                expression.AND([offer_domain,
+                                [('workshop_id.listing_type', '=', 'workshop')]]), limit=6),
+            'parts_offers': Offer.search(
+                expression.AND([offer_domain,
+                                [('workshop_id.listing_type', '=', 'spare_parts')]]), limit=6),
             'options': self._orm_search_options({}),
         })
         return values
@@ -235,6 +252,9 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
     def orm_offers(self, page=1, **post):
         Offer = request.env['odex.road.mechanic.offer']
         domain = Offer._public_domain()
+        listing = post.get('listing')
+        if listing in ('workshop', 'spare_parts'):
+            domain = expression.AND([domain, [('workshop_id.listing_type', '=', listing)]])
         if post.get('service_id'):
             try:
                 domain = expression.AND([
@@ -250,12 +270,13 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
         offers = Offer.search(domain, limit=step, offset=(page - 1) * step)
         pager = request.website.pager(
             url='/offers', total=total, page=page, step=step, scope=5,
-            url_args={'service_id': post.get('service_id')} if post.get('service_id') else {})
+            url_args={k: post[k] for k in ('service_id', 'listing') if post.get(k)})
         values = self._orm_common_values()
         values.update({
             'offers': offers,
             'total': total,
             'pager': pager,
+            'listing': listing if listing in ('workshop', 'spare_parts') else '',
             'options': self._orm_search_options({}),
         })
         return request.render('odex_road_mechanic.offers_page', values)

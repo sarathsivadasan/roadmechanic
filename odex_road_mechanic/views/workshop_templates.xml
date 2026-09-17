@@ -6,116 +6,142 @@
     <!-- ============================================================== -->
     <template id="homepage" name="Road Mechanic Homepage">
         <t t-call="website.layout">
-            <t t-set="additional_title">Road Mechanic - Find trusted workshops in the UAE</t>
+            <t t-set="additional_title">Road Mechanic - Automotive services across the UAE</t>
             <div id="wrap" class="oe_structure">
                 <div class="odex-road-mechanic">
                     <t t-out="website.orm_theme_style()"/>
 
+                    <!-- HERO -->
                     <section class="orm-hero"
                              t-attf-style="background-image: #{orm_hero_overlay}, url('#{orm_hero_image}');">
                         <div class="orm-container orm-hero__inner">
                             <div class="orm-hero__text">
-                                <p class="orm-hero__eyebrow">Find trusted &amp; verified</p>
-                                <h1 class="orm-hero__title">Workshops <span>Near You</span></h1>
-                                <p class="orm-hero__subtitle">Quality service. Genuine parts. Peace of mind.</p>
+                                <p class="orm-hero__eyebrow">Road Mechanic - UAE Auto Solutions</p>
+                                <h1 class="orm-hero__title">
+                                    Find automotive <span>services near you</span>
+                                </h1>
+                                <p class="orm-hero__subtitle">
+                                    Workshops, spare parts, roadside assistance and recovery -
+                                    verified companies, real reviews, one tap to contact them.
+                                </p>
                                 <t t-call="odex_road_mechanic.orm_search_bar"/>
                             </div>
                             <aside class="orm-hero__points">
                                 <div class="orm-point">
                                     <i class="fa fa-shield orm-point__icon"/>
-                                    <div>
-                                        <strong>Verified workshops</strong>
-                                        <span>Trade licence checked by our team</span>
-                                    </div>
+                                    <div><strong>Verified companies</strong>
+                                        <span>Trade licence checked by our team</span></div>
                                 </div>
                                 <div class="orm-point">
                                     <i class="fa fa-star orm-point__icon"/>
-                                    <div>
-                                        <strong>Real customer reviews</strong>
-                                        <span>Every review is moderated before it appears</span>
-                                    </div>
+                                    <div><strong>Real customer reviews</strong>
+                                        <span>Every review is moderated before it appears</span></div>
                                 </div>
                                 <div class="orm-point">
-                                    <i class="fa fa-clock-o orm-point__icon"/>
-                                    <div>
-                                        <strong>Call or message directly</strong>
-                                        <span>Reach the workshop in one tap</span>
-                                    </div>
+                                    <i class="fa fa-bolt orm-point__icon"/>
+                                    <div><strong>Help when you need it</strong>
+                                        <span>Assistance and recovery, straight from a listing</span></div>
                                 </div>
                             </aside>
                         </div>
                         <t t-call="odex_road_mechanic.orm_theme_toggle"/>
                     </section>
 
-                    <t t-call="odex_road_mechanic.orm_service_strip"/>
+                    <!-- QUICK CATEGORIES -->
+                    <nav class="orm-services" aria-label="Platform categories">
+                        <a href="/workshops" class="orm-services__item orm-services__item--active">
+                            <span class="orm-services__icon"><i class="fa fa-wrench"/></span>
+                            <span class="orm-services__name">Workshops</span>
+                        </a>
+                        <a href="/spare-parts" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-cubes"/></span>
+                            <span class="orm-services__name">Spare parts</span>
+                        </a>
+                        <a href="/roadside-assistance" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-life-ring"/></span>
+                            <span class="orm-services__name">Roadside assistance</span>
+                        </a>
+                        <a href="/recovery" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-truck"/></span>
+                            <span class="orm-services__name">Recovery</span>
+                        </a>
+                        <a href="/spare-parts/request" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-bullhorn"/></span>
+                            <span class="orm-services__name">Request a part</span>
+                        </a>
+                        <a href="/services" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-cogs"/></span>
+                            <span class="orm-services__name">Services</span>
+                        </a>
+                    </nav>
 
-                    <section class="orm-section orm-section--offers" t-if="home_offers">
+                    <!-- 1. VERIFIED WORKSHOPS -->
+                    <section class="orm-section">
                         <div class="orm-container">
                             <header class="orm-section__head">
                                 <h2 class="orm-section__title">
-                                    <i class="fa fa-tags orm-section__icon orm-section__icon--gold"/>
-                                    Exclusive workshop offers
-                                </h2>
-                                <a href="/offers" class="orm-section__link">
-                                    View all offers <i class="fa fa-arrow-right"/>
-                                </a>
-                            </header>
-                            <div class="orm-grid orm-grid--offers">
-                                <t t-set="hide_workshop" t-value="False"/>
-                                <t t-foreach="home_offers" t-as="offer">
-                                    <t t-call="odex_road_mechanic.orm_offer_tile"/>
-                                </t>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="orm-section" t-if="top_verified">
-                        <div class="orm-container">
-                            <header class="orm-section__head">
-                                <h2 class="orm-section__title">
-                                    <i class="fa fa-shield orm-section__icon"/> Top verified workshops
-                                    <span class="orm-pill">Priority listing</span>
+                                    <i class="fa fa-shield orm-section__icon"/> Verified workshops
                                 </h2>
                                 <a href="/workshops?verified=1" class="orm-section__link">
-                                    View all verified <i class="fa fa-arrow-right"/>
+                                    View all workshops <i class="fa fa-arrow-right"/>
                                 </a>
                             </header>
-                            <div class="orm-grid orm-grid--cards">
-                                <t t-foreach="top_verified" t-as="workshop">
+                            <div class="orm-rail" t-if="verified_workshops">
+                                <t t-foreach="verified_workshops" t-as="workshop">
                                     <t t-call="odex_road_mechanic.orm_workshop_card"/>
                                 </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No verified workshop available yet.</strong>
+                                <p class="orm-muted">
+                                    Verification is in progress. Browse every listed workshop
+                                    meanwhile.
+                                </p>
+                                <a href="/workshops" class="orm-btn orm-btn--outline orm-btn--sm">
+                                    See all workshops
+                                </a>
                             </div>
                         </div>
                     </section>
 
-                    <section class="orm-section orm-section--muted" t-if="featured_workshops">
+                    <!-- 2. VERIFIED SPARE PARTS -->
+                    <section class="orm-section orm-section--muted">
                         <div class="orm-container">
                             <header class="orm-section__head">
                                 <h2 class="orm-section__title">
-                                    <i class="fa fa-bookmark orm-section__icon orm-section__icon--gold"/>
-                                    Featured workshops
+                                    <i class="fa fa-cubes orm-section__icon"/> Verified spare parts
                                 </h2>
-                                <a href="/workshops?featured=1" class="orm-section__link">
-                                    View all featured <i class="fa fa-arrow-right"/>
+                                <a href="/spare-parts?verified=1" class="orm-section__link">
+                                    View all spare parts <i class="fa fa-arrow-right"/>
                                 </a>
                             </header>
-                            <div class="orm-grid orm-grid--cards">
-                                <t t-foreach="featured_workshops" t-as="workshop">
+                            <div class="orm-rail" t-if="verified_suppliers">
+                                <t t-foreach="verified_suppliers" t-as="workshop">
                                     <t t-call="odex_road_mechanic.orm_workshop_card"/>
                                 </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No verified spare parts supplier yet.</strong>
+                                <p class="orm-muted">
+                                    Post the part you need and suppliers will come back with offers.
+                                </p>
+                                <a href="/spare-parts/request" class="orm-btn orm-btn--outline orm-btn--sm">
+                                    Post a parts request
+                                </a>
                             </div>
                         </div>
                     </section>
 
+                    <!-- 3. ALL WORKSHOPS -->
                     <section class="orm-section">
                         <div class="orm-container">
                             <header class="orm-section__head">
                                 <h2 class="orm-section__title">
                                     All workshops
-                                    <span class="orm-count">(<t t-out="total_workshops"/> found)</span>
+                                    <span class="orm-count">(<t t-out="total_workshops"/>)</span>
                                 </h2>
                                 <a href="/workshops" class="orm-section__link">
-                                    Browse the directory <i class="fa fa-arrow-right"/>
+                                    View all workshops <i class="fa fa-arrow-right"/>
                                 </a>
                             </header>
                             <div class="orm-rows" t-if="all_workshops">
@@ -123,40 +149,158 @@
                                     <t t-call="odex_road_mechanic.orm_workshop_row"/>
                                 </t>
                             </div>
-                            <t t-else="">
-                                <t t-call="odex_road_mechanic.orm_empty_state"/>
-                            </t>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No workshop is listed yet.</strong>
+                                <p class="orm-muted">Be the first to list your garage.</p>
+                                <a href="/register-workshop" class="orm-btn orm-btn--outline orm-btn--sm">
+                                    List your business
+                                </a>
+                            </div>
                         </div>
                     </section>
 
+                    <!-- 4. SPARE PARTS -->
                     <section class="orm-section orm-section--muted">
                         <div class="orm-container">
-                            <h2 class="orm-section__title">Why Road Mechanic</h2>
-                            <div class="orm-why">
-                                <div class="orm-why__item">
-                                    <i class="fa fa-check-circle"/>
-                                    <h3>Verification before listing</h3>
-                                    <p>Workshops submit their trade licence and are reviewed by our
-                                        team before the verified badge is granted.</p>
-                                </div>
-                                <div class="orm-why__item">
-                                    <i class="fa fa-comments-o"/>
-                                    <h3>Moderated reviews</h3>
-                                    <p>Ratings are calculated only from reviews that passed
-                                        moderation, so the score reflects real feedback.</p>
-                                </div>
-                                <div class="orm-why__item">
-                                    <i class="fa fa-map-o"/>
-                                    <h3>Search by area and service</h3>
-                                    <p>Filter by emirate, area, service, vehicle brand or opening
-                                        hours and find a workshop that fits your car.</p>
-                                </div>
-                                <div class="orm-why__item">
-                                    <i class="fa fa-bolt"/>
-                                    <h3>Contact in one tap</h3>
-                                    <p>Call, message on WhatsApp or send an inquiry with your
-                                        vehicle details and preferred date.</p>
-                                </div>
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title">
+                                    Spare parts
+                                    <span class="orm-count">(<t t-out="total_suppliers"/>)</span>
+                                </h2>
+                                <a href="/spare-parts" class="orm-section__link">
+                                    View all spare parts <i class="fa fa-arrow-right"/>
+                                </a>
+                            </header>
+                            <div class="orm-rows" t-if="all_suppliers">
+                                <t t-foreach="all_suppliers" t-as="workshop">
+                                    <t t-call="odex_road_mechanic.orm_workshop_row"/>
+                                </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No spare parts supplier is listed yet.</strong>
+                                <p class="orm-muted">
+                                    Post what you need and every supplier gets it at once.
+                                </p>
+                                <a href="/spare-parts/request" class="orm-btn orm-btn--outline orm-btn--sm">
+                                    Post a parts request
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 5. ROADSIDE ASSISTANCE -->
+                    <section class="orm-section">
+                        <div class="orm-container">
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title">
+                                    <i class="fa fa-life-ring orm-section__icon"/> Roadside assistance
+                                </h2>
+                                <a href="/roadside-assistance" class="orm-section__link">
+                                    View all roadside assistance <i class="fa fa-arrow-right"/>
+                                </a>
+                            </header>
+                            <div class="orm-rail" t-if="roadside_providers">
+                                <t t-foreach="roadside_providers" t-as="workshop">
+                                    <t t-call="odex_road_mechanic.orm_workshop_card"/>
+                                </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No roadside assistance provider available yet.</strong>
+                                <p class="orm-muted">
+                                    Companies that offer assistance appear here as soon as they
+                                    register.
+                                </p>
+                                <a href="/register-workshop" class="orm-btn orm-btn--outline orm-btn--sm">
+                                    List your business
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 6. RECOVERY AND PICKUP -->
+                    <section class="orm-section orm-section--muted">
+                        <div class="orm-container">
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title">
+                                    <i class="fa fa-truck orm-section__icon"/> Recovery &amp; pickup
+                                </h2>
+                                <a href="/recovery" class="orm-section__link">
+                                    View all recovery &amp; pickup <i class="fa fa-arrow-right"/>
+                                </a>
+                            </header>
+                            <div class="orm-rail" t-if="recovery_providers">
+                                <t t-foreach="recovery_providers" t-as="workshop">
+                                    <t t-call="odex_road_mechanic.orm_workshop_card"/>
+                                </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No recovery provider available yet.</strong>
+                                <p class="orm-muted">
+                                    Recovery and pickup companies appear here once they register.
+                                </p>
+                                <a href="/register-workshop" class="orm-btn orm-btn--outline orm-btn--sm">
+                                    List your business
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 7. WORKSHOP OFFERS -->
+                    <section class="orm-section">
+                        <div class="orm-container">
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title">
+                                    <i class="fa fa-tags orm-section__icon orm-section__icon--gold"/>
+                                    Workshop offers
+                                </h2>
+                                <a href="/offers?listing=workshop" class="orm-section__link">
+                                    View all workshop offers <i class="fa fa-arrow-right"/>
+                                </a>
+                            </header>
+                            <div class="orm-rail" t-if="workshop_offers">
+                                <t t-set="hide_workshop" t-value="False"/>
+                                <t t-foreach="workshop_offers" t-as="offer">
+                                    <t t-call="odex_road_mechanic.orm_offer_tile"/>
+                                </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No workshop offer is running.</strong>
+                                <p class="orm-muted">
+                                    Promotions from verified workshops show up here.
+                                </p>
+                                <a href="/workshops" class="orm-btn orm-btn--outline orm-btn--sm">
+                                    Browse workshops
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 8. SPARE PARTS OFFERS -->
+                    <section class="orm-section orm-section--muted">
+                        <div class="orm-container">
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title">
+                                    <i class="fa fa-tags orm-section__icon orm-section__icon--gold"/>
+                                    Spare parts offers
+                                </h2>
+                                <a href="/offers?listing=spare_parts" class="orm-section__link">
+                                    View all spare parts offers <i class="fa fa-arrow-right"/>
+                                </a>
+                            </header>
+                            <div class="orm-rail" t-if="parts_offers">
+                                <t t-set="hide_workshop" t-value="False"/>
+                                <t t-foreach="parts_offers" t-as="offer">
+                                    <t t-call="odex_road_mechanic.orm_offer_tile"/>
+                                </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No spare parts offer is running.</strong>
+                                <p class="orm-muted">
+                                    Supplier promotions show up here when they are published.
+                                </p>
+                                <a href="/spare-parts" class="orm-btn orm-btn--outline orm-btn--sm">
+                                    Browse suppliers
+                                </a>
                             </div>
                         </div>
                     </section>

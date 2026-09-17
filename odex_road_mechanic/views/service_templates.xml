@@ -1135,4 +1135,76 @@
         </t>
     </template>
 
+
+    <!-- Roadside assistance and recovery provider directories -->
+    <template id="provider_directory" name="Road Mechanic Provider Directory">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="directory_title"/>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic">
+                    <t t-out="website.orm_theme_style()"/>
+                    <section class="orm-subhero">
+                        <div class="orm-container">
+                            <p class="orm-hero__eyebrow">Road Mechanic</p>
+                            <h1 class="orm-subhero__title" t-out="directory_title"/>
+                            <p class="orm-subhero__text" t-out="directory_lead"/>
+                            <form class="orm-providers__search" method="get">
+                                <input type="search" name="provider_search" class="orm-input"
+                                       placeholder="Company name or area"
+                                       t-att-value="provider_search"/>
+                                <select name="provider_area" class="orm-input">
+                                    <option value="">All areas</option>
+                                    <t t-foreach="orm_locations" t-as="location">
+                                        <option t-att-value="location.id"
+                                                t-att-selected="str(provider_area) == str(location.id) and 'selected' or None"
+                                                t-out="location.display_name"/>
+                                    </t>
+                                </select>
+                                <button type="submit" class="orm-btn orm-btn--primary">
+                                    <i class="fa fa-search"/> Find companies
+                                </button>
+                            </form>
+                        </div>
+                        <t t-call="odex_road_mechanic.orm_theme_toggle"/>
+                    </section>
+
+                    <section class="orm-section">
+                        <div class="orm-container">
+                            <div class="orm-toolbar">
+                                <h2 class="orm-toolbar__title">
+                                    <t t-out="directory_title"/>
+                                    <span class="orm-count">(<t t-out="provider_total"/> found)</span>
+                                </h2>
+                            </div>
+                            <div class="orm-grid orm-grid--results" t-if="providers">
+                                <t t-foreach="providers" t-as="workshop">
+                                    <t t-call="odex_road_mechanic.orm_workshop_card"/>
+                                </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <t t-if="provider_search or provider_area">
+                                    <strong>No company matches this search.</strong>
+                                    <p class="orm-muted">Try another area or clear the search.</p>
+                                    <a t-att-href="page_url" class="orm-btn orm-btn--outline orm-btn--sm">
+                                        Clear search
+                                    </a>
+                                </t>
+                                <t t-else="">
+                                    <strong>No company is listed for this service yet.</strong>
+                                    <p class="orm-muted">
+                                        Register your business to receive these requests.
+                                    </p>
+                                    <a href="/register-workshop" class="orm-btn orm-btn--outline orm-btn--sm">
+                                        List your business
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                    <t t-call="odex_road_mechanic.orm_register_cta"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
 </odoo>
