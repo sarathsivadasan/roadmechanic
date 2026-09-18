@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Index: every compatible device, in a filterable grid -->
+    <template id="devices_page" name="Business Devices">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="website.owms_devices_title"/>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic odex-owms">
+                    <t t-out="website.orm_theme_style()"/>
+
+                    <section class="orm-subhero owms-devices__hero"
+                             t-attf-style="#{devices_image and ('background-image: linear-gradient(90deg, rgba(7,26,43,.92) 0%%, rgba(7,26,43,.55) 60%%, rgba(7,26,43,.25) 100%%), url(' + devices_image + '); background-size: cover; background-position: center;') or ''}">
+                        <div class="orm-container">
+                            <p class="orm-hero__eyebrow">Odex - hardware for modern garages</p>
+                            <h1 class="orm-subhero__title" t-out="website.owms_devices_title"/>
+                            <p class="orm-subhero__text" t-out="website.owms_devices_subtitle"/>
+                            <div class="orm-actions orm-actions--hero">
+                                <a href="#devices-grid" class="orm-btn orm-btn--primary">
+                                    Browse devices
+                                </a>
+                                <a href="/software/owms" class="orm-btn orm-btn--outline">
+                                    About the software
+                                </a>
+                            </div>
+                        </div>
+                        <t t-call="odex_road_mechanic.orm_theme_toggle"/>
+                    </section>
+
+                    <section class="orm-section" id="devices-grid">
+                        <div class="orm-container">
+                            <div class="owms-filters" data-owms-filters="1">
+                                <div class="owms-filters__search">
+                                    <i class="fa fa-search"/>
+                                    <input type="search" class="orm-input"
+                                           placeholder="Search devices, brands or modules"
+                                           data-owms-search="1"/>
+                                </div>
+                                <div class="owms-filters__cats">
+                                    <button type="button" class="owms-chip is-active"
+                                            data-owms-cat="all">All devices</button>
+                                    <button type="button" class="owms-chip"
+                                            t-foreach="owms_categories" t-as="category"
+                                            t-att-data-owms-cat="category.id">
+                                        <i t-attf-class="fa #{category.icon or 'fa-microchip'}"/>
+                                        <t t-out="category.name"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="owms-grid" data-owms-grid="1" t-if="owms_products">
+                                <t t-foreach="owms_products" t-as="product">
+                                    <t t-call="odex_road_mechanic.owms_device_card"/>
+                                </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No device is published yet.</strong>
+                                <p class="orm-muted">
+                                    Add devices under Odex OWMS - Devices, with their image and the
+                                    specifications you can confirm.
+                                </p>
+                            </div>
+                            <div class="orm-providers__empty" data-owms-empty="1" hidden="hidden">
+                                <strong>No device matches this search.</strong>
+                                <p class="orm-muted">Clear the search or pick another category.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Product detail -->
+    <template id="device_detail" name="Business Device Detail">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="product.name"/>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic odex-owms">
+                    <t t-out="website.orm_theme_style()"/>
+
+                    <nav class="orm-wsp-crumb" aria-label="Breadcrumb">
+                        <div class="orm-container">
+                            <a href="/"><i class="fa fa-home"/></a>
+                            <span>/</span>
+                            <a href="/business-devices">Business devices</a>
+                            <span>/</span>
+                            <a t-attf-href="/business-devices?category=#{product.category_id.id}"
+                               t-out="product.category_id.name"/>
+                            <span>/</span>
+                            <span class="is-current" t-out="product.name"/>
+                        </div>
+                    </nav>
+
+                    <section class="orm-section">
+                        <div class="orm-container owms-detail">
+                            <div class="owms-detail__media">
+                                <div class="owms-detail__main">
+                                    <img t-att-src="product.image_url('1200x900')"
+                                         t-att-alt="product.name" data-owms-main-image="1"/>
+                                </div>
+                                <div class="orm-gallery" t-if="product.image_ids">
+                                    <button type="button" class="orm-gallery__thumb"
+                                            t-att-data-owms-image="product.image_url('1200x900')">
+                                        <img t-att-src="product.image_url('300x220')"
+                                             t-att-alt="product.name"/>
+                                    </button>
+                                    <button type="button" class="orm-gallery__thumb"
+                                            t-foreach="product.image_ids" t-as="photo"
+                                            t-att-data-owms-image="photo.image_url('1200x900')">
+                                        <img t-att-src="photo.image_url('300x220')"
+                                             t-att-alt="photo.name or product.name"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="owms-detail__body">
+                                <span class="owms-card__cat" t-out="product.category_id.name"/>
+                                <h1 class="owms-detail__title" t-out="product.name"/>
+                                <p class="owms-detail__lead" t-if="product.short_description"
+                                   t-out="product.short_description"/>
+
+                                <div class="owms-detail__meta">
+                                    <span t-if="product.brand">
+                                        <i class="fa fa-tag"/> <t t-out="product.brand"/>
+                                    </span>
+                                    <span t-if="product.model_name">
+                                        <i class="fa fa-cube"/> <t t-out="product.model_name"/>
+                                    </span>
+                                    <span t-if="product.sku">
+                                        <i class="fa fa-barcode"/> <t t-out="product.sku"/>
+                                    </span>
+                                    <span t-if="product.availability">
+                                        <i class="fa fa-truck"/>
+                                        <t t-out="product.availability_label"/>
+                                    </span>
+                                </div>
+
+                                <p class="owms-detail__price" t-if="not product.price_on_request">
+                                    <t t-out="product.price"
+                                       t-options="{'widget': 'monetary', 'display_currency': product.currency_id}"/>
+                                </p>
+                                <p class="owms-detail__price owms-detail__price--muted" t-else="">
+                                    Price on request
+                                </p>
+
+                                <ul class="owms-detail__bullets" t-if="product.highlight_ids">
+                                    <li t-foreach="product.highlight_ids" t-as="highlight">
+                                        <i class="fa fa-check"/> <t t-out="highlight.name"/>
+                                    </li>
+                                </ul>
+
+                                <div class="orm-actions">
+                                    <a href="#device-quote" class="orm-btn orm-btn--primary">
+                                        <i class="fa fa-paper-plane-o"/> Request a quote
+                                    </a>
+                                    <a href="/business-devices" class="orm-btn orm-btn--outline">
+                                        Back to devices
+                                    </a>
+                                </div>
+
+                                <p class="owms-card__sample" t-if="product.is_demo">
+                                    Catalog sample - final specifications are confirmed before
+                                    quotation.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="orm-section orm-section--muted" t-if="product.description">
+                        <div class="orm-container orm-container--narrow">
+                            <h2 class="orm-section__title">About this device</h2>
+                            <div class="orm-prose" t-out="product.description"/>
+                        </div>
+                    </section>
+
+                    <section class="orm-section">
+                        <div class="orm-container orm-container--narrow">
+                            <h2 class="orm-section__title">Specifications</h2>
+                            <table class="orm-table owms-specs">
+                                <tbody>
+                                    <tr t-if="product.processor">
+                                        <th>Processor</th><td t-out="product.processor"/>
+                                    </tr>
+                                    <tr t-if="product.operating_system">
+                                        <th>Operating system</th><td t-out="product.operating_system"/>
+                                    </tr>
+                                    <tr t-if="product.display">
+                                        <th>Display</th><td t-out="product.display"/>
+                                    </tr>
+                                    <tr t-if="product.connectivity">
+                                        <th>Connectivity</th><td t-out="product.connectivity"/>
+                                    </tr>
+                                    <tr t-if="product.battery">
+                                        <th>Battery</th><td t-out="product.battery"/>
+                                    </tr>
+                                    <tr t-foreach="product.spec_ids" t-as="spec">
+                                        <th t-out="spec.name"/><td t-out="spec.value"/>
+                                    </tr>
+                                    <tr t-if="product.warranty">
+                                        <th>Warranty</th><td t-out="product.warranty"/>
+                                    </tr>
+                                    <tr t-if="product.support_info">
+                                        <th>Support</th><td t-out="product.support_info"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p class="orm-muted orm-small"
+                               t-if="not product.processor and not product.spec_ids and not product.display">
+                                Full specifications are confirmed on request for this device.
+                            </p>
+
+                            <h2 class="orm-section__title orm-mt">Compatibility</h2>
+                            <ul class="orm-chips" t-if="product.compatible_owms or product.compatible_odoo">
+                                <li t-if="product.compatible_owms" class="orm-chip orm-chip--plain">
+                                    OWMS: <t t-out="product.compatible_owms"/>
+                                </li>
+                                <li t-if="product.compatible_odoo" class="orm-chip orm-chip--plain">
+                                    Odoo: <t t-out="product.compatible_odoo"/>
+                                </li>
+                            </ul>
+                            <p t-attf-class="orm-muted orm-small #{product.integration_status != 'none' and 'text-success' or ''}">
+                                <t t-if="product.integration_status == 'none'">
+                                    Integration details are confirmed on request.
+                                </t>
+                                <t t-else="">
+                                    <t t-out="product.integration_label"/>
+                                    <t t-if="product.integration_note"> - <t t-out="product.integration_note"/></t>
+                                </t>
+                            </p>
+                        </div>
+                    </section>
+
+                    <section class="orm-section orm-section--muted" id="device-quote">
+                        <div class="orm-container orm-container--narrow">
+                            <div class="orm-alert orm-alert--success" t-if="sent">
+                                Thank you. Your request has been received and our team will get
+                                back to you shortly.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'contact'">
+                                Please enter your name and a valid mobile number.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'email'">
+                                Please enter a valid email address.
+                            </div>
+
+                            <div class="orm-panel">
+                                <h2 class="orm-block__title">Request a quote</h2>
+                                <p class="orm-muted orm-small">
+                                    Tell us how many units you need and we will confirm
+                                    specifications, availability and price.
+                                </p>
+                                <form action="/software/owms/enquiry" method="post" class="orm-form">
+                                    <input type="hidden" name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="enquiry_type" value="device"/>
+                                    <input type="hidden" name="product_id" t-att-value="product.id"/>
+                                    <input type="hidden" name="redirect"
+                                           t-attf-value="/business-devices/#{product.slug}"/>
+                                    <input type="text" name="orm_website_url" class="orm-hp"
+                                           tabindex="-1" autocomplete="off" aria-hidden="true"/>
+                                    <div class="orm-form__row">
+                                        <div class="orm-form__field">
+                                            <label for="dev-name">Full name *</label>
+                                            <input id="dev-name" type="text" name="contact_name"
+                                                   class="orm-input" required="required" maxlength="120"/>
+                                        </div>
+                                        <div class="orm-form__field">
+                                            <label for="dev-company">Company / workshop</label>
+                                            <input id="dev-company" type="text" name="company_name"
+                                                   class="orm-input" maxlength="120"/>
+                                        </div>
+                                    </div>
+                                    <div class="orm-form__row">
+                                        <div class="orm-form__field">
+                                            <label for="dev-phone">Mobile number *</label>
+                                            <input id="dev-phone" type="tel" name="phone"
+                                                   class="orm-input" required="required" maxlength="40"/>
+                                        </div>
+                                        <div class="orm-form__field">
+                                            <label for="dev-email">Email</label>
+                                            <input id="dev-email" type="email" name="email"
+                                                   class="orm-input" maxlength="120"/>
+                                        </div>
+                                    </div>
+                                    <div class="orm-form__row">
+                                        <div class="orm-form__field">
+                                            <label for="dev-qty">Quantity</label>
+                                            <input id="dev-qty" type="number" min="1" value="1"
+                                                   name="quantity" class="orm-input"/>
+                                        </div>
+                                    </div>
+                                    <div class="orm-form__field">
+                                        <label for="dev-message">Message</label>
+                                        <textarea id="dev-message" name="message" rows="3"
+                                                  class="orm-input" maxlength="2000"/>
+                                    </div>
+                                    <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg">
+                                        Send request
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="orm-section" t-if="related_products">
+                        <div class="orm-container">
+                            <h2 class="orm-section__title">Related devices</h2>
+                            <div class="owms-grid">
+                                <t t-foreach="related_products" t-as="product">
+                                    <t t-call="odex_road_mechanic.owms_device_card"/>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

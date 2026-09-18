@@ -120,3 +120,7 @@ access_owms_step_internal,odex.owms_step.internal,model_odex_owms_workflow_step,
 access_owms_step_user,odex.owms_step.user,model_odex_owms_workflow_step,odex_road_mechanic.group_road_mechanic_user,1,1,1,1
 access_owms_enquiry_user,odex.owms.enquiry.user,model_odex_owms_enquiry,odex_road_mechanic.group_road_mechanic_user,1,1,1,0
 access_owms_enquiry_manager,odex.owms.enquiry.manager,model_odex_owms_enquiry,odex_road_mechanic.group_road_mechanic_manager,1,1,1,1
+access_owms_highlight_public,odex.owms_highlight.public,model_odex_owms_hardware_highlight,base.group_public,1,0,0,0
+access_owms_highlight_portal,odex.owms_highlight.portal,model_odex_owms_hardware_highlight,base.group_portal,1,0,0,0
+access_owms_highlight_internal,odex.owms_highlight.internal,model_odex_owms_hardware_highlight,base.group_user,1,0,0,0
+access_owms_highlight_user,odex.owms_highlight.user,model_odex_owms_hardware_highlight,odex_road_mechanic.group_road_mechanic_user,1,1,1,1

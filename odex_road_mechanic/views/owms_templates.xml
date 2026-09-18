@@ -6,13 +6,15 @@
         <article class="owms-card" t-att-data-category="product.category_id.id"
                  t-att-data-name="product.name.lower()"
                  t-att-data-search="(product.name + ' ' + (product.brand or '') + ' ' + (product.short_description or '') + ' ' + (product.compatible_owms or '')).lower()">
-            <div class="owms-card__media">
+            <a class="owms-card__media" t-attf-href="/business-devices/#{product.slug}">
                 <img t-att-src="product.image_url()" loading="lazy" t-att-alt="product.name"/>
                 <span class="owms-card__flag" t-if="product.is_featured">Featured</span>
-            </div>
+            </a>
             <div class="owms-card__body">
                 <span class="owms-card__cat" t-out="product.category_id.name"/>
-                <h3 class="owms-card__title" t-out="product.name"/>
+                <h3 class="owms-card__title">
+                    <a t-attf-href="/business-devices/#{product.slug}" t-out="product.name"/>
+                </h3>
                 <p class="owms-card__text" t-if="product.short_description"
                    t-out="product.short_description"/>
 
@@ -57,11 +59,10 @@
                     <span class="owms-card__price owms-card__price--muted" t-else="">
                         Price on request
                     </span>
-                    <button type="button" class="orm-btn orm-btn--primary orm-btn--sm"
-                            data-owms-quote="1" t-att-data-product="product.id"
-                            t-att-data-product-name="product.name">
-                        Request quote
-                    </button>
+                    <a t-attf-href="/business-devices/#{product.slug}"
+                       class="orm-btn orm-btn--primary orm-btn--sm">
+                        View details
+                    </a>
                 </div>
                 <p class="owms-card__sample" t-if="product.is_demo">
                     Catalog sample - final specifications confirmed before quotation.
@@ -92,8 +93,8 @@
                                        data-owms-demo="1">
                                         Request a demo
                                     </a>
-                                    <a href="#owms-devices" class="orm-btn orm-btn--outline orm-btn--lg">
-                                        View compatible devices
+                                    <a href="/business-devices" class="orm-btn orm-btn--outline orm-btn--lg">
+                                        Business devices
                                     </a>
                                 </div>
                             </div>
@@ -132,7 +133,7 @@
                             <span class="orm-services__icon"><i class="fa fa-layer-group"/></span>
                             <span class="orm-services__name">Editions</span>
                         </a>
-                        <a href="#owms-devices" class="orm-services__item">
+                        <a href="/business-devices" class="orm-services__item">
                             <span class="orm-services__icon"><i class="fa fa-tablet"/></span>
                             <span class="orm-services__name">Devices</span>
                         </a>
@@ -237,52 +238,20 @@
                         </div>
                     </section>
 
-                    <!-- DEVICES -->
-                    <section class="orm-section orm-section--muted" id="owms-devices">
+                    <!-- DEVICES: moved to its own Business Devices page -->
+                    <section class="orm-section orm-section--muted">
                         <div class="orm-container">
-                            <header class="orm-section__head">
-                                <h2 class="orm-section__title" t-out="website.owms_devices_title"/>
-                            </header>
-                            <p class="owms-devices__lead" t-out="website.owms_devices_subtitle"/>
-                            <div class="owms-devices__banner" t-if="devices_image">
-                                <img t-att-src="devices_image" loading="lazy"
-                                     t-att-alt="website.owms_devices_title"/>
-                            </div>
-
-                            <div class="owms-filters" data-owms-filters="1">
-                                <div class="owms-filters__search">
-                                    <i class="fa fa-search"/>
-                                    <input type="search" class="orm-input"
-                                           placeholder="Search devices, brands or modules"
-                                           data-owms-search="1"/>
+                            <div class="owms-devicecta">
+                                <div>
+                                    <h2 class="orm-section__title">Business devices &amp; workshop hardware</h2>
+                                    <p class="orm-muted">
+                                        Tablets, POS terminals, scanners, printers and more, listed
+                                        with the specifications we can confirm.
+                                    </p>
                                 </div>
-                                <div class="owms-filters__cats">
-                                    <button type="button" class="owms-chip is-active"
-                                            data-owms-cat="all">All devices</button>
-                                    <button type="button" class="owms-chip"
-                                            t-foreach="owms_categories" t-as="category"
-                                            t-att-data-owms-cat="category.id">
-                                        <i t-attf-class="fa #{category.icon or 'fa-microchip'}"/>
-                                        <t t-out="category.name"/>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="owms-grid" data-owms-grid="1" t-if="owms_products">
-                                <t t-foreach="owms_products" t-as="product">
-                                    <t t-call="odex_road_mechanic.owms_device_card"/>
-                                </t>
-                            </div>
-                            <div class="orm-providers__empty" t-else="">
-                                <strong>No device is published yet.</strong>
-                                <p class="orm-muted">
-                                    Add devices under Odex OWMS - Devices, with their image and
-                                    the specifications you can confirm.
-                                </p>
-                            </div>
-                            <div class="orm-providers__empty" data-owms-empty="1" hidden="hidden">
-                                <strong>No device matches this search.</strong>
-                                <p class="orm-muted">Clear the search or pick another category.</p>
+                                <a href="/business-devices" class="orm-btn orm-btn--primary orm-btn--lg">
+                                    Browse business devices
+                                </a>
                             </div>
                         </div>
                     </section>

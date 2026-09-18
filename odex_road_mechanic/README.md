@@ -491,3 +491,27 @@ reload; the workflow strip switches panels on click; and the single contact form
 retargets itself for a demo, an edition quote or a device quote, carrying the
 chosen edition or device with it. Enquiries land in the Enquiries list and, when
 the CRM app is installed, also create a `crm.lead`.
+
+
+---
+
+# Release 18.0.5.1.0
+
+* The software page is now called **Softwares** in the menu and answers on
+  `/softwares` as well as `/software/owms`.
+* The "Compatible business devices & workshop hardware" section is gone from the
+  software page - search bar, category filters and product cards included. What
+  remains is a single link across to the new page.
+* **Edition feature lists replaced** with the supplied wording: Starter 7 items,
+  Professional 13, Enterprise / Custom 16. They live in a data file with
+  `noupdate` off, so a module upgrade rewrites them; editing the lists later is
+  still done in Odex OWMS - Software Editions.
+* **New page: Business Devices** at `/business-devices`, linked in the main
+  menu. Every published device in a responsive grid, with the category chips and
+  live search that used to sit on the software page.
+* **Device detail page** at `/business-devices/<slug>`: image with a thumbnail
+  gallery, title, short description, key highlights as bullet points, a
+  specification table that only prints rows that were filled in, compatibility,
+  a quote form that returns to the same product, and related devices from the
+  same category.
+* Products gained a **Highlights** tab in the backend for those bullet points.

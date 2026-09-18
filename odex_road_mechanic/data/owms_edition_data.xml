@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- noupdate is off on purpose: the edition feature lists are
+         refreshed from here on every module upgrade. -->
+    <data>
+        <delete model="odex.owms.edition.feature" search="[]"/>
+        <record id="owms_efeat_starter_1" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Inspection</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="owms_efeat_starter_2" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Vehicle Management</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="owms_efeat_starter_3" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Customer Management</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="owms_efeat_starter_4" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Job Card</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="owms_efeat_starter_5" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Accounts</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="owms_efeat_starter_6" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Basic Inventory</field>
+            <field name="sequence">60</field>
+        </record>
+        <record id="owms_efeat_starter_7" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Accounting Reports</field>
+            <field name="sequence">70</field>
+        </record>
+        <record id="owms_efeat_professional_1" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Gatepass</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="owms_efeat_professional_2" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Inspection</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="owms_efeat_professional_3" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Job Card</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="owms_efeat_professional_4" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Advance Inventory</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="owms_efeat_professional_5" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Accounts</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="owms_efeat_professional_6" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Accounting Reports</field>
+            <field name="sequence">60</field>
+        </record>
+        <record id="owms_efeat_professional_7" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Vehicle Management</field>
+            <field name="sequence">70</field>
+        </record>
+        <record id="owms_efeat_professional_8" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Customer Management</field>
+            <field name="sequence">80</field>
+        </record>
+        <record id="owms_efeat_professional_9" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">WhatsApp Integration (Optional)</field>
+            <field name="sequence">90</field>
+        </record>
+        <record id="owms_efeat_professional_10" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Email Integration</field>
+            <field name="sequence">100</field>
+        </record>
+        <record id="owms_efeat_professional_11" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">CRM</field>
+            <field name="sequence">110</field>
+        </record>
+        <record id="owms_efeat_professional_12" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Employees</field>
+            <field name="sequence">120</field>
+        </record>
+        <record id="owms_efeat_professional_13" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Technician Portal</field>
+            <field name="sequence">130</field>
+        </record>
+        <record id="owms_efeat_enterprise_1" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Inspection</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="owms_efeat_enterprise_2" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Job Card</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="owms_efeat_enterprise_3" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Advance Inventory</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="owms_efeat_enterprise_4" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Accounts</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="owms_efeat_enterprise_5" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Accounting Reports</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="owms_efeat_enterprise_6" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Vehicle Management</field>
+            <field name="sequence">60</field>
+        </record>
+        <record id="owms_efeat_enterprise_7" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Customer Management</field>
+            <field name="sequence">70</field>
+        </record>
+        <record id="owms_efeat_enterprise_8" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">WhatsApp Integration (Optional)</field>
+            <field name="sequence">80</field>
+        </record>
+        <record id="owms_efeat_enterprise_9" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Email Integration</field>
+            <field name="sequence">90</field>
+        </record>
+        <record id="owms_efeat_enterprise_10" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">CRM</field>
+            <field name="sequence">100</field>
+        </record>
+        <record id="owms_efeat_enterprise_11" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Employees</field>
+            <field name="sequence">110</field>
+        </record>
+        <record id="owms_efeat_enterprise_12" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Technician Portal</field>
+            <field name="sequence">120</field>
+        </record>
+        <record id="owms_efeat_enterprise_13" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Vendor Portal</field>
+            <field name="sequence">130</field>
+        </record>
+        <record id="owms_efeat_enterprise_14" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">AI</field>
+            <field name="sequence">140</field>
+        </record>
+        <record id="owms_efeat_enterprise_15" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">HRM</field>
+            <field name="sequence">150</field>
+        </record>
+        <record id="owms_efeat_enterprise_16" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Payroll</field>
+            <field name="sequence">160</field>
+        </record>
+    </data>
+</odoo>

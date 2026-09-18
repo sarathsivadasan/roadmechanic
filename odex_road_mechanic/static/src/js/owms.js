@@ -134,3 +134,20 @@ publicWidget.registry.OwmsCatalog = publicWidget.Widget.extend({
         });
     },
 });
+
+
+/** Product detail: thumbnails swap the main image. */
+publicWidget.registry.OwmsDeviceGallery = publicWidget.Widget.extend({
+    selector: ".odex-owms",
+    events: {
+        "click [data-owms-image]": "_onThumb",
+    },
+
+    _onThumb(ev) {
+        ev.preventDefault();
+        const main = this.el.querySelector("[data-owms-main-image]");
+        if (main) {
+            main.setAttribute("src", ev.currentTarget.dataset.owmsImage);
+        }
+    },
+});

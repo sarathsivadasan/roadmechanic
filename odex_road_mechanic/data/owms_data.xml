@@ -64,31 +64,6 @@
             <field name="is_highlighted" eval="False"/>
             <field name="cta_label">Request a quote</field>
         </record>
-        <record id="owms_feat_starter_1" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_starter"/>
-            <field name="name">Digital Gate Pass</field>
-            <field name="sequence">1</field>
-        </record>
-        <record id="owms_feat_starter_2" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_starter"/>
-            <field name="name">Digital Vehicle Inspection</field>
-            <field name="sequence">2</field>
-        </record>
-        <record id="owms_feat_starter_3" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_starter"/>
-            <field name="name">Job Card Management</field>
-            <field name="sequence">3</field>
-        </record>
-        <record id="owms_feat_starter_4" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_starter"/>
-            <field name="name">Basic Invoicing</field>
-            <field name="sequence">4</field>
-        </record>
-        <record id="owms_feat_starter_5" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_starter"/>
-            <field name="name">Petty Cash</field>
-            <field name="sequence">5</field>
-        </record>
         <record id="owms_edition_professional" model="odex.owms.edition">
             <field name="name">Professional</field>
             <field name="subtitle">For growing workshops with stock and a team</field>
@@ -97,31 +72,6 @@
             <field name="is_highlighted" eval="True"/>
             <field name="cta_label">Request a quote</field>
         </record>
-        <record id="owms_feat_professional_1" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_professional"/>
-            <field name="name">CRM</field>
-            <field name="sequence">1</field>
-        </record>
-        <record id="owms_feat_professional_2" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_professional"/>
-            <field name="name">Multi-Vendor Purchase Module</field>
-            <field name="sequence">2</field>
-        </record>
-        <record id="owms_feat_professional_3" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_professional"/>
-            <field name="name">Inventory Management</field>
-            <field name="sequence">3</field>
-        </record>
-        <record id="owms_feat_professional_4" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_professional"/>
-            <field name="name">Employee Management</field>
-            <field name="sequence">4</field>
-        </record>
-        <record id="owms_feat_professional_5" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_professional"/>
-            <field name="name">Bank Reconciliation</field>
-            <field name="sequence">5</field>
-        </record>
         <record id="owms_edition_enterprise" model="odex.owms.edition">
             <field name="name">Enterprise / Custom</field>
             <field name="subtitle">For multi-branch groups and custom workflows</field>
@@ -129,51 +79,6 @@
             <field name="sequence">3</field>
             <field name="is_highlighted" eval="False"/>
             <field name="cta_label">Talk to our team</field>
-        </record>
-        <record id="owms_feat_enterprise_1" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_enterprise"/>
-            <field name="name">HRMS Solution</field>
-            <field name="sequence">1</field>
-        </record>
-        <record id="owms_feat_enterprise_2" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_enterprise"/>
-            <field name="name">Multi-Branch Operations</field>
-            <field name="sequence">2</field>
-        </record>
-        <record id="owms_feat_enterprise_3" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_enterprise"/>
-            <field name="name">Full Accounting Suite</field>
-            <field name="sequence">3</field>
-        </record>
-        <record id="owms_feat_enterprise_4" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_enterprise"/>
-            <field name="name">Profit &amp; Loss</field>
-            <field name="sequence">4</field>
-        </record>
-        <record id="owms_feat_enterprise_5" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_enterprise"/>
-            <field name="name">Balance Sheet</field>
-            <field name="sequence">5</field>
-        </record>
-        <record id="owms_feat_enterprise_6" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_enterprise"/>
-            <field name="name">Trial Balance</field>
-            <field name="sequence">6</field>
-        </record>
-        <record id="owms_feat_enterprise_7" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_enterprise"/>
-            <field name="name">Custom Workflow Development</field>
-            <field name="sequence">7</field>
-        </record>
-        <record id="owms_feat_enterprise_8" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_enterprise"/>
-            <field name="name">Advanced Customisation</field>
-            <field name="sequence">8</field>
-        </record>
-        <record id="owms_feat_enterprise_9" model="odex.owms.edition.feature">
-            <field name="edition_id" ref="owms_edition_enterprise"/>
-            <field name="name">Business-specific integrations</field>
-            <field name="sequence">9</field>
         </record>
         <record id="owms_group_operations" model="odex.owms.feature.group">
             <field name="name">Workshop Operations</field>

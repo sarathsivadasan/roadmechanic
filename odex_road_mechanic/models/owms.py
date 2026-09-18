@@ -91,6 +91,9 @@ class OwmsHardwareProduct(models.Model):
     ], default='enquire')
     spec_ids = fields.One2many(
         'odex.owms.hardware.spec', 'product_id', string='Technical Specifications')
+    highlight_ids = fields.One2many(
+        'odex.owms.hardware.highlight', 'product_id', string='Key Highlights',
+        help='Bullet points shown on the product page.')
 
     compatible_owms = fields.Char(
         string='Compatible OWMS Modules',
@@ -170,6 +173,17 @@ class OwmsHardwareSpec(models.Model):
         'odex.owms.hardware.product', required=True, ondelete='cascade', index=True)
     name = fields.Char(string='Specification', required=True)
     value = fields.Char(required=True)
+    sequence = fields.Integer(default=10)
+
+
+class OwmsHardwareHighlight(models.Model):
+    _name = 'odex.owms.hardware.highlight'
+    _description = 'OWMS Device Highlight'
+    _order = 'sequence, id'
+
+    product_id = fields.Many2one(
+        'odex.owms.hardware.product', required=True, ondelete='cascade', index=True)
+    name = fields.Char(string='Highlight', required=True, translate=True)
     sequence = fields.Integer(default=10)
 
 

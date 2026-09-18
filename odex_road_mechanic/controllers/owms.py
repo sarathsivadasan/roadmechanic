@@ -44,11 +44,42 @@ class OwmsWebsite(http.Controller):
             'error': post.get('error'),
         }
 
-    @http.route(['/software/owms'], type='http', auth='public', website=True,
-                sitemap=True)
+    @http.route(['/software/owms', '/softwares'], type='http', auth='public',
+                website=True, sitemap=True)
     def owms_page(self, **post):
         values = self._page_values(**post)
         return request.render('odex_road_mechanic.owms_page', values)
+
+    # ------------------------------------------------------------------
+    # Business devices: its own page, with a detail page per product
+    # ------------------------------------------------------------------
+    @http.route(['/business-devices'], type='http', auth='public', website=True,
+                sitemap=True)
+    def devices_page(self, **post):
+        values = self._page_values(**post)
+        return request.render('odex_road_mechanic.devices_page', values)
+
+    @http.route(['/business-devices/<string:product_slug>'], type='http', auth='public',
+                website=True, sitemap=False)
+    def device_detail(self, product_slug, **post):
+        Product = request.env['odex.owms.hardware.product']
+        product = Product.search(
+            [('slug', '=', product_slug), ('website_published', '=', True)], limit=1)
+        if not product:
+            raise NotFound()
+        values = {
+            'website': request.website,
+            'product': product,
+            'main_object': product,
+            'devices_image': request.website.owms_devices_image_url(),
+            'related_products': Product.search(
+                [('category_id', '=', product.category_id.id),
+                 ('id', '!=', product.id),
+                 ('website_published', '=', True)], limit=4),
+            'sent': post.get('sent'),
+            'error': post.get('error'),
+        }
+        return request.render('odex_road_mechanic.device_detail', values)
 
     # ------------------------------------------------------------------
     # Enquiries: demo, edition quote, device quote
@@ -66,9 +97,15 @@ class OwmsWebsite(http.Controller):
         name = (post.get('contact_name') or '').strip()
         phone = (post.get('phone') or '').strip()
         if not name or not phone or not PHONE_RE.match(phone):
+            back = post.get('redirect') or ''
+            if back.startswith('/business-devices/'):
+                return request.redirect('%s?error=contact#device-quote' % back)
             return request.redirect('/software/owms?error=contact#owms-contact')
         email = (post.get('email') or '').strip()
         if email and not EMAIL_RE.match(email):
+            back = post.get('redirect') or ''
+            if back.startswith('/business-devices/'):
+                return request.redirect('%s?error=email#device-quote' % back)
             return request.redirect('/software/owms?error=email#owms-contact')
 
         def _rel(model, value):
@@ -95,9 +132,16 @@ class OwmsWebsite(http.Controller):
             'edition_id': _rel('odex.owms.edition', post.get('edition_id')),
             'product_id': _rel('odex.owms.hardware.product', post.get('product_id')),
         }
+        redirect = post.get('redirect') or ''
+        if not redirect.startswith('/business-devices/'):
+            redirect = ''
         try:
             request.env['odex.owms.enquiry'].sudo().create(values)
         except Exception:  # noqa: BLE001 - never leak a traceback publicly
             _logger.exception('OWMS: enquiry creation failed')
+            if redirect:
+                return request.redirect('%s?error=unknown#device-quote' % redirect)
             return request.redirect('/software/owms?error=unknown#owms-contact')
+        if redirect:
+            return request.redirect('%s?sent=1#device-quote' % redirect)
         return request.redirect('/software/owms?sent=%s#owms-contact' % enquiry_type)

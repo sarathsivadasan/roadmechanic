@@ -109,6 +109,17 @@
                                 "No integration claimed" is the honest default.
                             </div>
                         </page>
+                        <page string="Highlights" name="highlights">
+                            <p class="text-muted">
+                                Bullet points shown on the product page.
+                            </p>
+                            <field name="highlight_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                </list>
+                            </field>
+                        </page>
                         <page string="Description" name="description">
                             <field name="description"/>
                         </page>
@@ -368,10 +379,17 @@
               action="action_owms_step" sequence="50"/>
 
     <record id="menu_website_owms" model="website.menu">
-        <field name="name">Software</field>
+        <field name="name">Softwares</field>
         <field name="url">/software/owms</field>
         <field name="parent_id" ref="website.main_menu"/>
         <field name="sequence">20</field>
+    </record>
+
+    <record id="menu_website_devices" model="website.menu">
+        <field name="name">Business Devices</field>
+        <field name="url">/business-devices</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">21</field>
     </record>
 
 </odoo>
