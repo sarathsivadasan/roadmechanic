@@ -165,8 +165,10 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
             'verified_suppliers': Workshop.search(
                 expression.AND([suppliers, [('is_verified', '=', True)]]), limit=6),
             # 3 + 4: the main listings, kept short on the home page
-            'all_workshops': Workshop.search(workshops, limit=5),
-            'all_suppliers': Workshop.search(suppliers, limit=5),
+            'all_workshops': Workshop.search(
+                workshops, limit=6, order='create_date desc, id desc'),
+            'all_suppliers': Workshop.search(
+                suppliers, limit=6, order='create_date desc, id desc'),
             'total_workshops': Workshop.search_count(workshops),
             'total_suppliers': Workshop.search_count(suppliers),
             # 5 + 6: providers of the two field services

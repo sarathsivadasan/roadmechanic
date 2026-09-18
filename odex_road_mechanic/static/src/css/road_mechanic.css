@@ -1542,3 +1542,77 @@ html[data-orm-theme="dark"] .orm-rating-input label { color: #3f3f46; }
 .odex-road-mechanic .orm-grid--cards > *,
 .odex-road-mechanic .orm-grid--results > *,
 .odex-road-mechanic .orm-grid--offers > * { max-width: 340px; }
+
+
+/* ==========================================================================
+   Contrast, clickable cards and footer readability
+   ========================================================================== */
+
+/* The hero sits on a photo in both themes, so its heading is white in both.
+   Only the accent span follows the brand colour. */
+.odex-road-mechanic .orm-hero__title,
+html[data-orm-theme="dark"] .odex-road-mechanic .orm-hero__title,
+.roadmechanic-workshop-page .orm-wsp-hero__title,
+html[data-orm-theme="dark"] .roadmechanic-workshop-page .orm-wsp-hero__title { color: #fff; }
+.odex-road-mechanic .orm-hero__title span { color: var(--orm-red); }
+.odex-road-mechanic .orm-hero__eyebrow,
+.odex-road-mechanic .orm-hero__subtitle { color: rgba(255, 255, 255, .92); }
+
+/* the whole card is a link, the buttons inside still win the click */
+.odex-road-mechanic .orm-card { position: relative; }
+.odex-road-mechanic .orm-card__stretch::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+.odex-road-mechanic .orm-card .orm-actions,
+.odex-road-mechanic .orm-card__more,
+.odex-road-mechanic .orm-card__media { position: relative; z-index: 2; }
+.odex-road-mechanic .orm-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    margin-top: .5rem;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--orm-red);
+}
+.odex-road-mechanic .orm-card .orm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+.odex-road-mechanic .orm-card .orm-actions .orm-btn { width: 100%; }
+
+/* Footer readability. The footer belongs to the website theme, so this only
+   raises contrast and tightens the mobile layout - it sets no palette of its
+   own and can be removed without affecting anything else. */
+#wrapwrap > footer a:not(.btn) { color: inherit; opacity: .85; }
+#wrapwrap > footer a:not(.btn):hover { opacity: 1; text-decoration: underline; }
+#wrapwrap > footer h5,
+#wrapwrap > footer h6,
+#wrapwrap > footer .h6 { opacity: 1; }
+
+@media (max-width: 767.98px) {
+    /* two columns of links instead of one long scroll */
+    #wrapwrap > footer .s_text_block .row > div[class*="col-lg-"] { width: 50%; }
+    #wrapwrap > footer .s_text_block .row > div[class*="col-lg-"]:nth-child(n+3) {
+        margin-top: 1rem;
+    }
+}
+
+
+/* Sticky pieces sit below the website header, never over it. Odoo's fixed
+   header uses z-index 1030, so ours stay under that and offset by its height
+   when the theme reports one. */
+.roadmechanic-workshop-page .orm-wsp-tabs {
+    z-index: 1020;
+    top: var(--o-navbar-height, 0px);
+}
+.odex-road-mechanic .orm-wsp-sticky { top: calc(var(--o-navbar-height, 0px) + 1rem); }
+.odex-road-mechanic .orm-mobilebar { z-index: 1025; }
+.odex-road-mechanic .orm-lightbox { z-index: 1080; }
+.odex-road-mechanic .orm-theme-toggle { z-index: 5; }
+
+/* the hero CTA buttons must clear the floating header on small screens */
+@media (max-width: 767.98px) {
+    .odex-road-mechanic .orm-cta__inner { padding-top: .5rem; }
+    .odex-road-mechanic .orm-actions--cta .orm-btn { flex: 1 1 100%; }
+}

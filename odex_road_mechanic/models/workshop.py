@@ -31,8 +31,10 @@ class RoadMechanicWorkshop(models.Model):
         'mail.thread',
         'mail.activity.mixin',
     ]
+    # Ranking bands first, then newest inside each band: a company that
+    # registered today is the first of its band, not the last alphabetically.
     _order = ('is_verified desc, priority desc, is_featured desc, '
-              'rating desc, review_count desc, name asc')
+              'rating desc, review_count desc, create_date desc, id desc')
 
     # ------------------------------------------------------------------
     # Identity
@@ -842,7 +844,7 @@ class RoadMechanicWorkshop(models.Model):
             'recommended': None,
             'rating': 'rating desc, review_count desc',
             'reviews': 'review_count desc, rating desc',
-            'newest': 'create_date desc',
+            'newest': 'create_date desc, id desc',
             'name': 'name asc',
         }.get(sort)
 

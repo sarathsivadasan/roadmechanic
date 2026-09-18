@@ -128,7 +128,8 @@
             </a>
             <div class="orm-card__body">
                 <h3 class="orm-card__title">
-                    <a t-attf-href="/workshop/#{workshop.slug}" t-out="workshop.name"/>
+                    <a t-attf-href="/workshop/#{workshop.slug}" class="orm-card__stretch"
+                       t-out="workshop.name"/>
                 </h3>
                 <p class="orm-card__meta" t-if="workshop.location_id or workshop.area">
                     <i class="fa fa-map-marker" aria-hidden="true"/>
@@ -147,10 +148,10 @@
                         +<t t-out="len(card_tags) - 3"/>
                     </li>
                 </ul>
-                <a t-attf-href="/workshop/#{workshop.slug}" class="orm-btn orm-btn--outline orm-btn--block">
+                <t t-call="odex_road_mechanic.orm_contact_buttons"/>
+                <a t-attf-href="/workshop/#{workshop.slug}" class="orm-card__more">
                     View details <i class="fa fa-arrow-right" aria-hidden="true"/>
                 </a>
-                <t t-call="odex_road_mechanic.orm_contact_buttons"/>
                 <t t-call="odex_road_mechanic.orm_service_buttons"/>
             </div>
         </article>

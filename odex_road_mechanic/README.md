@@ -420,3 +420,27 @@ Assistance, Recovery, Request a part and Services.
   like every other panel. The only colours still fixed on purpose are the white
   plate behind a company logo and the toggle knob, which need to stay white for
   legibility whatever the palette.
+
+
+---
+
+# Release 18.0.4.2.0
+
+* **Hero heading is white in both themes.** It sits on a photo, so only the
+  accent span follows the brand colour. Same rule on the workshop hero.
+* **Whole card is clickable.** The title carries a stretched link covering the
+  card, while Call, WhatsApp and the media link stay above it and keep their own
+  click. "View details" is now a secondary text link rather than a third button,
+  and Call/WhatsApp sit in a two column row underneath.
+* **FIFO for new listings.** `_order` ends with `create_date desc, id desc`, so
+  a company that registered today leads its ranking band instead of trailing
+  alphabetically, and the two home listing sections query newest first
+  explicitly. Verified and featured still rank above unverified - tell me if you
+  want pure registration order instead.
+* **Sticky layers fixed.** The section tabs, sidebar, mobile bar and lightbox
+  now use an explicit z-index ladder below Odoo's fixed header (1030) and offset
+  themselves by `--o-navbar-height`, so nothing slides under or over the header.
+* **Footer contrast and mobile columns.** Footer links inherit the footer text
+  colour at raised opacity instead of staying low contrast, and the link groups
+  fall into two columns on phones. This only adjusts contrast and layout; the
+  footer palette still belongs to the website theme.
