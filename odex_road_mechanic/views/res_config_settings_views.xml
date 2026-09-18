@@ -24,6 +24,39 @@
                              help="How much the hero photo is darkened behind the heading. 0 leaves the photo untouched, 95 is almost black.">
                         <field name="orm_hero_overlay"/>
                     </setting>
+                    <setting id="owms_page_setting" string="OWMS Software Page"
+                             help="Title, text and images of the /software/owms page.">
+                        <div class="content-group">
+                            <div class="row mt8">
+                                <label for="owms_hero_title" class="col-lg-4 o_light_label"/>
+                                <field name="owms_hero_title"/>
+                            </div>
+                            <div class="row">
+                                <label for="owms_hero_subtitle" class="col-lg-4 o_light_label"/>
+                                <field name="owms_hero_subtitle"/>
+                            </div>
+                            <div class="row">
+                                <label for="owms_hero_text" class="col-lg-4 o_light_label"/>
+                                <field name="owms_hero_text"/>
+                            </div>
+                            <div class="row">
+                                <label for="owms_hero_image" class="col-lg-4 o_light_label"/>
+                                <field name="owms_hero_image" widget="image" class="w-50"/>
+                            </div>
+                            <div class="row">
+                                <label for="owms_devices_title" class="col-lg-4 o_light_label"/>
+                                <field name="owms_devices_title"/>
+                            </div>
+                            <div class="row">
+                                <label for="owms_devices_subtitle" class="col-lg-4 o_light_label"/>
+                                <field name="owms_devices_subtitle"/>
+                            </div>
+                            <div class="row">
+                                <label for="owms_devices_image" class="col-lg-4 o_light_label"/>
+                                <field name="owms_devices_image" widget="image" class="w-50"/>
+                            </div>
+                        </div>
+                    </setting>
                     <setting id="orm_colors_setting" string="Brand Colours"
                              help="Hex values used across the Road Mechanic pages. Leave a field empty to keep the shipped colour.">
                         <div class="content-group">

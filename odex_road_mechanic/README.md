@@ -444,3 +444,50 @@ Assistance, Recovery, Request a part and Services.
   colour at raised opacity instead of staying low contrast, and the link groups
   fall into two columns on phones. This only adjusts contrast and layout; the
   footer palette still belongs to the website theme.
+
+
+---
+
+# Release 18.0.5.0.0 - Odex Workshop Management Software page
+
+A new page at **/software/owms**, inside the same website, header, footer and
+theme as the rest of Road Mechanic. It is linked from the main menu as
+"Software".
+
+Everything on it is data driven - a category, device, edition, feature group or
+workflow step added in the backend changes the page with no template edit.
+
+**Backend: Odex OWMS menu**
+
+* *Devices* - the hardware catalog: image, gallery, category, brand, model, SKU,
+  price or price-on-request, processor, OS, display, connectivity, battery,
+  warranty, support, availability, plus a free-form specification list for
+  anything else.
+* *Hardware Categories* - the 11 categories ship preloaded: inspection tablets,
+  POS terminals, barcode scanners, thermal printers, cash drawers, biometric
+  devices, diagnostic devices, payment terminals, customer displays, network
+  devices and workshop accessories.
+* *Software Editions* - Starter, Professional and Enterprise with their feature
+  lists, all editable. No price is invented: an edition with no price note shows
+  "Configured to your business".
+* *Feature Groups*, *Workflow Steps* and *Enquiries*.
+
+**Page content is editable** in Settings - Website - OWMS Software Page: hero
+title, subtitle, intro text and image, plus the devices section title, subtitle
+and banner image.
+
+**Honesty rules kept in the data model**
+
+* `integration_status` defaults to "No integration claimed"; a card only shows an
+  integration line when someone sets one deliberately.
+* Seven sample devices ship so the catalog is not empty. They are flagged
+  `is_demo`, print "Catalog sample - final specifications confirmed before
+  quotation" on the card, and carry no invented brand, model, price or warranty.
+* Specification rows render only when filled, so a half-known device shows what
+  is known and nothing else.
+
+**Interaction**: category chips and a search box filter the catalog live with no
+reload; the workflow strip switches panels on click; and the single contact form
+retargets itself for a demo, an edition quote or a device quote, carrying the
+chosen edition or device with it. Enquiries land in the Enquiries list and, when
+the CRM app is installed, also create a `crm.lead`.

@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="owms_cat_inspection_tablets" model="odex.owms.hardware.category">
+            <field name="name">Inspection Tablets</field>
+            <field name="icon">fa-tablet</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_cat_pos_terminals" model="odex.owms.hardware.category">
+            <field name="name">POS Terminals</field>
+            <field name="icon">fa-desktop</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_cat_barcode_scanners" model="odex.owms.hardware.category">
+            <field name="name">Barcode Scanners</field>
+            <field name="icon">fa-barcode</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_cat_thermal_printers" model="odex.owms.hardware.category">
+            <field name="name">Thermal Printers</field>
+            <field name="icon">fa-print</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_cat_cash_drawers" model="odex.owms.hardware.category">
+            <field name="name">Cash Drawers</field>
+            <field name="icon">fa-inbox</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_cat_biometric_devices" model="odex.owms.hardware.category">
+            <field name="name">Biometric Devices</field>
+            <field name="icon">fa-hand-o-up</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="owms_cat_diagnostic_devices" model="odex.owms.hardware.category">
+            <field name="name">Vehicle Diagnostic Devices</field>
+            <field name="icon">fa-stethoscope</field>
+            <field name="sequence">7</field>
+        </record>
+        <record id="owms_cat_payment_terminals" model="odex.owms.hardware.category">
+            <field name="name">Payment Terminals</field>
+            <field name="icon">fa-credit-card</field>
+            <field name="sequence">8</field>
+        </record>
+        <record id="owms_cat_customer_displays" model="odex.owms.hardware.category">
+            <field name="name">Customer Display Screens</field>
+            <field name="icon">fa-tv</field>
+            <field name="sequence">9</field>
+        </record>
+        <record id="owms_cat_network_devices" model="odex.owms.hardware.category">
+            <field name="name">Network &amp; Connectivity Devices</field>
+            <field name="icon">fa-wifi</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="owms_cat_workshop_accessories" model="odex.owms.hardware.category">
+            <field name="name">Workshop Accessories</field>
+            <field name="icon">fa-wrench</field>
+            <field name="sequence">11</field>
+        </record>
+        <record id="owms_edition_starter" model="odex.owms.edition">
+            <field name="name">Starter</field>
+            <field name="subtitle">For a single workshop getting off paper</field>
+            <field name="includes_note"></field>
+            <field name="sequence">1</field>
+            <field name="is_highlighted" eval="False"/>
+            <field name="cta_label">Request a quote</field>
+        </record>
+        <record id="owms_feat_starter_1" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Digital Gate Pass</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_feat_starter_2" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Digital Vehicle Inspection</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_feat_starter_3" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Job Card Management</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_feat_starter_4" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Basic Invoicing</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_feat_starter_5" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_starter"/>
+            <field name="name">Petty Cash</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_edition_professional" model="odex.owms.edition">
+            <field name="name">Professional</field>
+            <field name="subtitle">For growing workshops with stock and a team</field>
+            <field name="includes_note">Everything in Starter, plus</field>
+            <field name="sequence">2</field>
+            <field name="is_highlighted" eval="True"/>
+            <field name="cta_label">Request a quote</field>
+        </record>
+        <record id="owms_feat_professional_1" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">CRM</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_feat_professional_2" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Multi-Vendor Purchase Module</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_feat_professional_3" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Inventory Management</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_feat_professional_4" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Employee Management</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_feat_professional_5" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_professional"/>
+            <field name="name">Bank Reconciliation</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_edition_enterprise" model="odex.owms.edition">
+            <field name="name">Enterprise / Custom</field>
+            <field name="subtitle">For multi-branch groups and custom workflows</field>
+            <field name="includes_note">Everything in Professional, plus</field>
+            <field name="sequence">3</field>
+            <field name="is_highlighted" eval="False"/>
+            <field name="cta_label">Talk to our team</field>
+        </record>
+        <record id="owms_feat_enterprise_1" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">HRMS Solution</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_feat_enterprise_2" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Multi-Branch Operations</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_feat_enterprise_3" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Full Accounting Suite</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_feat_enterprise_4" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Profit &amp; Loss</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_feat_enterprise_5" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Balance Sheet</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_feat_enterprise_6" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Trial Balance</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="owms_feat_enterprise_7" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Custom Workflow Development</field>
+            <field name="sequence">7</field>
+        </record>
+        <record id="owms_feat_enterprise_8" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Advanced Customisation</field>
+            <field name="sequence">8</field>
+        </record>
+        <record id="owms_feat_enterprise_9" model="odex.owms.edition.feature">
+            <field name="edition_id" ref="owms_edition_enterprise"/>
+            <field name="name">Business-specific integrations</field>
+            <field name="sequence">9</field>
+        </record>
+        <record id="owms_group_operations" model="odex.owms.feature.group">
+            <field name="name">Workshop Operations</field>
+            <field name="icon">fa-car</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_gfeat_operations_1" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_operations"/>
+            <field name="name">Digital Gate Pass</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_gfeat_operations_2" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_operations"/>
+            <field name="name">Multi-Point Vehicle Inspection</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_gfeat_operations_3" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_operations"/>
+            <field name="name">Job Card Management</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_gfeat_operations_4" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_operations"/>
+            <field name="name">Real-Time Repair Status</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_gfeat_operations_5" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_operations"/>
+            <field name="name">Vehicle History</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_gfeat_operations_6" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_operations"/>
+            <field name="name">Technician Job Tracking</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="owms_group_procurement" model="odex.owms.feature.group">
+            <field name="name">Procurement &amp; Inventory</field>
+            <field name="icon">fa-cubes</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_gfeat_procurement_1" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_procurement"/>
+            <field name="name">Multi-Vendor Purchase System</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_gfeat_procurement_2" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_procurement"/>
+            <field name="name">RFQ to Purchase Order</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_gfeat_procurement_3" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_procurement"/>
+            <field name="name">Auto Parts Inventory</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_gfeat_procurement_4" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_procurement"/>
+            <field name="name">Stock Tracking</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_gfeat_procurement_5" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_procurement"/>
+            <field name="name">Low Stock Alerts</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_gfeat_procurement_6" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_procurement"/>
+            <field name="name">Parts Usage Tracking</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="owms_group_crm" model="odex.owms.feature.group">
+            <field name="name">CRM &amp; Customer Management</field>
+            <field name="icon">fa-users</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_gfeat_crm_1" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_crm"/>
+            <field name="name">Customer Management</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_gfeat_crm_2" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_crm"/>
+            <field name="name">Complete Vehicle Repair History</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_gfeat_crm_3" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_crm"/>
+            <field name="name">Customer Communication</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_gfeat_crm_4" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_crm"/>
+            <field name="name">Automated Notifications</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_gfeat_crm_5" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_crm"/>
+            <field name="name">Customer Portal</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_group_finance" model="odex.owms.feature.group">
+            <field name="name">Financial &amp; Accounting</field>
+            <field name="icon">fa-calculator</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_gfeat_finance_1" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">Petty Cash</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_gfeat_finance_2" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">Bank Book</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_gfeat_finance_3" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">Day Book</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_gfeat_finance_4" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">Cash Book</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_gfeat_finance_5" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">Bank Reconciliation</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_gfeat_finance_6" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">Profit &amp; Loss</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="owms_gfeat_finance_7" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">Balance Sheet</field>
+            <field name="sequence">7</field>
+        </record>
+        <record id="owms_gfeat_finance_8" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">Trial Balance</field>
+            <field name="sequence">8</field>
+        </record>
+        <record id="owms_gfeat_finance_9" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">VAT Invoicing</field>
+            <field name="sequence">9</field>
+        </record>
+        <record id="owms_gfeat_finance_10" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_finance"/>
+            <field name="name">Financial Reports</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="owms_group_hr" model="odex.owms.feature.group">
+            <field name="name">Employee &amp; HR</field>
+            <field name="icon">fa-id-badge</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_gfeat_hr_1" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_hr"/>
+            <field name="name">Employee Management</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_gfeat_hr_2" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_hr"/>
+            <field name="name">HRMS</field>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_gfeat_hr_3" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_hr"/>
+            <field name="name">Technician Management</field>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_gfeat_hr_4" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_hr"/>
+            <field name="name">Technician Productivity</field>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_gfeat_hr_5" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_hr"/>
+            <field name="name">Technician Performance Tracking</field>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_gfeat_hr_6" model="odex.owms.feature">
+            <field name="group_id" ref="owms_group_hr"/>
+            <field name="name">Attendance Integration</field>
+            <field name="sequence">6</field>
+        </record>
+        <record id="owms_step_gate_pass" model="odex.owms.workflow.step">
+            <field name="name">Gate Pass</field>
+            <field name="icon">fa-sign-in</field>
+            <field name="sequence">1</field>
+            <field name="description">The vehicle is checked in at the gate with entry time, photos and a gate pass number.</field>
+        </record>
+        <record id="owms_step_inspection" model="odex.owms.workflow.step">
+            <field name="name">Vehicle Inspection</field>
+            <field name="icon">fa-search</field>
+            <field name="sequence">2</field>
+            <field name="description">A multi-point inspection on a tablet records findings and photos against the vehicle.</field>
+        </record>
+        <record id="owms_step_estimate" model="odex.owms.workflow.step">
+            <field name="name">Estimate / Quotation</field>
+            <field name="icon">fa-file-text-o</field>
+            <field name="sequence">3</field>
+            <field name="description">Findings become a priced estimate the customer can review and approve.</field>
+        </record>
+        <record id="owms_step_job_card" model="odex.owms.workflow.step">
+            <field name="name">Job Card</field>
+            <field name="icon">fa-clipboard</field>
+            <field name="sequence">4</field>
+            <field name="description">The approved estimate opens a job card with tasks assigned to technicians.</field>
+        </record>
+        <record id="owms_step_parts" model="odex.owms.workflow.step">
+            <field name="name">Parts / Inventory</field>
+            <field name="icon">fa-cubes</field>
+            <field name="sequence">5</field>
+            <field name="description">Parts are requested, issued from stock and costed onto the job.</field>
+        </record>
+        <record id="owms_step_technician" model="odex.owms.workflow.step">
+            <field name="name">Technician Work</field>
+            <field name="icon">fa-wrench</field>
+            <field name="sequence">6</field>
+            <field name="description">Technicians log time and progress, so the repair status stays live.</field>
+        </record>
+        <record id="owms_step_invoice" model="odex.owms.workflow.step">
+            <field name="name">Invoicing</field>
+            <field name="icon">fa-file-o</field>
+            <field name="sequence">7</field>
+            <field name="description">The completed job card becomes a VAT invoice without re-entering anything.</field>
+        </record>
+        <record id="owms_step_payment" model="odex.owms.workflow.step">
+            <field name="name">Payment</field>
+            <field name="icon">fa-credit-card</field>
+            <field name="sequence">8</field>
+            <field name="description">Payment is recorded and the vehicle is cleared for exit at the gate.</field>
+        </record>
+        <record id="owms_product_inspection_tablet" model="odex.owms.hardware.product">
+            <field name="name">Rugged Mobile Inspection Tablet</field>
+            <field name="category_id" ref="owms_cat_inspection_tablets"/>
+            <field name="short_description">Android rugged tablet for vehicle inspection, gate pass and workshop floor work.</field>
+            <field name="compatible_owms">Vehicle Inspection, Gate Pass, Job Card</field>
+            <field name="integration_status">none</field>
+            <field name="price_on_request" eval="True"/>
+            <field name="is_demo" eval="True"/>
+            <field name="sequence">1</field>
+        </record>
+        <record id="owms_product_pos_terminal" model="odex.owms.hardware.product">
+            <field name="name">All-in-One Desktop POS Terminal</field>
+            <field name="category_id" ref="owms_cat_pos_terminals"/>
+            <field name="short_description">Dual-screen touchscreen terminal for reception, billing and counter operations.</field>
+            <field name="compatible_owms">Invoicing, Customer Portal</field>
+            <field name="integration_status">none</field>
+            <field name="price_on_request" eval="True"/>
+            <field name="is_demo" eval="True"/>
+            <field name="sequence">2</field>
+        </record>
+        <record id="owms_product_barcode_scanner" model="odex.owms.hardware.product">
+            <field name="name">Wireless 2D Barcode &amp; QR Scanner</field>
+            <field name="category_id" ref="owms_cat_barcode_scanners"/>
+            <field name="short_description">Bluetooth and USB scanner for spare parts inventory and stock operations.</field>
+            <field name="compatible_owms">Inventory, Parts Requisition</field>
+            <field name="integration_status">none</field>
+            <field name="price_on_request" eval="True"/>
+            <field name="is_demo" eval="True"/>
+            <field name="sequence">3</field>
+        </record>
+        <record id="owms_product_thermal_printer" model="odex.owms.hardware.product">
+            <field name="name">High-Speed Thermal Receipt &amp; Invoice Printer</field>
+            <field name="category_id" ref="owms_cat_thermal_printers"/>
+            <field name="short_description">Thermal printer for receipts, invoices, gate pass slips and workshop documents.</field>
+            <field name="compatible_owms">Invoicing, Gate Pass</field>
+            <field name="integration_status">none</field>
+            <field name="price_on_request" eval="True"/>
+            <field name="is_demo" eval="True"/>
+            <field name="sequence">4</field>
+        </record>
+        <record id="owms_product_cash_drawer" model="odex.owms.hardware.product">
+            <field name="name">Heavy-Duty Electronic Cash Drawer</field>
+            <field name="category_id" ref="owms_cat_cash_drawers"/>
+            <field name="short_description">RJ11 cash drawer with multiple compartments for cash handling and petty cash.</field>
+            <field name="compatible_owms">Petty Cash</field>
+            <field name="integration_status">none</field>
+            <field name="price_on_request" eval="True"/>
+            <field name="is_demo" eval="True"/>
+            <field name="sequence">5</field>
+        </record>
+        <record id="owms_product_handheld_pos" model="odex.owms.hardware.product">
+            <field name="name">Mobile Bluetooth Handheld POS &amp; Printer</field>
+            <field name="category_id" ref="owms_cat_pos_terminals"/>
+            <field name="short_description">Portable handheld with built-in printer for mobile mechanics and roadside work.</field>
+            <field name="compatible_owms">Invoicing, Roadside Assistance</field>
+            <field name="integration_status">none</field>
+            <field name="price_on_request" eval="True"/>
+            <field name="is_demo" eval="True"/>
+            <field name="sequence">6</field>
+        </record>
+        <record id="owms_product_biometric_device" model="odex.owms.hardware.product">
+            <field name="name">Biometric Attendance Device</field>
+            <field name="category_id" ref="owms_cat_biometric_devices"/>
+            <field name="short_description">Employee and technician attendance device for workshop attendance management.</field>
+            <field name="compatible_owms">Employee Management, Technician Management</field>
+            <field name="integration_status">none</field>
+            <field name="price_on_request" eval="True"/>
+            <field name="is_demo" eval="True"/>
+            <field name="sequence">7</field>
+        </record>
+        <record id="seq_owms_enquiry" model="ir.sequence">
+            <field name="name">OWMS Enquiry</field>
+            <field name="code">odex.owms.enquiry</field>
+            <field name="prefix">OWMS/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

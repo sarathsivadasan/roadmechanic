@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_owms_category_list" model="ir.ui.view">
+        <field name="name">odex.owms.hardware.category.list</field>
+        <field name="model">odex.owms.hardware.category</field>
+        <field name="arch" type="xml">
+            <list string="Hardware Categories" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="icon"/>
+                <field name="product_count" string="Products"/>
+                <field name="show_when_empty" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_owms_product_list" model="ir.ui.view">
+        <field name="name">odex.owms.hardware.product.list</field>
+        <field name="model">odex.owms.hardware.product</field>
+        <field name="arch" type="xml">
+            <list string="Devices" decoration-muted="is_demo">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="brand" optional="show"/>
+                <field name="model_name" optional="show"/>
+                <field name="sku" optional="hide"/>
+                <field name="price" optional="hide"/>
+                <field name="price_on_request" widget="boolean_toggle"/>
+                <field name="integration_status"/>
+                <field name="is_demo" string="Sample"/>
+                <field name="is_featured" widget="boolean_toggle"/>
+                <field name="website_published" widget="boolean_toggle"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_owms_product_form" model="ir.ui.view">
+        <field name="name">odex.owms.hardware.product.form</field>
+        <field name="model">odex.owms.hardware.product</field>
+        <field name="arch" type="xml">
+            <form string="Device">
+                <sheet>
+                    <widget name="web_ribbon" title="Sample" bg_color="text-bg-warning"
+                            invisible="not is_demo"/>
+                    <field name="is_demo" invisible="1"/>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Rugged Inspection Tablet"/></h1>
+                        <field name="short_description" placeholder="One line shown on the card"/>
+                    </div>
+                    <group>
+                        <group string="Catalog">
+                            <field name="category_id" options="{'no_create_edit': True}"/>
+                            <field name="subcategory"/>
+                            <field name="brand"/>
+                            <field name="model_name"/>
+                            <field name="sku"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Commercial">
+                            <field name="price_on_request"/>
+                            <field name="price" invisible="price_on_request"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="availability"/>
+                            <field name="warranty" placeholder="Leave empty unless confirmed"/>
+                            <field name="support_info"/>
+                            <field name="is_featured"/>
+                            <field name="is_demo"/>
+                            <field name="website_published"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Specifications" name="specs">
+                            <group>
+                                <group>
+                                    <field name="processor"/>
+                                    <field name="operating_system"/>
+                                    <field name="display"/>
+                                </group>
+                                <group>
+                                    <field name="connectivity"/>
+                                    <field name="battery"/>
+                                </group>
+                            </group>
+                            <separator string="Additional Specifications"/>
+                            <field name="spec_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="value"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Compatibility" name="compat">
+                            <group>
+                                <field name="integration_status"/>
+                                <field name="compatible_owms"
+                                       placeholder="Vehicle Inspection, Gate Pass"/>
+                                <field name="compatible_odoo" placeholder="Point of Sale, Inventory"/>
+                                <field name="integration_note"/>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                Only claim an integration that has actually been tested.
+                                "No integration claimed" is the honest default.
+                            </div>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Gallery" name="gallery">
+                            <field name="image_ids" mode="kanban">
+                                <kanban>
+                                    <templates>
+                                        <t t-name="card">
+                                            <div class="text-center">
+                                                <field name="image" widget="image"
+                                                       options="{'size': [200, 150]}"/>
+                                                <div><field name="name" placeholder="Caption"/></div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form>
+                                    <group>
+                                        <field name="image" widget="image"/>
+                                        <field name="name"/>
+                                        <field name="sequence"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Website" name="website">
+                            <group>
+                                <field name="slug"/>
+                                <field name="website_meta_title"/>
+                                <field name="website_meta_description"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_owms_edition_form" model="ir.ui.view">
+        <field name="name">odex.owms.edition.form</field>
+        <field name="model">odex.owms.edition</field>
+        <field name="arch" type="xml">
+            <form string="Software Edition">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                        <field name="subtitle" placeholder="Who this edition is for"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="is_highlighted"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="includes_note" placeholder="Everything in Starter, plus"/>
+                            <field name="price_note"
+                                   placeholder="Leave empty when there is no public price"/>
+                            <field name="cta_label"/>
+                        </group>
+                    </group>
+                    <field name="feature_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_owms_edition_list" model="ir.ui.view">
+        <field name="name">odex.owms.edition.list</field>
+        <field name="model">odex.owms.edition</field>
+        <field name="arch" type="xml">
+            <list string="Editions">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="subtitle"/>
+                <field name="price_note"/>
+                <field name="is_highlighted" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_owms_group_form" model="ir.ui.view">
+        <field name="name">odex.owms.feature.group.form</field>
+        <field name="model">odex.owms.feature.group</field>
+        <field name="arch" type="xml">
+            <form string="Feature Group">
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="icon"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <field name="feature_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_owms_group_list" model="ir.ui.view">
+        <field name="name">odex.owms.feature.group.list</field>
+        <field name="model">odex.owms.feature.group</field>
+        <field name="arch" type="xml">
+            <list string="Feature Groups">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="icon"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_owms_step_list" model="ir.ui.view">
+        <field name="name">odex.owms.workflow.step.list</field>
+        <field name="model">odex.owms.workflow.step</field>
+        <field name="arch" type="xml">
+            <list string="Workflow Steps" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="icon"/>
+                <field name="description"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_owms_enquiry_list" model="ir.ui.view">
+        <field name="name">odex.owms.enquiry.list</field>
+        <field name="model">odex.owms.enquiry</field>
+        <field name="arch" type="xml">
+            <list string="OWMS Enquiries" decoration-info="state == 'new'">
+                <field name="name"/>
+                <field name="create_date" string="Received"/>
+                <field name="enquiry_type"/>
+                <field name="contact_name"/>
+                <field name="company_name"/>
+                <field name="phone"/>
+                <field name="edition_id" optional="show"/>
+                <field name="product_id" optional="show"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_owms_enquiry_form" model="ir.ui.view">
+        <field name="name">odex.owms.enquiry.form</field>
+        <field name="model">odex.owms.enquiry</field>
+        <field name="arch" type="xml">
+            <form string="OWMS Enquiry">
+                <header>
+                    <button name="action_set_contacted" type="object" string="Mark Contacted"
+                            class="btn-primary" invisible="state != 'new'"/>
+                    <button name="action_set_won" type="object" string="Won"
+                            invisible="state in ('won', 'lost')"/>
+                    <button name="action_set_lost" type="object" string="Lost"
+                            invisible="state in ('won', 'lost')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="enquiry_type"/>
+                            <field name="contact_name"/>
+                            <field name="company_name"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                        </group>
+                        <group>
+                            <field name="business_type"/>
+                            <field name="user_count"/>
+                            <field name="quantity"/>
+                            <field name="edition_id"/>
+                            <field name="product_id"/>
+                            <field name="lead_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="message"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_owms_category" model="ir.actions.act_window">
+        <field name="name">Hardware Categories</field>
+        <field name="res_model">odex.owms.hardware.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_owms_product" model="ir.actions.act_window">
+        <field name="name">Devices</field>
+        <field name="res_model">odex.owms.hardware.product</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a device</p>
+            <p>Upload the product image, fill the specifications you can verify and
+               leave the rest empty. Nothing is invented on the website.</p>
+        </field>
+    </record>
+
+    <record id="action_owms_edition" model="ir.actions.act_window">
+        <field name="name">Software Editions</field>
+        <field name="res_model">odex.owms.edition</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_owms_group" model="ir.actions.act_window">
+        <field name="name">Feature Groups</field>
+        <field name="res_model">odex.owms.feature.group</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_owms_step" model="ir.actions.act_window">
+        <field name="name">Workflow Steps</field>
+        <field name="res_model">odex.owms.workflow.step</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <record id="action_owms_enquiry" model="ir.actions.act_window">
+        <field name="name">OWMS Enquiries</field>
+        <field name="res_model">odex.owms.enquiry</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_owms_root" name="Odex OWMS" web_icon="odex_road_mechanic,static/src/img/road_mechanic_mark.png"
+              sequence="56" groups="odex_road_mechanic.group_road_mechanic_user"/>
+    <menuitem id="menu_owms_enquiry" name="Enquiries" parent="menu_owms_root"
+              action="action_owms_enquiry" sequence="1"/>
+    <menuitem id="menu_owms_products" name="Devices" parent="menu_owms_root"
+              action="action_owms_product" sequence="10"/>
+    <menuitem id="menu_owms_categories" name="Hardware Categories" parent="menu_owms_root"
+              action="action_owms_category" sequence="20"/>
+    <menuitem id="menu_owms_editions" name="Software Editions" parent="menu_owms_root"
+              action="action_owms_edition" sequence="30"/>
+    <menuitem id="menu_owms_groups" name="Feature Groups" parent="menu_owms_root"
+              action="action_owms_group" sequence="40"/>
+    <menuitem id="menu_owms_steps" name="Workflow Steps" parent="menu_owms_root"
+              action="action_owms_step" sequence="50"/>
+
+    <record id="menu_website_owms" model="website.menu">
+        <field name="name">Software</field>
+        <field name="url">/software/owms</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">20</field>
+    </record>
+
+</odoo>

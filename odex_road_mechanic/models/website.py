@@ -35,6 +35,29 @@ class Website(models.Model):
         string='Dark Mode Background', default='#0d0d0d')
     orm_color_dark_surface = fields.Char(
         string='Dark Mode Panels', default='#171717')
+    owms_hero_title = fields.Char(
+        string='OWMS Page Title',
+        default='Odex Workshop Management Software (OWMS)')
+    owms_hero_subtitle = fields.Char(
+        string='OWMS Subtitle',
+        default='The all-in-one cloud ERP built for UAE auto workshops, '
+                'service centres and spare parts businesses.')
+    owms_hero_text = fields.Text(
+        string='OWMS Intro Text',
+        default='Manage workshop operations, vehicle inspections, job cards, '
+                'inventory, purchases, customers, employees and accounting from '
+                'one connected platform.')
+    owms_hero_image = fields.Image(
+        string='OWMS Hero Image', max_width=2400, max_height=1400)
+    owms_devices_title = fields.Char(
+        string='Devices Section Title',
+        default='Compatible business devices & workshop hardware')
+    owms_devices_subtitle = fields.Text(
+        string='Devices Section Subtitle',
+        default='Rugged hardware tested to work with Odex Workshop Management '
+                'Software and other Odoo solutions for seamless garage operations.')
+    owms_devices_image = fields.Image(
+        string='Devices Section Image', max_width=2400, max_height=1400)
     orm_contact_phone = fields.Char(string='Road Mechanic Phone')
     orm_contact_whatsapp = fields.Char(string='Road Mechanic WhatsApp')
     orm_contact_email = fields.Char(string='Road Mechanic Email')
@@ -89,6 +112,18 @@ class Website(models.Model):
         if dark_rules:
             css += 'html[data-orm-theme="dark"] .odex-road-mechanic{%s}' % dark_rules
         return Markup('<style>%s</style>') % Markup(css)
+
+    def owms_hero_image_url(self):
+        self.ensure_one()
+        if self.owms_hero_image:
+            return '/web/image/website/%s/owms_hero_image' % self.id
+        return '/odex_road_mechanic/static/src/img/hero_default.png'
+
+    def owms_devices_image_url(self):
+        self.ensure_one()
+        if self.owms_devices_image:
+            return '/web/image/website/%s/owms_devices_image' % self.id
+        return False
 
     def orm_hero_image_url(self):
         self.ensure_one()

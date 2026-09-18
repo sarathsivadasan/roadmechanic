@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Device card, reused by the catalog grid -->
+    <template id="owms_device_card" name="OWMS Device Card">
+        <article class="owms-card" t-att-data-category="product.category_id.id"
+                 t-att-data-name="product.name.lower()"
+                 t-att-data-search="(product.name + ' ' + (product.brand or '') + ' ' + (product.short_description or '') + ' ' + (product.compatible_owms or '')).lower()">
+            <div class="owms-card__media">
+                <img t-att-src="product.image_url()" loading="lazy" t-att-alt="product.name"/>
+                <span class="owms-card__flag" t-if="product.is_featured">Featured</span>
+            </div>
+            <div class="owms-card__body">
+                <span class="owms-card__cat" t-out="product.category_id.name"/>
+                <h3 class="owms-card__title" t-out="product.name"/>
+                <p class="owms-card__text" t-if="product.short_description"
+                   t-out="product.short_description"/>
+
+                <ul class="owms-card__specs">
+                    <li t-if="product.brand"><span>Brand</span><strong t-out="product.brand"/></li>
+                    <li t-if="product.model_name"><span>Model</span>
+                        <strong t-out="product.model_name"/></li>
+                    <li t-if="product.processor"><span>Processor</span>
+                        <strong t-out="product.processor"/></li>
+                    <li t-if="product.operating_system"><span>OS</span>
+                        <strong t-out="product.operating_system"/></li>
+                    <li t-if="product.display"><span>Display</span>
+                        <strong t-out="product.display"/></li>
+                    <li t-if="product.connectivity"><span>Connectivity</span>
+                        <strong t-out="product.connectivity"/></li>
+                    <li t-if="product.battery"><span>Battery</span>
+                        <strong t-out="product.battery"/></li>
+                    <li t-foreach="product.spec_ids[:3]" t-as="spec">
+                        <span t-out="spec.name"/><strong t-out="spec.value"/>
+                    </li>
+                    <li t-if="product.warranty"><span>Warranty</span>
+                        <strong t-out="product.warranty"/></li>
+                </ul>
+
+                <ul class="owms-card__tags" t-if="product.compatibility_tags()">
+                    <li t-foreach="product.compatibility_tags()" t-as="tag" t-out="tag"/>
+                </ul>
+                <p class="owms-card__note" t-if="product.integration_status == 'none'">
+                    Integration details confirmed on request.
+                </p>
+                <p class="owms-card__note owms-card__note--ok"
+                   t-elif="product.integration_status != 'none'">
+                    <i class="fa fa-plug"/> <t t-out="product.integration_label"/>
+                    <t t-if="product.integration_note"> - <t t-out="product.integration_note"/></t>
+                </p>
+
+                <div class="owms-card__foot">
+                    <span class="owms-card__price" t-if="not product.price_on_request">
+                        <t t-out="product.price"
+                           t-options="{'widget': 'monetary', 'display_currency': product.currency_id}"/>
+                    </span>
+                    <span class="owms-card__price owms-card__price--muted" t-else="">
+                        Price on request
+                    </span>
+                    <button type="button" class="orm-btn orm-btn--primary orm-btn--sm"
+                            data-owms-quote="1" t-att-data-product="product.id"
+                            t-att-data-product-name="product.name">
+                        Request quote
+                    </button>
+                </div>
+                <p class="owms-card__sample" t-if="product.is_demo">
+                    Catalog sample - final specifications confirmed before quotation.
+                </p>
+            </div>
+        </article>
+    </template>
+
+    <!-- The page -->
+    <template id="owms_page" name="Odex Workshop Management Software">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="website.owms_hero_title"/>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic odex-owms">
+                    <t t-out="website.orm_theme_style()"/>
+
+                    <!-- HERO -->
+                    <section class="orm-hero owms-hero"
+                             t-attf-style="background-image: #{website.orm_hero_overlay_css()}, url('#{hero_image}');">
+                        <div class="orm-container orm-hero__inner">
+                            <div class="orm-hero__text">
+                                <p class="orm-hero__eyebrow">Odex - your partner in digital transformation</p>
+                                <h1 class="orm-hero__title" t-out="website.owms_hero_title"/>
+                                <p class="orm-hero__subtitle" t-out="website.owms_hero_subtitle"/>
+                                <p class="owms-hero__text" t-out="website.owms_hero_text"/>
+                                <div class="orm-actions orm-actions--hero">
+                                    <a href="#owms-contact" class="orm-btn orm-btn--primary orm-btn--lg"
+                                       data-owms-demo="1">
+                                        Request a demo
+                                    </a>
+                                    <a href="#owms-devices" class="orm-btn orm-btn--outline orm-btn--lg">
+                                        View compatible devices
+                                    </a>
+                                </div>
+                            </div>
+                            <aside class="orm-hero__points">
+                                <div class="orm-point">
+                                    <i class="fa fa-cubes orm-point__icon"/>
+                                    <div><strong>One connected platform</strong>
+                                        <span>Operations, parts, people and accounts in one system</span></div>
+                                </div>
+                                <div class="orm-point">
+                                    <i class="fa fa-flag orm-point__icon"/>
+                                    <div><strong>Built for the UAE</strong>
+                                        <span>VAT invoicing and local workshop practice</span></div>
+                                </div>
+                                <div class="orm-point">
+                                    <i class="fa fa-mobile orm-point__icon"/>
+                                    <div><strong>Works on the floor</strong>
+                                        <span>Tablets and handhelds, not only the back office</span></div>
+                                </div>
+                            </aside>
+                        </div>
+                        <t t-call="odex_road_mechanic.orm_theme_toggle"/>
+                    </section>
+
+                    <!-- QUICK NAV -->
+                    <nav class="orm-services" aria-label="Sections">
+                        <a href="#owms-features" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-th"/></span>
+                            <span class="orm-services__name">Modules</span>
+                        </a>
+                        <a href="#owms-workflow" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-sitemap"/></span>
+                            <span class="orm-services__name">Workflow</span>
+                        </a>
+                        <a href="#owms-editions" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-layer-group"/></span>
+                            <span class="orm-services__name">Editions</span>
+                        </a>
+                        <a href="#owms-devices" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-tablet"/></span>
+                            <span class="orm-services__name">Devices</span>
+                        </a>
+                        <a href="#owms-contact" class="orm-services__item">
+                            <span class="orm-services__icon"><i class="fa fa-paper-plane-o"/></span>
+                            <span class="orm-services__name">Contact</span>
+                        </a>
+                    </nav>
+
+                    <!-- MODULES -->
+                    <section class="orm-section" id="owms-features">
+                        <div class="orm-container">
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title">What OWMS covers</h2>
+                            </header>
+                            <div class="owms-groups">
+                                <article class="owms-group" t-foreach="owms_groups" t-as="group">
+                                    <header>
+                                        <span class="owms-group__icon">
+                                            <i t-attf-class="fa #{group.icon or 'fa-cogs'}"/>
+                                        </span>
+                                        <h3 t-out="group.name"/>
+                                    </header>
+                                    <p class="orm-muted orm-small" t-if="group.description"
+                                       t-out="group.description"/>
+                                    <ul class="owms-group__list">
+                                        <li t-foreach="group.feature_ids" t-as="feature">
+                                            <i class="fa fa-check"/> <t t-out="feature.name"/>
+                                        </li>
+                                    </ul>
+                                </article>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- WORKFLOW -->
+                    <section class="orm-section orm-section--muted" id="owms-workflow">
+                        <div class="orm-container">
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title">From gate pass to payment</h2>
+                                <span class="orm-muted orm-small">
+                                    Tap a step to see what happens there
+                                </span>
+                            </header>
+                            <div class="owms-flow" data-owms-flow="1">
+                                <div class="owms-flow__steps">
+                                    <button type="button" t-foreach="owms_steps" t-as="step"
+                                            t-attf-class="owms-flow__step #{step_index == 0 and 'is-active' or ''}"
+                                            t-att-data-step="step.id">
+                                        <span class="owms-flow__num" t-out="step_index + 1"/>
+                                        <span class="owms-flow__icon">
+                                            <i t-attf-class="fa #{step.icon or 'fa-circle'}"/>
+                                        </span>
+                                        <span class="owms-flow__name" t-out="step.name"/>
+                                    </button>
+                                </div>
+                                <div class="owms-flow__panels">
+                                    <div t-foreach="owms_steps" t-as="step"
+                                         t-attf-class="owms-flow__panel #{step_index == 0 and 'is-active' or ''}"
+                                         t-att-data-panel="step.id">
+                                        <h3 t-out="step.name"/>
+                                        <p t-out="step.description"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- EDITIONS -->
+                    <section class="orm-section" id="owms-editions">
+                        <div class="orm-container">
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title">Choose your edition</h2>
+                            </header>
+                            <div class="owms-editions">
+                                <article t-foreach="owms_editions" t-as="edition"
+                                         t-attf-class="owms-edition #{edition.is_highlighted and 'is-highlighted' or ''}">
+                                    <span class="owms-edition__flag" t-if="edition.is_highlighted">
+                                        Most chosen
+                                    </span>
+                                    <h3 class="owms-edition__name" t-out="edition.name"/>
+                                    <p class="owms-edition__sub" t-if="edition.subtitle"
+                                       t-out="edition.subtitle"/>
+                                    <p class="owms-edition__price" t-if="edition.price_note"
+                                       t-out="edition.price_note"/>
+                                    <p class="owms-edition__price owms-edition__price--muted" t-else="">
+                                        Configured to your business
+                                    </p>
+                                    <p class="owms-edition__includes" t-if="edition.includes_note"
+                                       t-out="edition.includes_note"/>
+                                    <ul class="owms-edition__list">
+                                        <li t-foreach="edition.feature_ids" t-as="feature">
+                                            <i class="fa fa-check"/> <t t-out="feature.name"/>
+                                        </li>
+                                    </ul>
+                                    <button type="button" class="orm-btn orm-btn--primary orm-btn--block"
+                                            data-owms-edition="1" t-att-data-edition="edition.id"
+                                            t-att-data-edition-name="edition.name"
+                                            t-out="edition.cta_label or 'Request a quote'"/>
+                                </article>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- DEVICES -->
+                    <section class="orm-section orm-section--muted" id="owms-devices">
+                        <div class="orm-container">
+                            <header class="orm-section__head">
+                                <h2 class="orm-section__title" t-out="website.owms_devices_title"/>
+                            </header>
+                            <p class="owms-devices__lead" t-out="website.owms_devices_subtitle"/>
+                            <div class="owms-devices__banner" t-if="devices_image">
+                                <img t-att-src="devices_image" loading="lazy"
+                                     t-att-alt="website.owms_devices_title"/>
+                            </div>
+
+                            <div class="owms-filters" data-owms-filters="1">
+                                <div class="owms-filters__search">
+                                    <i class="fa fa-search"/>
+                                    <input type="search" class="orm-input"
+                                           placeholder="Search devices, brands or modules"
+                                           data-owms-search="1"/>
+                                </div>
+                                <div class="owms-filters__cats">
+                                    <button type="button" class="owms-chip is-active"
+                                            data-owms-cat="all">All devices</button>
+                                    <button type="button" class="owms-chip"
+                                            t-foreach="owms_categories" t-as="category"
+                                            t-att-data-owms-cat="category.id">
+                                        <i t-attf-class="fa #{category.icon or 'fa-microchip'}"/>
+                                        <t t-out="category.name"/>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="owms-grid" data-owms-grid="1" t-if="owms_products">
+                                <t t-foreach="owms_products" t-as="product">
+                                    <t t-call="odex_road_mechanic.owms_device_card"/>
+                                </t>
+                            </div>
+                            <div class="orm-providers__empty" t-else="">
+                                <strong>No device is published yet.</strong>
+                                <p class="orm-muted">
+                                    Add devices under Odex OWMS - Devices, with their image and
+                                    the specifications you can confirm.
+                                </p>
+                            </div>
+                            <div class="orm-providers__empty" data-owms-empty="1" hidden="hidden">
+                                <strong>No device matches this search.</strong>
+                                <p class="orm-muted">Clear the search or pick another category.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- CONTACT -->
+                    <section class="orm-section" id="owms-contact">
+                        <div class="orm-container orm-container--narrow">
+                            <div class="orm-alert orm-alert--success" t-if="sent">
+                                Thank you. Your request has been received and our team will get
+                                back to you shortly.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'contact'">
+                                Please enter your name and a valid mobile number.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'email'">
+                                Please enter a valid email address.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="error == 'unknown'">
+                                Your request could not be saved. Please try again.
+                            </div>
+
+                            <div class="orm-panel">
+                                <h2 class="orm-block__title" data-owms-form-title="1">
+                                    Request a demo
+                                </h2>
+                                <p class="orm-muted orm-small" data-owms-form-lead="1">
+                                    Tell us about your workshop and we will walk you through the
+                                    system on a call.
+                                </p>
+                                <form action="/software/owms/enquiry" method="post" class="orm-form">
+                                    <input type="hidden" name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="enquiry_type" value="demo"
+                                           data-owms-type="1"/>
+                                    <input type="hidden" name="edition_id" data-owms-edition-id="1"/>
+                                    <input type="hidden" name="product_id" data-owms-product-id="1"/>
+                                    <input type="text" name="orm_website_url" class="orm-hp"
+                                           tabindex="-1" autocomplete="off" aria-hidden="true"/>
+
+                                    <p class="owms-form__context" data-owms-context="1" hidden="hidden"/>
+
+                                    <div class="orm-form__row">
+                                        <div class="orm-form__field">
+                                            <label for="owms-name">Full name *</label>
+                                            <input id="owms-name" type="text" name="contact_name"
+                                                   class="orm-input" required="required"
+                                                   maxlength="120"/>
+                                        </div>
+                                        <div class="orm-form__field">
+                                            <label for="owms-company">Company / workshop name</label>
+                                            <input id="owms-company" type="text" name="company_name"
+                                                   class="orm-input" maxlength="120"/>
+                                        </div>
+                                    </div>
+                                    <div class="orm-form__row">
+                                        <div class="orm-form__field">
+                                            <label for="owms-phone">Mobile number *</label>
+                                            <input id="owms-phone" type="tel" name="phone"
+                                                   class="orm-input" required="required"
+                                                   maxlength="40" pattern="[0-9+\\-\\s()]{7,20}"/>
+                                        </div>
+                                        <div class="orm-form__field">
+                                            <label for="owms-email">Email</label>
+                                            <input id="owms-email" type="email" name="email"
+                                                   class="orm-input" maxlength="120"/>
+                                        </div>
+                                    </div>
+                                    <div class="orm-form__row">
+                                        <div class="orm-form__field">
+                                            <label for="owms-business">Business type</label>
+                                            <input id="owms-business" type="text" name="business_type"
+                                                   class="orm-input" maxlength="80"
+                                                   placeholder="Workshop, service centre, spare parts"/>
+                                        </div>
+                                        <div class="orm-form__field">
+                                            <label for="owms-users">Number of users</label>
+                                            <input id="owms-users" type="text" name="user_count"
+                                                   class="orm-input" maxlength="40"/>
+                                        </div>
+                                    </div>
+                                    <div class="orm-form__field" data-owms-qty-field="1" hidden="hidden">
+                                        <label for="owms-qty">Quantity</label>
+                                        <input id="owms-qty" type="number" min="1" value="1"
+                                               name="quantity" class="orm-input"/>
+                                    </div>
+                                    <div class="orm-form__field">
+                                        <label for="owms-message">Message</label>
+                                        <textarea id="owms-message" name="message" rows="4"
+                                                  class="orm-input" maxlength="2000"/>
+                                    </div>
+                                    <button type="submit" class="orm-btn orm-btn--primary orm-btn--lg">
+                                        Send request
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

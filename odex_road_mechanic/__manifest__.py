@@ -1,6 +1,6 @@
 {
     'name': 'Odex Road Mechanic',
-    'version': '18.0.4.2.0',
+    'version': '18.0.5.0.0',
     'category': 'Website/Website',
     'summary': 'Road Mechanic - UAE workshop directory, roadside assistance, recovery and parts marketplace',
     'description': """
@@ -40,6 +40,7 @@ Main features
         'data/workshop_type_data.xml',
         'data/service_data.xml',
         'data/part_category_data.xml',
+        'data/owms_data.xml',
         'data/vehicle_brand_data.xml',
         'data/location_data.xml',
         'data/service_sequence_data.xml',
@@ -54,11 +55,13 @@ Main features
         'views/verification_views.xml',
         'views/workshop_views.xml',
         'views/offer_views.xml',
+        'views/owms_views.xml',
         'views/dashboard_views.xml',
         'views/vehicle_views.xml',
         'views/message_views.xml',
         'views/request_views.xml',
         'views/part_offer_views.xml',
+        'views/owms_views.xml',
         'views/notification_views.xml',
         'views/workshop_services_views.xml',
         'views/res_config_settings_views.xml',
@@ -69,6 +72,7 @@ Main features
         'views/workshop_snippets.xml',
         'views/workshop_templates.xml',
         'views/offer_templates.xml',
+        'views/owms_templates.xml',
         'views/portal_templates.xml',
         'views/service_snippets.xml',
         'views/service_templates.xml',
@@ -78,8 +82,10 @@ Main features
         'web.assets_frontend': [
             'odex_road_mechanic/static/src/css/road_mechanic.css',
             'odex_road_mechanic/static/src/css/services.css',
+            'odex_road_mechanic/static/src/css/owms.css',
             'odex_road_mechanic/static/src/js/road_mechanic.js',
             'odex_road_mechanic/static/src/js/services.js',
+            'odex_road_mechanic/static/src/js/owms.js',
         ],
         'web.assets_backend': [
             'odex_road_mechanic/static/src/css/road_mechanic_backend.css',

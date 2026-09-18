@@ -34,6 +34,23 @@ class ResConfigSettings(models.TransientModel):
     orm_color_dark_surface = fields.Char(
         related='website_id.orm_color_dark_surface', readonly=False,
         string='Dark Mode Panels')
+    owms_hero_title = fields.Char(
+        related='website_id.owms_hero_title', readonly=False, string='OWMS Page Title')
+    owms_hero_subtitle = fields.Char(
+        related='website_id.owms_hero_subtitle', readonly=False, string='OWMS Subtitle')
+    owms_hero_text = fields.Text(
+        related='website_id.owms_hero_text', readonly=False, string='OWMS Intro Text')
+    owms_hero_image = fields.Image(
+        related='website_id.owms_hero_image', readonly=False, string='OWMS Hero Image')
+    owms_devices_title = fields.Char(
+        related='website_id.owms_devices_title', readonly=False,
+        string='Devices Section Title')
+    owms_devices_subtitle = fields.Text(
+        related='website_id.owms_devices_subtitle', readonly=False,
+        string='Devices Section Subtitle')
+    owms_devices_image = fields.Image(
+        related='website_id.owms_devices_image', readonly=False,
+        string='Devices Section Image')
     orm_contact_phone = fields.Char(
         related='website_id.orm_contact_phone', readonly=False,
         string='Road Mechanic Phone')
