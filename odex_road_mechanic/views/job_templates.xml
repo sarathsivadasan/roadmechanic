@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Job card: one Apply button, nothing repeated -->
+    <template id="orm_job_card" name="Road Mechanic Job Card">
+        <article class="roadmechanic-job-card">
+            <div class="roadmechanic-job-card__head">
+                <a t-attf-href="/jobs/#{job.slug}" class="roadmechanic-job-card__logo">
+                    <img t-att-src="job.logo_url()" loading="lazy"
+                         t-att-alt="job.workshop_id.name"/>
+                </a>
+                <div class="roadmechanic-job-card__company">
+                    <a t-attf-href="/workshop/#{job.workshop_id.slug}"
+                       class="roadmechanic-job-card__name" t-out="job.workshop_id.name"/>
+                    <div class="roadmechanic-job-card__flags">
+                        <span class="orm-wsp-flag orm-wsp-flag--verified"
+                              t-if="job.workshop_id.is_verified">
+                            <i class="fa fa-check-circle"/> Verified
+                        </span>
+                        <span class="orm-wsp-flag orm-wsp-flag--class"
+                              t-if="job.workshop_id.workshop_class">
+                            <i class="fa fa-certificate"/>
+                            <t t-out="job.workshop_id.workshop_class_label"/>
+                        </span>
+                        <span class="orm-wsp-flag orm-wsp-flag--featured" t-if="job.is_featured">
+                            <i class="fa fa-star"/> Featured
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="roadmechanic-job-card__title">
+                <a t-attf-href="/jobs/#{job.slug}" t-out="job.name"/>
+            </h3>
+            <span class="roadmechanic-job-card__cat" t-out="job.job_category_id.name"/>
+
+            <ul class="roadmechanic-job-card__meta">
+                <li><i class="fa fa-briefcase"/> <t t-out="job.experience_label"/></li>
+                <li><i class="fa fa-map-marker"/> <t t-out="job.location_label"/></li>
+                <li><i class="fa fa-clock-o"/> <t t-out="job.job_type_label"/></li>
+                <li t-if="job.salary_label"><i class="fa fa-money"/>
+                    <t t-out="job.salary_label"/></li>
+            </ul>
+
+            <p class="roadmechanic-job-card__text" t-if="job.short_description"
+               t-out="job.short_description"/>
+
+            <div class="roadmechanic-job-card__foot">
+                <span class="roadmechanic-job-card__date" t-if="job.published_date">
+                    Posted on <t t-out="job.published_date"
+                                 t-options="{'widget': 'date'}"/>
+                </span>
+                <a t-attf-href="/jobs/#{job.slug}#job-apply"
+                   class="orm-btn orm-btn--primary orm-btn--sm"
+                   t-if="job.is_open">Apply Now</a>
+                <span class="roadmechanic-job-card__closed" t-else="">
+                    Applications closed
+                </span>
+            </div>
+        </article>
+    </template>
+
+    <!-- /jobs -->
+    <template id="jobs_page" name="Road Mechanic Jobs">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Automotive jobs in the UAE - Road Mechanic</t>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic roadmechanic-jobs-page">
+                    <t t-out="website.orm_theme_style()"/>
+
+                    <section class="orm-hero roadmechanic-job-hero"
+                             t-attf-style="background-image: #{orm_hero_overlay}, url('#{orm_hero_image}');">
+                        <div class="orm-container">
+                            <p class="orm-hero__eyebrow">Road Mechanic careers</p>
+                            <h1 class="orm-hero__title">Find your next <span>opportunity</span></h1>
+                            <p class="orm-hero__subtitle">
+                                Explore job openings from workshops, garages, spare parts
+                                companies and automotive businesses across the UAE.
+                            </p>
+                            <form class="orm-search roadmechanic-job-search" action="/jobs"
+                                  method="get" role="search">
+                                <div class="orm-search__field">
+                                    <label class="orm-search__label" for="job-search">
+                                        Job title, skill or company
+                                    </label>
+                                    <i class="fa fa-search orm-search__icon"/>
+                                    <input id="job-search" type="search" name="search"
+                                           class="orm-search__input" t-att-value="search"
+                                           placeholder="e.g. Auto Technician"/>
+                                </div>
+                                <div class="orm-search__field">
+                                    <label class="orm-search__label" for="job-emirate">Location</label>
+                                    <i class="fa fa-map-marker orm-search__icon"/>
+                                    <select id="job-emirate" name="emirate" class="orm-search__input">
+                                        <option value="">All locations</option>
+                                        <t t-foreach="job_emirates" t-as="emirate">
+                                            <option t-att-value="emirate[0]"
+                                                    t-att-selected="filters.get('emirate') == emirate[0] and 'selected' or None"
+                                                    t-out="emirate[1]"/>
+                                        </t>
+                                    </select>
+                                </div>
+                                <button type="submit" class="orm-btn orm-btn--primary orm-search__submit">
+                                    <i class="fa fa-search"/> Search
+                                </button>
+                            </form>
+                        </div>
+                        <t t-call="odex_road_mechanic.orm_theme_toggle"/>
+                    </section>
+
+                    <div class="orm-container roadmechanic-jobs-layout">
+                        <div class="roadmechanic-jobs-main">
+                            <button type="button" class="orm-btn orm-btn--outline roadmechanic-job-filter__toggle"
+                                    data-orm-job-filters="1">
+                                <i class="fa fa-sliders"/> Filter jobs
+                            </button>
+
+                            <section class="roadmechanic-jobs-featured" t-if="featured_jobs">
+                                <header class="orm-section__head">
+                                    <h2 class="orm-section__title">
+                                        <i class="fa fa-star orm-section__icon orm-section__icon--gold"/>
+                                        Featured jobs
+                                    </h2>
+                                </header>
+                                <div class="roadmechanic-jobs-grid">
+                                    <t t-foreach="featured_jobs" t-as="job">
+                                        <t t-call="odex_road_mechanic.orm_job_card"/>
+                                    </t>
+                                </div>
+                            </section>
+
+                            <section class="roadmechanic-jobs-all">
+                                <div class="orm-toolbar">
+                                    <h2 class="orm-toolbar__title">
+                                        All jobs
+                                        <span class="orm-count">(<t t-out="total"/> found)</span>
+                                    </h2>
+                                    <form method="get" class="orm-toolbar__controls">
+                                        <input type="hidden" name="search" t-att-value="search"/>
+                                        <select name="sort" class="orm-input orm-input--sm"
+                                                onchange="this.form.submit()">
+                                            <option value="relevant"
+                                                    t-att-selected="sort == 'relevant' and 'selected' or None">
+                                                Most relevant</option>
+                                            <option value="latest"
+                                                    t-att-selected="sort == 'latest' and 'selected' or None">
+                                                Latest first</option>
+                                            <option value="oldest"
+                                                    t-att-selected="sort == 'oldest' and 'selected' or None">
+                                                Oldest first</option>
+                                            <option value="deadline"
+                                                    t-att-selected="sort == 'deadline' and 'selected' or None">
+                                                Closing soon</option>
+                                        </select>
+                                    </form>
+                                </div>
+
+                                <div class="roadmechanic-jobs-grid" t-if="jobs">
+                                    <t t-foreach="jobs" t-as="job">
+                                        <t t-call="odex_road_mechanic.orm_job_card"/>
+                                    </t>
+                                </div>
+                                <div class="orm-providers__empty" t-else="">
+                                    <t t-if="search or filters.get('emirate') or filters.get('category_id')">
+                                        <strong>No job matches this search.</strong>
+                                        <p class="orm-muted">
+                                            Try a different keyword, or clear the filters.
+                                        </p>
+                                        <a href="/jobs" class="orm-btn orm-btn--outline orm-btn--sm">
+                                            Clear filters
+                                        </a>
+                                    </t>
+                                    <t t-else="">
+                                        <strong>No job has been published yet.</strong>
+                                        <p class="orm-muted">
+                                            Automotive companies post their openings here.
+                                        </p>
+                                        <a href="/my/jobs" class="orm-btn orm-btn--outline orm-btn--sm">
+                                            Post a job
+                                        </a>
+                                    </t>
+                                </div>
+
+                                <div class="orm-pager" t-if="pager">
+                                    <t t-call="website.pager"/>
+                                </div>
+                            </section>
+                        </div>
+
+                        <aside class="roadmechanic-job-filter" data-orm-job-filter-panel="1">
+                            <form method="get" action="/jobs" class="roadmechanic-job-filter__form">
+                                <input type="hidden" name="search" t-att-value="search"/>
+                                <header class="roadmechanic-job-filter__head">
+                                    <h2>Filter jobs</h2>
+                                    <button type="button" class="roadmechanic-job-filter__close"
+                                            data-orm-job-filters-close="1" aria-label="Close">
+                                        <i class="fa fa-times"/>
+                                    </button>
+                                </header>
+
+                                <fieldset class="roadmechanic-job-filter__group">
+                                    <legend>Job type</legend>
+                                    <label class="orm-check">
+                                        <input type="radio" name="job_type" value=""
+                                               t-att-checked="not filters.get('job_type') and 'checked' or None"/>
+                                        <span>All</span>
+                                    </label>
+                                    <label class="orm-check" t-foreach="job_types" t-as="jtype">
+                                        <input type="radio" name="job_type" t-att-value="jtype[0]"
+                                               t-att-checked="filters.get('job_type') == jtype[0] and 'checked' or None"/>
+                                        <span t-out="jtype[1]"/>
+                                    </label>
+                                </fieldset>
+
+                                <fieldset class="roadmechanic-job-filter__group">
+                                    <legend>Experience level</legend>
+                                    <label class="orm-check">
+                                        <input type="radio" name="band" value=""
+                                               t-att-checked="not filters.get('band') and 'checked' or None"/>
+                                        <span>All</span>
+                                    </label>
+                                    <label class="orm-check" t-foreach="job_bands" t-as="band">
+                                        <input type="radio" name="band" t-att-value="band[0]"
+                                               t-att-checked="filters.get('band') == band[0] and 'checked' or None"/>
+                                        <span t-out="band[1]"/>
+                                    </label>
+                                </fieldset>
+
+                                <fieldset class="roadmechanic-job-filter__group">
+                                    <legend>Category</legend>
+                                    <select name="category_id" class="orm-input">
+                                        <option value="">All categories</option>
+                                        <t t-foreach="job_categories" t-as="category">
+                                            <option t-att-value="category.id"
+                                                    t-att-selected="str(filters.get('category_id') or '') == str(category.id) and 'selected' or None"
+                                                    t-out="category.name"/>
+                                        </t>
+                                    </select>
+                                </fieldset>
+
+                                <fieldset class="roadmechanic-job-filter__group">
+                                    <legend>Location</legend>
+                                    <select name="emirate" class="orm-input">
+                                        <option value="">All emirates</option>
+                                        <t t-foreach="job_emirates" t-as="emirate">
+                                            <option t-att-value="emirate[0]"
+                                                    t-att-selected="filters.get('emirate') == emirate[0] and 'selected' or None"
+                                                    t-out="emirate[1]"/>
+                                        </t>
+                                    </select>
+                                </fieldset>
+
+                                <button type="submit" class="orm-btn orm-btn--primary orm-btn--block">
+                                    Apply filters
+                                </button>
+                                <a href="/jobs" class="orm-btn orm-btn--dark orm-btn--block orm-mt">
+                                    Clear filters
+                                </a>
+                            </form>
+
+                            <div class="roadmechanic-job-filter__cta">
+                                <i class="fa fa-users"/>
+                                <strong>Looking for great talent?</strong>
+                                <p class="orm-muted orm-small">
+                                    Post your job openings and find the right people for your team.
+                                </p>
+                                <a href="/my/jobs" class="orm-btn orm-btn--primary orm-btn--block">
+                                    Post a job
+                                </a>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- /jobs/<slug> -->
+    <template id="job_detail" name="Road Mechanic Job Detail">
+        <t t-call="website.layout">
+            <t t-set="additional_title"
+               t-value="job.name + ' job in ' + job.location_label"/>
+            <div id="wrap" class="oe_structure">
+                <div class="odex-road-mechanic roadmechanic-job-detail">
+                    <t t-out="website.orm_theme_style()"/>
+
+                    <nav class="orm-wsp-crumb" aria-label="Breadcrumb">
+                        <div class="orm-container">
+                            <a href="/"><i class="fa fa-home"/></a>
+                            <span>/</span>
+                            <a href="/jobs">Jobs</a>
+                            <span>/</span>
+                            <a t-attf-href="/jobs?category_id=#{job.job_category_id.id}"
+                               t-out="job.job_category_id.name"/>
+                            <span>/</span>
+                            <span class="is-current" t-out="job.name"/>
+                        </div>
+                    </nav>
+
+                    <div class="orm-container roadmechanic-job-detail__layout">
+                        <div class="roadmechanic-job-detail__main">
+                            <header class="roadmechanic-job-detail__head">
+                                <img t-att-src="job.logo_url()" t-att-alt="job.workshop_id.name"
+                                     class="roadmechanic-job-detail__logo"/>
+                                <div>
+                                    <a t-attf-href="/workshop/#{job.workshop_id.slug}"
+                                       class="roadmechanic-job-detail__company"
+                                       t-out="job.workshop_id.name"/>
+                                    <div class="orm-wsp-hero__badges orm-wsp-hero__badges--light">
+                                        <span class="orm-wsp-flag orm-wsp-flag--verified"
+                                              t-if="job.workshop_id.is_verified">
+                                            <i class="fa fa-check-circle"/> Verified
+                                        </span>
+                                        <span class="orm-wsp-flag orm-wsp-flag--featured"
+                                              t-if="job.is_featured">
+                                            <i class="fa fa-star"/> Featured
+                                        </span>
+                                    </div>
+                                    <h1 class="roadmechanic-job-detail__title" t-out="job.name"/>
+                                    <ul class="roadmechanic-job-card__meta">
+                                        <li><i class="fa fa-briefcase"/>
+                                            <t t-out="job.experience_label"/></li>
+                                        <li><i class="fa fa-map-marker"/>
+                                            <t t-out="job.location_label"/></li>
+                                        <li><i class="fa fa-clock-o"/>
+                                            <t t-out="job.job_type_label"/></li>
+                                        <li t-if="job.salary_label"><i class="fa fa-money"/>
+                                            <t t-out="job.salary_label"/></li>
+                                        <li t-if="job.published_date"><i class="fa fa-calendar"/>
+                                            Posted on <t t-out="job.published_date"
+                                                         t-options="{'widget': 'date'}"/></li>
+                                    </ul>
+                                </div>
+                            </header>
+
+                            <div class="orm-alert orm-alert--error" t-if="job.state == 'closed'">
+                                This job is closed and is no longer accepting applications.
+                            </div>
+                            <div class="orm-alert orm-alert--error" t-if="job.state == 'expired'">
+                                Applications closed - the deadline for this job has passed.
+                            </div>
+
+                            <section class="roadmechanic-job-detail__block">
+                                <h2>Job description</h2>
+                                <div class="orm-prose" t-out="job.description"/>
+                            </section>
+
+                            <section class="roadmechanic-job-detail__block" t-if="job.requirements">
+                                <h2>Requirements</h2>
+                                <div class="orm-prose" t-out="job.requirements"/>
+                            </section>
+
+                            <section class="roadmechanic-job-detail__block" t-if="job.skill_ids">
+                                <h2>Required skills</h2>
+                                <ul class="orm-tags">
+                                    <li class="orm-tag" t-foreach="job.skill_ids" t-as="skill"
+                                        t-out="skill.name"/>
+                                </ul>
+                            </section>
+
+                            <section class="roadmechanic-job-detail__block"
+                                     t-if="job.show_contact and (job.contact_person or job.contact_phone)">
+                                <h2>Contact</h2>
+                                <p>
+                                    <t t-if="job.contact_person"><t t-out="job.contact_person"/></t>
+                                    <t t-if="job.contact_phone">
+                                        - <a t-attf-href="tel:#{job.contact_phone}"
+                                             t-out="job.contact_phone"/>
+                                    </t>
+                                </p>
+                            </section>
+
+                            <!-- The single Apply block on this page -->
+                            <section class="roadmechanic-job-detail__block" id="job-apply">
+                                <h2>Apply for this job</h2>
+
+                                <div class="orm-alert orm-alert--success" t-if="sent">
+                                    Application submitted successfully. You will receive a
+                                    confirmation email shortly.
+                                </div>
+                                <div class="orm-alert orm-alert--error" t-if="error == 'duplicate'">
+                                    You have already applied for this job.
+                                </div>
+                                <div class="orm-alert orm-alert--error" t-if="error == 'contact'">
+                                    Please enter your name, a valid email and a phone number.
+                                </div>
+                                <div class="orm-alert orm-alert--error" t-if="error == 'consent'">
+                                    Please tick the consent box before submitting.
+                                </div>
+                                <div class="orm-alert orm-alert--error" t-if="error == 'filetype'">
+                                    A CV must be a PDF or document file.
+                                </div>
+                                <div class="orm-alert orm-alert--error" t-if="error == 'filesize'">
+                                    That file is too large. The limit is 8 MB.
+                                </div>
+                                <div class="orm-alert orm-alert--error" t-if="error == 'closed'">
+                                    This job is no longer accepting applications.
+                                </div>
+                                <div class="orm-alert orm-alert--error" t-if="error == 'unknown'">
+                                    Your application could not be saved. Please try again.
+                                </div>
+
+                                <t t-if="already_applied and not sent">
+                                    <p class="orm-muted">
+                                        You have already applied for this job.
+                                        <a href="/my/applications">Track your applications</a>.
+                                    </p>
+                                </t>
+                                <t t-elif="job.application_method == 'url' and job.is_open">
+                                    <p class="orm-muted">
+                                        This company handles applications on its own careers page.
+                                    </p>
+                                    <a t-att-href="job.application_url" target="_blank"
+                                       rel="noopener nofollow"
+                                       class="orm-btn orm-btn--primary orm-btn--lg">
+                                        Apply on the company site
+                                    </a>
+                                </t>
+                                <t t-elif="not job.is_open">
+                                    <p class="orm-muted">Applications are closed for this job.</p>
+                                </t>
+                                <t t-else="">
+                                    <form t-attf-action="/jobs/#{job.slug}/apply" method="post"
+                                          class="orm-form" enctype="multipart/form-data">
+                                        <input type="hidden" name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+                                        <input type="text" name="orm_website_url" class="orm-hp"
+                                               tabindex="-1" autocomplete="off" aria-hidden="true"/>
+                                        <div class="orm-form__row">
+                                            <div class="orm-form__field">
+                                                <label for="ja-name">Full name *</label>
+                                                <input id="ja-name" type="text" name="applicant_name"
+                                                       class="orm-input" required="required"
+                                                       maxlength="120"
+                                                       t-att-value="request.env.user.name if not request.env.user._is_public() else ''"/>
+                                            </div>
+                                            <div class="orm-form__field">
+                                                <label for="ja-email">Email *</label>
+                                                <input id="ja-email" type="email" name="email"
+                                                       class="orm-input" required="required"
+                                                       maxlength="120"
+                                                       t-att-value="request.env.user.email if not request.env.user._is_public() else ''"/>
+                                            </div>
+                                        </div>
+                                        <div class="orm-form__row">
+                                            <div class="orm-form__field">
+                                                <label for="ja-phone">Phone *</label>
+                                                <input id="ja-phone" type="tel" name="phone"
+                                                       class="orm-input" required="required"
+                                                       maxlength="40"/>
+                                            </div>
+                                            <div class="orm-form__field">
+                                                <label for="ja-exp">Years of experience</label>
+                                                <input id="ja-exp" type="number" min="0" max="60"
+                                                       step="0.5" name="experience_years"
+                                                       class="orm-input"/>
+                                            </div>
+                                        </div>
+                                        <div class="orm-form__row">
+                                            <div class="orm-form__field">
+                                                <label for="ja-loc">Current location</label>
+                                                <input id="ja-loc" type="text" name="current_location"
+                                                       class="orm-input" maxlength="120"/>
+                                            </div>
+                                            <div class="orm-form__field">
+                                                <label for="ja-link">LinkedIn / portfolio</label>
+                                                <input id="ja-link" type="url" name="linkedin_url"
+                                                       class="orm-input" maxlength="250"/>
+                                            </div>
+                                        </div>
+                                        <div class="orm-form__field">
+                                            <label for="ja-cv">Resume / CV (PDF or DOC, max 8 MB)</label>
+                                            <input id="ja-cv" type="file" name="resume"
+                                                   class="orm-input"
+                                                   accept=".pdf,.doc,.docx,.odt,.rtf"/>
+                                        </div>
+                                        <div class="orm-form__field">
+                                            <label for="ja-cover">Cover letter</label>
+                                            <textarea id="ja-cover" name="cover_letter" rows="4"
+                                                      class="orm-input" maxlength="4000"/>
+                                        </div>
+                                        <label class="orm-check">
+                                            <input type="checkbox" name="consent" value="1"
+                                                   required="required"/>
+                                            <span>
+                                                I agree to share my application details and CV with
+                                                this company for recruitment purposes.
+                                            </span>
+                                        </label>
+                                        <button type="submit"
+                                                class="orm-btn orm-btn--primary orm-btn--lg">
+                                            Submit application
+                                        </button>
+                                    </form>
+                                </t>
+                            </section>
+                        </div>
+
+                        <aside class="roadmechanic-job-detail__side">
+                            <div class="orm-wsp-card orm-wsp-card--tight">
+                                <header class="orm-wsp-card__head orm-wsp-card__head--sm">
+                                    <h2 class="orm-wsp-card__title">About the company</h2>
+                                </header>
+                                <div class="orm-wsp-idcard">
+                                    <div class="orm-wsp-idcard__logo">
+                                        <img t-att-src="job.logo_url()"
+                                             t-att-alt="job.workshop_id.name"/>
+                                    </div>
+                                    <div>
+                                        <strong class="orm-wsp-idcard__name"
+                                                t-out="job.workshop_id.name"/>
+                                        <span class="orm-wsp-flag orm-wsp-flag--verified"
+                                              t-if="job.workshop_id.is_verified">
+                                            <i class="fa fa-check-circle"/> Verified
+                                        </span>
+                                    </div>
+                                </div>
+                                <p class="orm-muted orm-small"
+                                   t-if="job.workshop_id.short_description"
+                                   t-out="job.workshop_id.short_description"/>
+                                <p class="orm-muted orm-small" t-if="job.workshop_id.full_address">
+                                    <i class="fa fa-map-marker"/>
+                                    <t t-out="job.workshop_id.full_address"/>
+                                </p>
+                                <a t-attf-href="/workshop/#{job.workshop_id.slug}"
+                                   class="orm-btn orm-btn--outline orm-btn--block">
+                                    View company profile
+                                </a>
+                            </div>
+
+                            <div class="orm-wsp-card orm-wsp-card--tight" t-if="job.application_deadline">
+                                <header class="orm-wsp-card__head orm-wsp-card__head--sm">
+                                    <span class="orm-wsp-card__icon"><i class="fa fa-calendar"/></span>
+                                    <h2 class="orm-wsp-card__title">Application deadline</h2>
+                                </header>
+                                <p t-out="job.application_deadline"
+                                   t-options="{'widget': 'date'}"/>
+                            </div>
+                        </aside>
+                    </div>
+
+                    <section class="orm-section orm-section--muted" t-if="related_jobs">
+                        <div class="orm-container">
+                            <h2 class="orm-section__title">Similar jobs</h2>
+                            <div class="roadmechanic-jobs-grid">
+                                <t t-foreach="related_jobs" t-as="job">
+                                    <t t-call="odex_road_mechanic.orm_job_card"/>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

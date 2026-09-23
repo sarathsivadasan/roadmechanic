@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Public and portal visitors only ever see published jobs -->
+    <record id="rule_job_public" model="ir.rule">
+        <field name="name">Road Mechanic: published jobs are public</field>
+        <field name="model_id" ref="model_odex_road_mechanic_job"/>
+        <field name="domain_force">[('state', '=', 'published')]</field>
+        <field name="groups" eval="[(4, ref('base.group_public'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- A Garage Partner works on the jobs of its own companies only -->
+    <record id="rule_job_garage_partner" model="ir.rule">
+        <field name="name">Road Mechanic: a company manages its own jobs</field>
+        <field name="model_id" ref="model_odex_road_mechanic_job"/>
+        <field name="domain_force">
+            ['|', ('workshop_id.partner_id', '=', user.partner_id.id),
+                  ('state', '=', 'published')]
+        </field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_job_garage_partner_write" model="ir.rule">
+        <field name="name">Road Mechanic: a company edits only its own jobs</field>
+        <field name="model_id" ref="model_odex_road_mechanic_job"/>
+        <field name="domain_force">[('workshop_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- A portal customer reads published jobs only -->
+    <record id="rule_job_portal" model="ir.rule">
+        <field name="name">Road Mechanic: portal users read published jobs</field>
+        <field name="model_id" ref="model_odex_road_mechanic_job"/>
+        <field name="domain_force">
+            ['|', ('state', '=', 'published'),
+                  ('workshop_id.partner_id', '=', user.partner_id.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Applications: the applicant sees their own, the company sees the ones
+         sent to its jobs, and nobody sees anyone else's -->
+    <record id="rule_job_application_own" model="ir.rule">
+        <field name="name">Road Mechanic: applicants read their own applications</field>
+        <field name="model_id" ref="model_odex_road_mechanic_job_application"/>
+        <field name="domain_force">[('applicant_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_job_application_company" model="ir.rule">
+        <field name="name">Road Mechanic: a company reads applications to its jobs</field>
+        <field name="model_id" ref="model_odex_road_mechanic_job_application"/>
+        <field name="domain_force">
+            ['|', ('job_id.workshop_id.partner_id', '=', user.partner_id.id),
+                  ('applicant_user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_job_application_company_write" model="ir.rule">
+        <field name="name">Road Mechanic: a company updates applications to its jobs</field>
+        <field name="model_id" ref="model_odex_road_mechanic_job_application"/>
+        <field name="domain_force">[('job_id.workshop_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('odex_road_mechanic.group_garage_partner'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

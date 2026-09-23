@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Garage Partner: job dashboard -->
+    <template id="portal_my_jobs" name="My Jobs">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic roadmechanic-company-jobs">
+                <div class="orm-toolbar">
+                    <h1 class="orm-block__title">Jobs</h1>
+                    <a href="/my/job/new" class="orm-btn orm-btn--primary">
+                        <i class="fa fa-plus"/> Post a job
+                    </a>
+                </div>
+
+                <div class="orm-alert orm-alert--success" t-if="saved">Job saved.</div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'missing'">
+                    Job title, category and application email are required.
+                </div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'company'">
+                    Choose one of your own companies for this job.
+                </div>
+                <div class="orm-alert orm-alert--error" t-if="error == 'save'">
+                    That job could not be saved. Check the values and try again.
+                </div>
+
+                <div class="roadmechanic-company-jobs__stats">
+                    <div class="roadmechanic-company-jobs__stat">
+                        <strong t-out="counts['total']"/><span>Jobs posted</span>
+                    </div>
+                    <div class="roadmechanic-company-jobs__stat">
+                        <strong t-out="counts['published']"/><span>Active jobs</span>
+                    </div>
+                    <div class="roadmechanic-company-jobs__stat">
+                        <strong t-out="counts['pending']"/><span>Pending approval</span>
+                    </div>
+                    <div class="roadmechanic-company-jobs__stat">
+                        <strong t-out="counts['applications']"/><span>Applications</span>
+                    </div>
+                    <div class="roadmechanic-company-jobs__stat">
+                        <strong t-out="counts['closed']"/><span>Closed</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive" t-if="jobs">
+                    <table class="table orm-table">
+                        <thead>
+                            <tr>
+                                <th>Job title</th>
+                                <th>Status</th>
+                                <th>Posted</th>
+                                <th>Applications</th>
+                                <th>Deadline</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="jobs" t-as="job">
+                                <td>
+                                    <strong t-out="job.name"/>
+                                    <div class="orm-muted orm-small" t-out="job.workshop_id.name"/>
+                                </td>
+                                <td><span class="orm-badge" t-out="job.state_label"/></td>
+                                <td>
+                                    <t t-if="job.published_date" t-out="job.published_date"
+                                       t-options="{'widget': 'date'}"/>
+                                    <t t-else="">-</t>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/my/job/#{job.id}/applications"
+                                       t-out="job.application_count"/>
+                                </td>
+                                <td>
+                                    <t t-if="job.application_deadline"
+                                       t-out="job.application_deadline"
+                                       t-options="{'widget': 'date'}"/>
+                                    <t t-else="">-</t>
+                                </td>
+                                <td class="roadmechanic-company-jobs__actions">
+                                    <a t-attf-href="/my/job/#{job.id}/edit"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">Edit</a>
+                                    <a t-if="job.state == 'published'"
+                                       t-attf-href="/jobs/#{job.slug}"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">View</a>
+                                    <form t-if="job.state in ('draft', 'rejected')"
+                                          t-attf-action="/my/job/#{job.id}/submit" method="post"
+                                          class="d-inline">
+                                        <input type="hidden" name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+                                        <button type="submit"
+                                                class="orm-btn orm-btn--primary orm-btn--sm">
+                                            Submit
+                                        </button>
+                                    </form>
+                                    <form t-if="job.state == 'published'"
+                                          t-attf-action="/my/job/#{job.id}/close" method="post"
+                                          class="d-inline">
+                                        <input type="hidden" name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+                                        <button type="submit"
+                                                class="orm-btn orm-btn--dark orm-btn--sm">
+                                            Close
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="orm-providers__empty" t-else="">
+                    <strong>You have not posted a job yet.</strong>
+                    <p class="orm-muted">
+                        Post an opening and it reaches candidates browsing Road Mechanic.
+                    </p>
+                    <a href="/my/job/new" class="orm-btn orm-btn--primary orm-btn--sm">
+                        Post a job
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Garage Partner: post or edit a job -->
+    <template id="portal_job_form" name="Post a Job">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic roadmechanic-company-jobs">
+                <h1 class="orm-block__title">
+                    <t t-if="job">Edit job</t>
+                    <t t-else="">Post a job</t>
+                </h1>
+
+                <form action="/my/job/save" method="post" class="orm-form orm-panel">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="job_id" t-att-value="job and job.id or ''"/>
+
+                    <h2 class="orm-block__subtitle">The role</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="jf-company">Company *</label>
+                            <select id="jf-company" name="workshop_id" class="orm-input"
+                                    required="required">
+                                <t t-foreach="workshops" t-as="workshop">
+                                    <option t-att-value="workshop.id"
+                                            t-att-selected="job and job.workshop_id.id == workshop.id and 'selected' or None"
+                                            t-out="workshop.name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-title">Job title *</label>
+                            <input id="jf-title" type="text" name="name" class="orm-input"
+                                   required="required" maxlength="120"
+                                   placeholder="e.g. Auto Technician"
+                                   t-att-value="job and job.name or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="jf-cat">Job category *</label>
+                            <select id="jf-cat" name="job_category_id" class="orm-input"
+                                    required="required">
+                                <option value="">Select category</option>
+                                <t t-foreach="job_categories" t-as="category">
+                                    <option t-att-value="category.id"
+                                            t-att-selected="job and job.job_category_id.id == category.id and 'selected' or None"
+                                            t-out="category.name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-type">Job type *</label>
+                            <select id="jf-type" name="job_type" class="orm-input">
+                                <t t-foreach="job_types" t-as="jtype">
+                                    <option t-att-value="jtype[0]"
+                                            t-att-selected="job and job.job_type == jtype[0] and 'selected' or None"
+                                            t-out="jtype[1]"/>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="jf-expmin">Minimum experience (years)</label>
+                            <input id="jf-expmin" type="number" min="0" max="50"
+                                   name="experience_min" class="orm-input"
+                                   t-att-value="job and job.experience_min or 0"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-expmax">Maximum experience (years)</label>
+                            <input id="jf-expmax" type="number" min="0" max="50"
+                                   name="experience_max" class="orm-input"
+                                   t-att-value="job and job.experience_max or 0"/>
+                        </div>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Location</h2>
+                    <label class="orm-check">
+                        <input type="checkbox" name="use_company_location" value="1"
+                               t-att-checked="(not job or job.use_company_location) and 'checked' or None"/>
+                        <span>Use the company location</span>
+                    </label>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="jf-emirate">Emirate</label>
+                            <select id="jf-emirate" name="emirate" class="orm-input">
+                                <option value="">Select emirate</option>
+                                <t t-foreach="job_emirates" t-as="emirate">
+                                    <option t-att-value="emirate[0]"
+                                            t-att-selected="job and job.emirate == emirate[0] and 'selected' or None"
+                                            t-out="emirate[1]"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-city">City</label>
+                            <input id="jf-city" type="text" name="city" class="orm-input"
+                                   maxlength="80" t-att-value="job and job.city or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-area">Area</label>
+                            <input id="jf-area" type="text" name="area" class="orm-input"
+                                   maxlength="80" t-att-value="job and job.area or ''"/>
+                        </div>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Salary (optional)</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="jf-saltype">Salary type</label>
+                            <select id="jf-saltype" name="salary_type" class="orm-input">
+                                <t t-foreach="salary_types" t-as="stype">
+                                    <option t-att-value="stype[0]"
+                                            t-att-selected="job and job.salary_type == stype[0] and 'selected' or None"
+                                            t-out="stype[1]"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-salmin">Minimum salary</label>
+                            <input id="jf-salmin" type="number" min="0" step="100"
+                                   name="salary_min" class="orm-input"
+                                   t-att-value="job and job.salary_min or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-salmax">Maximum salary</label>
+                            <input id="jf-salmax" type="number" min="0" step="100"
+                                   name="salary_max" class="orm-input"
+                                   t-att-value="job and job.salary_max or ''"/>
+                        </div>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Details</h2>
+                    <div class="orm-form__field">
+                        <label for="jf-desc">Job description *</label>
+                        <textarea id="jf-desc" name="description" rows="6" class="orm-input"
+                                  required="required"
+                                  t-out="job and job.description or ''"/>
+                    </div>
+                    <div class="orm-form__field">
+                        <label for="jf-req">Requirements</label>
+                        <textarea id="jf-req" name="requirements" rows="5" class="orm-input"
+                                  placeholder="Minimum 2 years experience, UAE licence preferred..."
+                                  t-out="job and job.requirements or ''"/>
+                    </div>
+                    <div class="orm-form__field">
+                        <span class="orm-form__label">Skills</span>
+                        <div class="orm-checklist orm-checklist--wide">
+                            <label class="orm-check" t-foreach="job_skills" t-as="skill">
+                                <input type="checkbox" name="skill_ids" t-att-value="skill.id"
+                                       t-att-checked="job and skill in job.skill_ids and 'checked' or None"/>
+                                <span t-out="skill.name"/>
+                            </label>
+                        </div>
+                    </div>
+
+                    <h2 class="orm-block__subtitle">Applications</h2>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="jf-method">How should candidates apply?</label>
+                            <select id="jf-method" name="application_method" class="orm-input">
+                                <option value="platform"
+                                        t-att-selected="(not job or job.application_method == 'platform') and 'selected' or None">
+                                    Through Road Mechanic
+                                </option>
+                                <option value="url"
+                                        t-att-selected="job and job.application_method == 'url' and 'selected' or None">
+                                    External application link
+                                </option>
+                            </select>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-email">Application email *</label>
+                            <input id="jf-email" type="email" name="application_email"
+                                   class="orm-input" required="required" maxlength="120"
+                                   t-att-value="job and job.application_email or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="jf-url">Application URL</label>
+                            <input id="jf-url" type="url" name="application_url"
+                                   class="orm-input" maxlength="250"
+                                   t-att-value="job and job.application_url or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-deadline">Application deadline</label>
+                            <input id="jf-deadline" type="date" name="application_deadline"
+                                   class="orm-input"
+                                   t-att-value="job and job.application_deadline or ''"/>
+                        </div>
+                    </div>
+                    <div class="orm-form__row">
+                        <div class="orm-form__field">
+                            <label for="jf-person">Contact person</label>
+                            <input id="jf-person" type="text" name="contact_person"
+                                   class="orm-input" maxlength="120"
+                                   t-att-value="job and job.contact_person or ''"/>
+                        </div>
+                        <div class="orm-form__field">
+                            <label for="jf-cphone">Contact phone</label>
+                            <input id="jf-cphone" type="tel" name="contact_phone"
+                                   class="orm-input" maxlength="40"
+                                   t-att-value="job and job.contact_phone or ''"/>
+                        </div>
+                    </div>
+                    <label class="orm-check">
+                        <input type="checkbox" name="show_contact" value="1"
+                               t-att-checked="job and job.show_contact and 'checked' or None"/>
+                        <span>Show the contact person and phone on the public job page</span>
+                    </label>
+
+                    <div class="orm-actions orm-mt">
+                        <button type="submit" class="orm-btn orm-btn--outline orm-btn--lg">
+                            Save as draft
+                        </button>
+                        <button type="submit" name="submit_for_approval" value="1"
+                                class="orm-btn orm-btn--primary orm-btn--lg">
+                            Submit for approval
+                        </button>
+                    </div>
+                    <p class="orm-muted orm-small">
+                        Jobs are reviewed by the Road Mechanic team before they appear publicly.
+                    </p>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <!-- Garage Partner: applications to one job -->
+    <template id="portal_job_applications" name="Job Applications">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic roadmechanic-company-jobs">
+                <div class="orm-toolbar">
+                    <h1 class="orm-block__title">
+                        Applications - <t t-out="job.name"/>
+                    </h1>
+                    <a href="/my/jobs" class="orm-btn orm-btn--outline orm-btn--sm">
+                        Back to jobs
+                    </a>
+                </div>
+                <p class="orm-muted">
+                    <t t-out="job.application_count"/> application(s) received.
+                </p>
+
+                <div class="table-responsive" t-if="applications">
+                    <table class="table orm-table">
+                        <thead>
+                            <tr>
+                                <th>Applicant</th>
+                                <th>Experience</th>
+                                <th>Location</th>
+                                <th>Applied</th>
+                                <th>CV</th>
+                                <th>Status</th>
+                                <th>Update</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="applications" t-as="application">
+                                <td>
+                                    <strong t-out="application.applicant_name"/>
+                                    <div class="orm-muted orm-small">
+                                        <a t-attf-href="mailto:#{application.email}"
+                                           t-out="application.email"/>
+                                        -
+                                        <a t-attf-href="tel:#{application.phone}"
+                                           t-out="application.phone"/>
+                                    </div>
+                                </td>
+                                <td><t t-out="application.experience_years"/> yrs</td>
+                                <td t-out="application.current_location or '-'"/>
+                                <td t-out="application.create_date"
+                                    t-options="{'widget': 'date'}"/>
+                                <td>
+                                    <a t-if="application.resume"
+                                       t-attf-href="/web/content/odex.road.mechanic.job.application/#{application.id}/resume/#{application.resume_filename}?download=true"
+                                       class="orm-btn orm-btn--outline orm-btn--sm">
+                                        <i class="fa fa-download"/> CV
+                                    </a>
+                                    <span class="orm-muted orm-small" t-else="">No CV</span>
+                                </td>
+                                <td><span class="orm-badge" t-out="application.state_label"/></td>
+                                <td>
+                                    <form t-attf-action="/my/application/#{application.id}/state"
+                                          method="post" class="d-flex gap-1">
+                                        <input type="hidden" name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+                                        <select name="state" class="orm-input orm-input--sm">
+                                            <option value="review">Under review</option>
+                                            <option value="shortlisted">Shortlisted</option>
+                                            <option value="interview">Interview</option>
+                                            <option value="selected">Selected</option>
+                                            <option value="rejected">Rejected</option>
+                                        </select>
+                                        <button type="submit"
+                                                class="orm-btn orm-btn--primary orm-btn--sm">
+                                            Save
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="orm-providers__empty" t-else="">
+                    <strong>No application yet.</strong>
+                    <p class="orm-muted">Applications appear here as candidates apply.</p>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Customer: my applications -->
+    <template id="portal_my_applications" name="My Job Applications">
+        <t t-call="portal.portal_layout">
+            <div class="odex-road-mechanic roadmechanic-company-jobs">
+                <h1 class="orm-block__title">My job applications</h1>
+                <div class="table-responsive" t-if="applications">
+                    <table class="table orm-table">
+                        <thead>
+                            <tr>
+                                <th>Job</th>
+                                <th>Company</th>
+                                <th>Applied</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="applications" t-as="application">
+                                <td>
+                                    <a t-attf-href="/jobs/#{application.job_id.slug}"
+                                       t-out="application.job_id.name"/>
+                                </td>
+                                <td t-out="application.workshop_id.name"/>
+                                <td t-out="application.create_date"
+                                    t-options="{'widget': 'date'}"/>
+                                <td><span class="orm-badge" t-out="application.state_label"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="orm-providers__empty" t-else="">
+                    <strong>You have not applied for a job yet.</strong>
+                    <p class="orm-muted">Browse openings from automotive companies in the UAE.</p>
+                    <a href="/jobs" class="orm-btn orm-btn--primary orm-btn--sm">Browse jobs</a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

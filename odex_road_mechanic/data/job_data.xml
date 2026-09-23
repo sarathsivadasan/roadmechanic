@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="job_cat_auto_technician" model="odex.road.mechanic.job.category">
+            <field name="name">Auto Technician</field>
+            <field name="icon">fa-wrench</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="job_cat_mechanical_technician" model="odex.road.mechanic.job.category">
+            <field name="name">Mechanical Technician</field>
+            <field name="icon">fa-wrench</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="job_cat_ac_technician" model="odex.road.mechanic.job.category">
+            <field name="name">AC Technician</field>
+            <field name="icon">fa-snowflake-o</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="job_cat_auto_electrician" model="odex.road.mechanic.job.category">
+            <field name="name">Auto Electrician</field>
+            <field name="icon">fa-bolt</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="job_cat_diagnostic_technician" model="odex.road.mechanic.job.category">
+            <field name="name">Diagnostic Technician</field>
+            <field name="icon">fa-stethoscope</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="job_cat_body_repair_technician" model="odex.road.mechanic.job.category">
+            <field name="name">Body Repair Technician</field>
+            <field name="icon">fa-wrench</field>
+            <field name="sequence">60</field>
+        </record>
+        <record id="job_cat_denting_and_painting_technician" model="odex.road.mechanic.job.category">
+            <field name="name">Denting &amp; Painting Technician</field>
+            <field name="icon">fa-wrench</field>
+            <field name="sequence">70</field>
+        </record>
+        <record id="job_cat_tyre_technician" model="odex.road.mechanic.job.category">
+            <field name="name">Tyre Technician</field>
+            <field name="icon">fa-circle-o</field>
+            <field name="sequence">80</field>
+        </record>
+        <record id="job_cat_service_advisor" model="odex.road.mechanic.job.category">
+            <field name="name">Service Advisor</field>
+            <field name="icon">fa-comments-o</field>
+            <field name="sequence">90</field>
+        </record>
+        <record id="job_cat_service_manager" model="odex.road.mechanic.job.category">
+            <field name="name">Service Manager</field>
+            <field name="icon">fa-user-circle-o</field>
+            <field name="sequence">100</field>
+        </record>
+        <record id="job_cat_workshop_supervisor" model="odex.road.mechanic.job.category">
+            <field name="name">Workshop Supervisor</field>
+            <field name="icon">fa-users</field>
+            <field name="sequence">110</field>
+        </record>
+        <record id="job_cat_spare_parts_sales_executive" model="odex.road.mechanic.job.category">
+            <field name="name">Spare Parts Sales Executive</field>
+            <field name="icon">fa-cubes</field>
+            <field name="sequence">120</field>
+        </record>
+        <record id="job_cat_spare_parts_manager" model="odex.road.mechanic.job.category">
+            <field name="name">Spare Parts Manager</field>
+            <field name="icon">fa-cubes</field>
+            <field name="sequence">130</field>
+        </record>
+        <record id="job_cat_storekeeper" model="odex.road.mechanic.job.category">
+            <field name="name">Storekeeper</field>
+            <field name="icon">fa-archive</field>
+            <field name="sequence">140</field>
+        </record>
+        <record id="job_cat_delivery_driver" model="odex.road.mechanic.job.category">
+            <field name="name">Delivery Driver</field>
+            <field name="icon">fa-truck</field>
+            <field name="sequence">150</field>
+        </record>
+        <record id="job_cat_recovery_driver" model="odex.road.mechanic.job.category">
+            <field name="name">Recovery Driver</field>
+            <field name="icon">fa-truck</field>
+            <field name="sequence">160</field>
+        </record>
+        <record id="job_cat_workshop_helper" model="odex.road.mechanic.job.category">
+            <field name="name">Workshop Helper</field>
+            <field name="icon">fa-hand-paper-o</field>
+            <field name="sequence">170</field>
+        </record>
+        <record id="job_cat_accountant" model="odex.road.mechanic.job.category">
+            <field name="name">Accountant</field>
+            <field name="icon">fa-calculator</field>
+            <field name="sequence">180</field>
+        </record>
+        <record id="job_cat_customer_service" model="odex.road.mechanic.job.category">
+            <field name="name">Customer Service</field>
+            <field name="icon">fa-headphones</field>
+            <field name="sequence">190</field>
+        </record>
+        <record id="job_cat_other" model="odex.road.mechanic.job.category">
+            <field name="name">Other</field>
+            <field name="icon">fa-ellipsis-h</field>
+            <field name="sequence">200</field>
+        </record>
+        <record id="job_skill_vehicle_diagnostics" model="odex.road.mechanic.job.skill">
+            <field name="name">Vehicle Diagnostics</field>
+        </record>
+        <record id="job_skill_ac_repair" model="odex.road.mechanic.job.skill">
+            <field name="name">AC Repair</field>
+        </record>
+        <record id="job_skill_auto_electrical" model="odex.road.mechanic.job.skill">
+            <field name="name">Auto Electrical</field>
+        </record>
+        <record id="job_skill_engine_overhaul" model="odex.road.mechanic.job.skill">
+            <field name="name">Engine Overhaul</field>
+        </record>
+        <record id="job_skill_transmission_repair" model="odex.road.mechanic.job.skill">
+            <field name="name">Transmission Repair</field>
+        </record>
+        <record id="job_skill_denting" model="odex.road.mechanic.job.skill">
+            <field name="name">Denting</field>
+        </record>
+        <record id="job_skill_painting" model="odex.road.mechanic.job.skill">
+            <field name="name">Painting</field>
+        </record>
+        <record id="job_skill_wheel_alignment" model="odex.road.mechanic.job.skill">
+            <field name="name">Wheel Alignment</field>
+        </record>
+        <record id="job_skill_tyre_fitting" model="odex.road.mechanic.job.skill">
+            <field name="name">Tyre Fitting</field>
+        </record>
+        <record id="job_skill_customer_service" model="odex.road.mechanic.job.skill">
+            <field name="name">Customer Service</field>
+        </record>
+        <record id="job_skill_spare_parts_knowledge" model="odex.road.mechanic.job.skill">
+            <field name="name">Spare Parts Knowledge</field>
+        </record>
+        <record id="job_skill_inventory_management" model="odex.road.mechanic.job.skill">
+            <field name="name">Inventory Management</field>
+        </record>
+        <record id="job_skill_uae_driving_licence" model="odex.road.mechanic.job.skill">
+            <field name="name">UAE Driving Licence</field>
+        </record>
+        <record id="job_skill_odoo" model="odex.road.mechanic.job.skill">
+            <field name="name">Odoo</field>
+        </record>
+        <record id="job_skill_body_work" model="odex.road.mechanic.job.skill">
+            <field name="name">Body Work</field>
+        </record>
+        <record id="job_skill_welding" model="odex.road.mechanic.job.skill">
+            <field name="name">Welding</field>
+        </record>
+        <record id="job_skill_oil_change" model="odex.road.mechanic.job.skill">
+            <field name="name">Oil Change</field>
+        </record>
+        <record id="job_skill_brake_systems" model="odex.road.mechanic.job.skill">
+            <field name="name">Brake Systems</field>
+        </record>
+        <record id="job_skill_suspension" model="odex.road.mechanic.job.skill">
+            <field name="name">Suspension</field>
+        </record>
+        <record id="job_skill_recovery_operations" model="odex.road.mechanic.job.skill">
+            <field name="name">Recovery Operations</field>
+        </record>
+        <record id="seq_job_application" model="ir.sequence">
+            <field name="name">Road Mechanic Job Application</field>
+            <field name="code">odex.road.mechanic.job.application</field>
+            <field name="prefix">JOBAPP/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="cron_job_expire" model="ir.cron">
+            <field name="name">Road Mechanic: expire job postings past their deadline</field>
+            <field name="model_id" ref="model_odex_road_mechanic_job"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_expire_jobs()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

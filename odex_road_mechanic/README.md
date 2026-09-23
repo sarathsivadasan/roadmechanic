@@ -515,3 +515,47 @@ the CRM app is installed, also create a `crm.lead`.
   a quote form that returns to the same product, and related devices from the
   same category.
 * Products gained a **Highlights** tab in the backend for those bullet points.
+
+
+---
+
+# Release 18.0.6.0.0 - Automotive job marketplace
+
+Added inside the existing module. No existing model, route, template or
+security rule was replaced.
+
+**Models** (new): `odex.road.mechanic.job`, `.job.application`, `.job.category`,
+`.job.skill`, plus a small `.job.reject` wizard so a rejection always carries a
+reason. Jobs point at the existing `odex.road.mechanic.workshop`, so a workshop,
+a spare parts supplier or any other listing type posts vacancies with no
+duplicated company data.
+
+**Public routes**: `/jobs` (search, filters, sort, pagination, featured strip),
+`/jobs/<slug>` (SEO slug built from title, company and area) and the application
+POST. **Portal routes**: `/my/jobs`, `/my/job/new`, `/my/job/<id>/edit`,
+`/my/job/<id>/applications`, `/my/applications`.
+
+**Security**: public and portal users read published jobs only; a Garage Partner
+reads, writes and deletes only jobs of companies whose `partner_id` is its own,
+and only applications sent to those jobs; applicants see only their own
+applications. `is_featured`, `priority`, approval and rejection fields are
+blocked at ORM level for anyone outside the Road Mechanic team, so a company
+cannot feature or approve its own posting. No unrestricted `sudo()` on read
+paths - `sudo` is used only for mail sending and the duplicate check.
+
+**Workflow**: Draft - Submit - Pending - Published, plus Closed, Rejected and
+Expired. A daily cron expires jobs past their deadline without deleting them.
+
+**Applications**: consent checkbox stored with its timestamp, CV limited to
+PDF/DOC/DOCX/ODT/RTF under 8 MB, duplicates blocked by a SQL constraint for
+logged-in users and by an email check for guests. CVs are ordinary Odoo
+attachments behind `/web/content`, reachable only by the applicant, the owning
+company and the Road Mechanic team through the record rules above.
+
+**Email templates**: job submitted, approved, rejected, new application to the
+company address, applicant confirmation, and status change. All addresses are
+dynamic - nothing is hardcoded.
+
+**Company profile** gained a Jobs tab beside About, Services, Gallery and
+Reviews, showing active openings, with "Post a job" and "Manage jobs" visible
+only to the owning partner.

@@ -14,6 +14,7 @@ from . import inquiry
 from . import verification
 from . import message
 from . import website
+from . import job
 from . import owms
 from . import res_partner
 from . import res_config_settings

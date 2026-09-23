@@ -570,6 +570,11 @@
                                 <i class="fa fa-car"/> Vehicle brands</a>
                             <a href="#orm-hours" class="orm-wsp-tab">
                                 <i class="fa fa-clock-o"/> Working hours</a>
+                            <a href="#orm-jobs" class="orm-wsp-tab" t-if="workshop_jobs or is_owner">
+                                <i class="fa fa-briefcase"/> Jobs
+                                <span class="orm-wsp-tab__count" t-if="workshop_jobs"
+                                      t-out="len(workshop_jobs)"/>
+                            </a>
                             <a href="#orm-review" class="orm-wsp-tab">
                                 <i class="fa fa-star"/> Reviews
                                 <span class="orm-wsp-tab__count" t-out="workshop.review_count"/>
@@ -735,6 +740,32 @@
                                 </div>
                                 <p class="orm-muted orm-small" t-if="workshop.working_hours"
                                    t-out="workshop.working_hours"/>
+                            </section>
+
+                            <!-- JOBS -->
+                            <section class="orm-wsp-card" id="orm-jobs"
+                                     t-if="workshop_jobs or is_owner">
+                                <header class="orm-wsp-card__head">
+                                    <span class="orm-wsp-card__icon"><i class="fa fa-briefcase"/></span>
+                                    <h2 class="orm-wsp-card__title">Our job openings</h2>
+                                    <span class="orm-wsp-card__rating" t-if="workshop_jobs">
+                                        <t t-out="len(workshop_jobs)"/> active position(s)
+                                    </span>
+                                    <a t-if="is_owner" href="/my/job/new"
+                                       class="orm-btn orm-btn--primary orm-btn--sm orm-wsp-card__link">
+                                        <i class="fa fa-plus"/> Post a job
+                                    </a>
+                                </header>
+                                <div class="roadmechanic-jobs-grid" t-if="workshop_jobs">
+                                    <t t-foreach="workshop_jobs" t-as="job">
+                                        <t t-call="odex_road_mechanic.orm_job_card"/>
+                                    </t>
+                                </div>
+                                <p class="orm-muted" t-else="">No current job openings.</p>
+                                <a t-if="is_owner" href="/my/jobs"
+                                   class="orm-btn orm-btn--outline orm-btn--sm orm-mt">
+                                    Manage jobs
+                                </a>
                             </section>
 
                             <!-- REVIEWS -->

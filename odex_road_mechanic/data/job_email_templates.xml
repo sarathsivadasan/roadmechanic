@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="mail_template_job_submitted" model="mail.template">
+            <field name="name">Road Mechanic: Job Submitted</field>
+            <field name="model_id" ref="model_odex_road_mechanic_job"/>
+            <field name="subject">Job submitted for approval - {{ object.name }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.application_email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family:Arial,sans-serif;font-size:14px;color:#171717;">
+                    <p>Hello,</p>
+                    <p>Your job posting <strong t-out="object.name">Job</strong> for
+                        <t t-out="object.workshop_id.name">Company</t> has been submitted
+                        to the Road Mechanic team for approval.</p>
+                    <p>We will email you again as soon as it is reviewed.</p>
+                    <p style="color:#666;">Road Mechanic - UAE Auto Solutions</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="mail_template_job_approved" model="mail.template">
+            <field name="name">Road Mechanic: Job Approved</field>
+            <field name="model_id" ref="model_odex_road_mechanic_job"/>
+            <field name="subject">Your job is now live - {{ object.name }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.application_email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family:Arial,sans-serif;font-size:14px;color:#171717;">
+                    <p>Good news,</p>
+                    <p><strong t-out="object.name">Job</strong> is published on Road
+                        Mechanic and is now visible to candidates.</p>
+                    <p>
+                        <a t-attf-href="{{ object.get_base_url() }}/jobs/{{ object.slug }}"
+                           style="background:#e51b23;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;">
+                            View your job posting
+                        </a>
+                    </p>
+                    <p>Applications will arrive at
+                        <t t-out="object.application_email">email</t>.</p>
+                    <p style="color:#666;">Road Mechanic - UAE Auto Solutions</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="mail_template_job_rejected" model="mail.template">
+            <field name="name">Road Mechanic: Job Rejected</field>
+            <field name="model_id" ref="model_odex_road_mechanic_job"/>
+            <field name="subject">Your job posting needs changes - {{ object.name }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.application_email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family:Arial,sans-serif;font-size:14px;color:#171717;">
+                    <p>Hello,</p>
+                    <p>Your job posting <strong t-out="object.name">Job</strong> was not
+                        approved in its current form.</p>
+                    <p><strong>Reason:</strong> <t t-out="object.rejection_reason">Reason</t></p>
+                    <p>You can edit the posting in your dashboard and submit it again.</p>
+                    <p style="color:#666;">Road Mechanic - UAE Auto Solutions</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="mail_template_job_application_company" model="mail.template">
+            <field name="name">Road Mechanic: New Job Application</field>
+            <field name="model_id" ref="model_odex_road_mechanic_job_application"/>
+            <field name="subject">New Job Application - {{ object.job_id.name }} - Road Mechanic</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.job_id.application_email }}</field>
+            <field name="reply_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family:Arial,sans-serif;font-size:14px;color:#171717;">
+                    <p>A new application has been received for
+                        <strong t-out="object.job_id.name">Job</strong>.</p>
+                    <table cellpadding="6" style="border-collapse:collapse;">
+                        <tr><td style="color:#666;">Applicant</td>
+                            <td><t t-out="object.applicant_name">Name</t></td></tr>
+                        <tr><td style="color:#666;">Email</td>
+                            <td><t t-out="object.email">Email</t></td></tr>
+                        <tr><td style="color:#666;">Phone</td>
+                            <td><t t-out="object.phone">Phone</t></td></tr>
+                        <tr><td style="color:#666;">Experience</td>
+                            <td><t t-out="object.experience_years">0</t> years</td></tr>
+                        <tr t-if="object.current_location"><td style="color:#666;">Location</td>
+                            <td><t t-out="object.current_location">Location</t></td></tr>
+                        <tr t-if="object.linkedin_url"><td style="color:#666;">Profile</td>
+                            <td><t t-out="object.linkedin_url">URL</t></td></tr>
+                        <tr><td style="color:#666;">Applied on</td>
+                            <td><t t-out="object.create_date">Date</t></td></tr>
+                    </table>
+                    <div t-if="object.cover_letter">
+                        <p style="margin-top:16px;"><strong>Cover letter</strong></p>
+                        <p t-out="object.cover_letter">Letter</p>
+                    </div>
+                    <p style="margin-top:16px;">
+                        <a t-attf-href="{{ object.get_base_url() }}/my/job/{{ object.job_id.id }}/applications"
+                           style="background:#e51b23;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;">
+                            View in your dashboard
+                        </a>
+                    </p>
+                    <p style="color:#666;">Road Mechanic - UAE Auto Solutions</p>
+                </div>
+            </field>
+            <field name="report_template_ids" eval="[]"/>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="mail_template_job_application_applicant" model="mail.template">
+            <field name="name">Road Mechanic: Application Received</field>
+            <field name="model_id" ref="model_odex_road_mechanic_job_application"/>
+            <field name="subject">Application Received - {{ object.job_id.name }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family:Arial,sans-serif;font-size:14px;color:#171717;">
+                    <p>Hello <t t-out="object.applicant_name">Name</t>,</p>
+                    <p>Your application for
+                        <strong t-out="object.job_id.name">Job</strong> at
+                        <t t-out="object.job_id.workshop_id.name">Company</t>
+                        has been received.</p>
+                    <p>Your reference is
+                        <strong t-out="object.name">Reference</strong>. The company will
+                        contact you directly if they wish to take it further.</p>
+                    <p style="color:#666;">Road Mechanic - UAE Auto Solutions</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <record id="mail_template_job_application_status" model="mail.template">
+            <field name="name">Road Mechanic: Application Status Changed</field>
+            <field name="model_id" ref="model_odex_road_mechanic_job_application"/>
+            <field name="subject">Update on your application - {{ object.job_id.name }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family:Arial,sans-serif;font-size:14px;color:#171717;">
+                    <p>Hello <t t-out="object.applicant_name">Name</t>,</p>
+                    <p>Your application for
+                        <strong t-out="object.job_id.name">Job</strong> at
+                        <t t-out="object.job_id.workshop_id.name">Company</t>
+                        is now marked as
+                        <strong t-out="object.state_label">Status</strong>.</p>
+                    <p style="color:#666;">Road Mechanic - UAE Auto Solutions</p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+    </data>
+</odoo>
