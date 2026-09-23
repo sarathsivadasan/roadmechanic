@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="action_job_reject_wizard" model="ir.actions.act_window">
+        <field name="name">Reject Job</field>
+        <field name="res_model">odex.road.mechanic.job.reject</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
     <record id="view_job_list" model="ir.ui.view">
         <field name="name">odex.road.mechanic.job.list</field>
         <field name="model">odex.road.mechanic.job</field>
@@ -306,13 +314,6 @@
                 </footer>
             </form>
         </field>
-    </record>
-
-    <record id="action_job_reject_wizard" model="ir.actions.act_window">
-        <field name="name">Reject Job</field>
-        <field name="res_model">odex.road.mechanic.job.reject</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
     </record>
 
     <record id="action_job_all" model="ir.actions.act_window">
