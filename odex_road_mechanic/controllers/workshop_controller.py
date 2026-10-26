@@ -236,7 +236,7 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
             'workshop': workshop,
             'main_object': workshop,
             'workshop_offers': Offer.search(Offer._public_domain(workshop=workshop), limit=6),
-            'workshop_jobs': env['odex.road.mechanic.job'].search(
+            'workshop_jobs': request.env['odex.road.mechanic.job'].search(
                 [('workshop_id', '=', workshop.id), ('state', '=', 'published')],
                 limit=6),
             'is_owner': bool(

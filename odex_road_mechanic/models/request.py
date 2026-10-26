@@ -188,7 +188,7 @@ class RoadMechanicRequest(models.Model):
     eta_minutes = fields.Integer(string='Estimated Response (minutes)')
     offer_ids = fields.One2many(
         'odex.road.mechanic.part.offer', 'request_id', string='Offers')
-    offer_count = fields.Integer(compute='_compute_counts', store=True)
+    offer_count = fields.Integer(compute='_compute_counts')
     accepted_offer_id = fields.Many2one(
         'odex.road.mechanic.part.offer', string='Accepted Offer', copy=False, readonly=True)
     best_price = fields.Float(string='Best Offer', compute='_compute_counts')

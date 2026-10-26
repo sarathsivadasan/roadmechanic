@@ -131,9 +131,11 @@
                     <a t-attf-href="/workshop/#{workshop.slug}" class="orm-card__stretch"
                        t-out="workshop.name"/>
                 </h3>
-                <p class="orm-card__meta" t-if="workshop.location_id or workshop.area">
-                    <i class="fa fa-map-marker" aria-hidden="true"/>
-                    <t t-out="workshop.location_id.display_name or workshop.area"/>
+                <p class="orm-card__meta">
+                    <t t-if="workshop.location_id or workshop.area">
+                        <i class="fa fa-map-marker" aria-hidden="true"/>
+                        <t t-out="workshop.location_id.display_name or workshop.area"/>
+                    </t>
                 </p>
                 <div class="orm-card__rating">
                     <t t-set="rating_value" t-value="workshop.rating"/>
@@ -142,7 +144,7 @@
                 </div>
                 <t t-set="card_tags"
                    t-value="workshop.part_category_ids if workshop.listing_type == 'spare_parts' else workshop.service_ids"/>
-                <ul class="orm-tags" t-if="card_tags">
+                <ul class="orm-tags">
                     <li class="orm-tag" t-foreach="card_tags[:3]" t-as="tag" t-out="tag.name"/>
                     <li class="orm-tag orm-tag--more" t-if="len(card_tags) &gt; 3">
                         +<t t-out="len(card_tags) - 3"/>

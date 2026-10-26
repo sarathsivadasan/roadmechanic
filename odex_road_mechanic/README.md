@@ -559,3 +559,20 @@ dynamic - nothing is hardcoded.
 **Company profile** gained a Jobs tab beside About, Services, Gallery and
 Reviews, showing active openings, with "Post a job" and "Manage jobs" visible
 only to the owning partner.
+
+
+* 18.0.6.0.1 - fixed a 500 on the workshop page. The Jobs section I added to
+  the company profile used a bare `env` in a method that never binds it, so
+  every workshop page raised NameError. It now uses `request.env` like the rest
+  of that method. A static check (`envcheck.py`) was added that walks every
+  function, and its enclosing scopes, for an unbound `env`; both modules are
+  clean.
+
+
+* 18.0.6.0.2 - card alignment. Photos of different proportions were setting
+  their own height, and the location and tag rows disappeared entirely on cards
+  that had neither, so names and buttons sat at different heights across a row.
+  The media box is now a fixed 16:10 that never grows or shrinks as a flex item,
+  the name clamps to two lines, the location and tag rows always reserve their
+  slot, and the Call/WhatsApp row is pinned to the bottom of the card. Badges
+  anchor to the photo rather than the card. Same treatment on the offer tiles.

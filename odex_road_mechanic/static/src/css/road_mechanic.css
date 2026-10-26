@@ -1616,3 +1616,73 @@ html[data-orm-theme="dark"] .roadmechanic-workshop-page .orm-wsp-hero__title { c
     .odex-road-mechanic .orm-cta__inner { padding-top: .5rem; }
     .odex-road-mechanic .orm-actions--cta .orm-btn { flex: 1 1 100%; }
 }
+
+
+/* ==========================================================================
+   Card alignment: every card in a row shares the same internal rhythm, so a
+   taller photo, a two-line name or a missing tag cannot push the rows below it
+   out of step.
+   ========================================================================== */
+
+/* the photo keeps its ratio whatever the source image is, and is never allowed
+   to grow or shrink as a flex item */
+.odex-road-mechanic .orm-card__media {
+    flex: 0 0 auto;
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    overflow: hidden;
+}
+.odex-road-mechanic .orm-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* equal-height cards across the row */
+.odex-road-mechanic .orm-grid--cards,
+.odex-road-mechanic .orm-grid--results { align-items: stretch; }
+.odex-road-mechanic .orm-grid--cards > .orm-card,
+.odex-road-mechanic .orm-grid--results > .orm-card,
+.odex-road-mechanic .orm-rail > .orm-card { height: 100%; }
+
+/* the name takes two lines whether it needs them or not, so the location,
+   rating and buttons start at the same height on every card */
+.odex-road-mechanic .orm-card__title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6em;
+    line-height: 1.3;
+    margin: 0;
+}
+.odex-road-mechanic .orm-card__meta,
+.odex-road-mechanic .orm-card__rating {
+    min-height: 1.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* one row of tags, clipped rather than wrapped onto a second line */
+.odex-road-mechanic .orm-card .orm-tags {
+    flex-wrap: nowrap;
+    overflow: hidden;
+    min-height: 1.6rem;
+}
+
+/* actions sit on the floor of the card, level across the row */
+.odex-road-mechanic .orm-card .orm-actions { margin-top: auto; }
+.odex-road-mechanic .orm-card__more { margin-top: .4rem; }
+
+
+/* badges anchor to the photo, not to whatever height the card ends up */
+.odex-road-mechanic .orm-card__badge { position: absolute; top: .6rem; right: .6rem; z-index: 3; }
+.odex-road-mechanic .orm-card__offer { position: absolute; top: .6rem; left: .6rem; z-index: 3; }
+.odex-road-mechanic .orm-card__status { position: absolute; bottom: .6rem; left: .6rem; z-index: 3; }
+
+/* the row heights also hold on the detail-page and offers grids */
+.odex-road-mechanic .orm-grid--offers > * { height: 100%; }
+.odex-road-mechanic .orm-offertile__media { flex: 0 0 auto; aspect-ratio: 16 / 10; overflow: hidden; }
+.odex-road-mechanic .orm-offertile__media img { width: 100%; height: 100%; object-fit: cover; display: block; }

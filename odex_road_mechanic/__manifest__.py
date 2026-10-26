@@ -1,6 +1,6 @@
 {
     'name': 'Odex Road Mechanic',
-    'version': '18.0.6.0.0',
+    'version': '18.0.6.0.2',
     'category': 'Website/Website',
     'summary': 'Road Mechanic - UAE workshop directory, roadside assistance, recovery and parts marketplace',
     'description': """
@@ -65,7 +65,7 @@ Main features
         'views/vehicle_views.xml',
         'views/message_views.xml',
         'views/request_views.xml',
-        'views/part_offer_views.xml',
+        'views/offer_views.xml',
         'views/job_views.xml',
         'views/owms_views.xml',
         'views/notification_views.xml',
