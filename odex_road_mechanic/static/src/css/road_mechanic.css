@@ -1760,3 +1760,156 @@ html[data-orm-theme="dark"] .roadmechanic-workshop-page .orm-wsp-hero__title { c
 #wrapwrap footer h5,
 #wrapwrap footer h6,
 #wrapwrap footer .h6 { opacity: 1; }
+
+
+/* ==========================================================================
+   Phone layout: centred cards, two-column footer, pull to refresh
+   ========================================================================== */
+
+/* The 340px cap exists so a single search result does not become a full-width
+   poster on a desktop. On a phone the grid is already one column, so the cap
+   just left-aligns the card and leaves a gap down the right-hand side. */
+@media (max-width: 767.98px) {
+    .odex-road-mechanic .orm-grid--cards,
+    .odex-road-mechanic .orm-grid--results,
+    .odex-road-mechanic .orm-grid--offers,
+    .odex-road-mechanic .roadmechanic-jobs-grid,
+    .odex-road-mechanic .owms-grid {
+        grid-template-columns: minmax(0, 1fr);
+        justify-content: stretch;
+        justify-items: stretch;
+    }
+    .odex-road-mechanic .orm-grid--cards > *,
+    .odex-road-mechanic .orm-grid--results > *,
+    .odex-road-mechanic .orm-grid--offers > *,
+    .odex-road-mechanic .roadmechanic-jobs-grid > *,
+    .odex-road-mechanic .owms-grid > * {
+        max-width: none;
+        width: 100%;
+        margin-inline: auto;
+    }
+}
+
+/* A rail holding one card has nothing to scroll to, so the peek gap reads as
+   bad centring. Let a lone card fill the row instead. */
+.odex-road-mechanic .orm-rail > :only-child { flex-basis: 100%; width: 100%; }
+
+/* ------------------------------------------------------------ footer phone */
+/* two columns from phone up, so the footer stops being a long scroll */
+@media (max-width: 575.98px) {
+    #wrapwrap footer .row > div[class*="col-"] {
+        flex: 0 0 auto !important;
+        width: 50% !important;
+        max-width: 50% !important;
+    }
+    #wrapwrap footer .row.o_grid_mode {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 1.25rem .75rem;
+    }
+    #wrapwrap footer .row.o_grid_mode > .o_grid_item {
+        grid-area: auto !important;
+        width: auto !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+    }
+    /* long addresses and emails must not spill out of a narrow column */
+    #wrapwrap footer { overflow-wrap: anywhere; }
+    #wrapwrap footer .row > div[class*="col-"]:nth-child(n+3) { margin-top: 1rem; }
+}
+
+/* --------------------------------------------------------- pull to refresh */
+/* Native pull to refresh is suppressed while the custom one is active, so the
+   page cannot reload twice from one gesture. */
+html.orm-ptr-enabled, html.orm-ptr-enabled body { overscroll-behavior-y: contain; }
+
+.orm-ptr {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: -20px;
+    border-radius: 50%;
+    background: var(--orm-card, #fff);
+    border: 1px solid var(--orm-border, #e5e5e5);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+    color: var(--orm-red, #e51b23);
+    transform: translateY(-60px);
+    opacity: 0;
+    pointer-events: none;
+}
+.orm-ptr .fa { font-size: 1.05rem; }
+.orm-ptr.is-ready .fa { transform: rotate(180deg); }
+.orm-ptr.is-spinning .fa { animation: orm-ptr-spin .7s linear infinite; }
+.orm-ptr.is-settling { transition: transform .2s ease, opacity .2s ease; }
+
+@keyframes orm-ptr-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .orm-ptr.is-spinning .fa { animation: none; }
+}
+
+
+/* A listing with no filter sidebar: the results take the full container width
+   instead of leaving the sidebar's 290px column empty. */
+.odex-road-mechanic .orm-layout--full { grid-template-columns: minmax(0, 1fr); }
+
+
+/* ==========================================================================
+   Home page preview grids (All workshops, Spare parts)
+   --------------------------------------------------------------------------
+   Desktop shows two rows of four, tablet narrows to three then two, and a
+   phone shows one card per row. The controller fetches 12; any trailing row
+   that cannot be filled is trimmed here, because only the browser knows how
+   many cards fit.
+   ========================================================================== */
+
+/* the preview cards fill their column, so a wide screen does not leave a gap
+   beside each card from the 340px cap the other grids use */
+.odex-road-mechanic .orm-grid--preview > * { max-width: none; width: 100%; }
+
+@media (min-width: 1200px) {
+    .odex-road-mechanic .orm-grid--preview { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .odex-road-mechanic .orm-grid--preview > :nth-child(n+9) { display: none; }
+    /* an item that starts a row while sitting among the last 3 begins
+       a row that cannot be filled, so it and the rest are dropped */
+    .odex-road-mechanic .orm-grid--preview > :nth-child(4n+1):not(:first-child):nth-last-child(-n+3),
+    .odex-road-mechanic .orm-grid--preview > :nth-child(4n+1):not(:first-child):nth-last-child(-n+3) ~ * {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .odex-road-mechanic .orm-grid--preview { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .odex-road-mechanic .orm-grid--preview > :nth-child(n+7) { display: none; }
+    /* an item that starts a row while sitting among the last 2 begins
+       a row that cannot be filled, so it and the rest are dropped */
+    .odex-road-mechanic .orm-grid--preview > :nth-child(3n+1):not(:first-child):nth-last-child(-n+2),
+    .odex-road-mechanic .orm-grid--preview > :nth-child(3n+1):not(:first-child):nth-last-child(-n+2) ~ * {
+        display: none;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .odex-road-mechanic .orm-grid--preview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .odex-road-mechanic .orm-grid--preview > :nth-child(n+5) { display: none; }
+    /* an item that starts a row while sitting among the last 1 begins
+       a row that cannot be filled, so it and the rest are dropped */
+    .odex-road-mechanic .orm-grid--preview > :nth-child(2n+1):not(:first-child):nth-last-child(-n+1),
+    .odex-road-mechanic .orm-grid--preview > :nth-child(2n+1):not(:first-child):nth-last-child(-n+1) ~ * {
+        display: none;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .odex-road-mechanic .orm-grid--preview { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .odex-road-mechanic .orm-grid--preview > :nth-child(n+5) { display: none; }
+}

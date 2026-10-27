@@ -626,3 +626,145 @@ publicWidget.registry.RoadMechanicListingType = publicWidget.Widget.extend({
         this._sync();
     },
 });
+
+
+/**
+ * Pull to refresh.
+ *
+ * Only runs on touch devices and only while the page is already scrolled to
+ * the top, so it never interferes with normal scrolling. Native pull to
+ * refresh is suppressed while this is active (see the CSS) so one gesture
+ * cannot trigger two reloads.
+ */
+let ormPullToRefreshBound = false;
+
+publicWidget.registry.RoadMechanicPullToRefresh = publicWidget.Widget.extend({
+    selector: ".odex-road-mechanic",
+
+    start() {
+        this.bound = false;
+        if (ormPullToRefreshBound) {
+            return this._super(...arguments);
+        }
+        const touchCapable =
+            "ontouchstart" in window || (navigator.maxTouchPoints || 0) > 0;
+        if (!touchCapable) {
+            return this._super(...arguments);
+        }
+        ormPullToRefreshBound = true;
+        this.bound = true;
+
+        this.threshold = 70;
+        this.maxPull = 110;
+        this.startY = null;
+        this.distance = 0;
+        this.refreshing = false;
+
+        this.indicator = document.createElement("div");
+        this.indicator.className = "orm-ptr";
+        this.indicator.setAttribute("aria-hidden", "true");
+        this.indicator.innerHTML = '<i class="fa fa-arrow-down"></i>';
+        document.body.appendChild(this.indicator);
+        document.documentElement.classList.add("orm-ptr-enabled");
+
+        this._onTouchStart = this._onTouchStart.bind(this);
+        this._onTouchMove = this._onTouchMove.bind(this);
+        this._onTouchEnd = this._onTouchEnd.bind(this);
+
+        document.addEventListener("touchstart", this._onTouchStart, { passive: true });
+        document.addEventListener("touchmove", this._onTouchMove, { passive: false });
+        document.addEventListener("touchend", this._onTouchEnd, { passive: true });
+        document.addEventListener("touchcancel", this._onTouchEnd, { passive: true });
+
+        return this._super(...arguments);
+    },
+
+    destroy() {
+        if (!this.bound) {
+            return this._super(...arguments);
+        }
+        document.removeEventListener("touchstart", this._onTouchStart);
+        document.removeEventListener("touchmove", this._onTouchMove);
+        document.removeEventListener("touchend", this._onTouchEnd);
+        document.removeEventListener("touchcancel", this._onTouchEnd);
+        if (this.indicator && this.indicator.parentNode) {
+            this.indicator.parentNode.removeChild(this.indicator);
+        }
+        document.documentElement.classList.remove("orm-ptr-enabled");
+        ormPullToRefreshBound = false;
+        this._super(...arguments);
+    },
+
+    /** The gesture is ignored while an overlay owns the screen. */
+    _blocked() {
+        if (document.querySelector(".orm-lightbox:not([hidden])")) {
+            return true;
+        }
+        if (document.querySelector(".roadmechanic-job-filter.is-open")) {
+            return true;
+        }
+        return false;
+    },
+
+    _atTop() {
+        return (window.scrollY || document.documentElement.scrollTop || 0) <= 0;
+    },
+
+    _onTouchStart(ev) {
+        if (this.refreshing || ev.touches.length !== 1 || !this._atTop() || this._blocked()) {
+            this.startY = null;
+            return;
+        }
+        this.startY = ev.touches[0].clientY;
+        this.distance = 0;
+        this.indicator.classList.remove("is-settling");
+    },
+
+    _onTouchMove(ev) {
+        if (this.startY === null || this.refreshing) {
+            return;
+        }
+        const delta = ev.touches[0].clientY - this.startY;
+        // an upward drag, or the page having scrolled, ends the gesture
+        if (delta <= 0 || !this._atTop()) {
+            this._reset();
+            return;
+        }
+        // damped so the indicator slows as it approaches the limit
+        this.distance = Math.min(this.maxPull, delta * 0.5);
+        if (ev.cancelable) {
+            ev.preventDefault();
+        }
+        this.indicator.style.transform =
+            "translateY(" + (this.distance - 20) + "px) rotate(" +
+            this.distance * 2 + "deg)";
+        this.indicator.style.opacity = Math.min(1, this.distance / 45);
+        this.indicator.classList.toggle("is-ready", this.distance >= this.threshold);
+    },
+
+    _onTouchEnd() {
+        if (this.startY === null || this.refreshing) {
+            return;
+        }
+        if (this.distance >= this.threshold) {
+            this.refreshing = true;
+            this.indicator.classList.remove("is-ready");
+            this.indicator.classList.add("is-spinning", "is-settling");
+            this.indicator.innerHTML = '<i class="fa fa-refresh"></i>';
+            this.indicator.style.transform = "translateY(24px)";
+            this.indicator.style.opacity = "1";
+            window.setTimeout(() => window.location.reload(), 150);
+            return;
+        }
+        this._reset();
+    },
+
+    _reset() {
+        this.startY = null;
+        this.distance = 0;
+        this.indicator.classList.remove("is-ready");
+        this.indicator.classList.add("is-settling");
+        this.indicator.style.transform = "translateY(-60px)";
+        this.indicator.style.opacity = "0";
+    },
+});

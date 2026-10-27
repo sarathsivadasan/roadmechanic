@@ -653,3 +653,43 @@ the leftovers stayed, so every dropdown showed each entry twice.
   Neither had surfaced because an upgrade resolves these references from
   external IDs left by earlier installs; both would have broken a fresh install
   into a clean database.
+
+
+---
+
+# Release 18.0.6.2.0 - phone layout and pull to refresh
+
+* **Cards were off-centre on phones.** The `max-width: 340px` added in
+  18.0.6.0.2, to stop a single search result becoming a full-width poster on a
+  desktop, also applied on phones - where the grid is already one column, so it
+  left the card at 340px against the left edge with a gap down the right. The
+  cap is now lifted below 768px and cards fill the column. A rail holding a
+  single card also fills the row rather than leaving its scroll-peek gap.
+* **Footer is two columns on phones**, as it already is on tablet, so it stops
+  being one long scroll. Long emails and addresses wrap inside their column
+  instead of spilling out.
+* **Pull to refresh.** Dragging down from the top of a Road Mechanic page shows
+  a spinner and reloads. Touch devices only, and only while the page is already
+  at the top, so ordinary scrolling is untouched. The gesture is ignored while
+  the lightbox or the jobs filter drawer is open. Native pull to refresh is
+  suppressed while this is active so one gesture cannot reload twice.
+
+
+* 18.0.6.2.1 - the filter sidebar is removed from the workshop listing at
+  /workshops. The results now use the full container width, and the mobile
+  Filter button is hidden there since it would open nothing. Filtering is still
+  available on that page through the search bar (workshop or service, location
+  or area, vehicle type), the service strip and the sort control. The sidebar
+  is unchanged on the service pages (/service/<slug>) and the area pages
+  (/area/<slug>), which were not part of the request.
+
+
+* 18.0.6.3.0 / 18.0.6.3.1 - the home page "All workshops" and "Spare parts"
+  previews fetched only 6 records, so a wide desktop showed five across and a
+  lone sixth on its own row. They now fetch 12, and the grid sets its column
+  count per breakpoint: four across on desktop (two rows, eight cards), three
+  then two on tablet, and one per row on a phone. Any trailing row that cannot
+  be filled is trimmed in CSS, since only the browser knows how many cards fit.
+  The trim never matches the first card, so a section holding fewer records
+  than one row still shows all of them. Preview cards fill their column, so a
+  wide screen does not leave a gap beside each card.

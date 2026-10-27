@@ -144,7 +144,8 @@
                                     View all workshops <i class="fa fa-arrow-right"/>
                                 </a>
                             </header>
-                            <div class="orm-grid orm-grid--results" t-if="all_workshops">
+                            <div class="orm-grid orm-grid--results orm-grid--preview"
+                                 t-if="all_workshops">
                                 <t t-foreach="all_workshops" t-as="workshop">
                                     <t t-call="odex_road_mechanic.orm_workshop_card"/>
                                 </t>
@@ -171,7 +172,8 @@
                                     View all spare parts <i class="fa fa-arrow-right"/>
                                 </a>
                             </header>
-                            <div class="orm-grid orm-grid--results" t-if="all_suppliers">
+                            <div class="orm-grid orm-grid--results orm-grid--preview"
+                                 t-if="all_suppliers">
                                 <t t-foreach="all_suppliers" t-as="workshop">
                                     <t t-call="odex_road_mechanic.orm_workshop_card"/>
                                 </t>
@@ -322,7 +324,7 @@
             </h1>
             <div class="orm-toolbar__controls">
                 <button type="button" class="orm-btn orm-btn--outline orm-btn--sm orm-only-mobile"
-                        data-orm-filters-open="1">
+                        data-orm-filters-open="1" t-if="not hide_filter_button">
                     <i class="fa fa-filter"/> Filter
                 </button>
                 <form method="get" class="orm-sort" data-orm-autosubmit="1">
@@ -400,13 +402,10 @@
                     <t t-call="odex_road_mechanic.orm_service_strip"/>
 
                     <section class="orm-section">
-                        <div class="orm-container orm-layout">
-                            <aside class="orm-layout__side" data-orm-filters-panel="1">
-                                <t t-set="active_service_ids" t-value="active_service_ids or []"/>
-                                <t t-call="odex_road_mechanic.orm_filters"/>
-                            </aside>
+                        <div class="orm-container orm-layout orm-layout--full">
                             <div class="orm-layout__main">
                                 <t t-set="toolbar_title">All workshops</t>
+                                <t t-set="hide_filter_button" t-value="True"/>
                                 <t t-set="view_grid_url" t-value="'/workshops?view=grid'"/>
                                 <t t-set="view_list_url" t-value="'/workshops?view=list'"/>
                                 <t t-call="odex_road_mechanic.orm_results_toolbar"/>

@@ -31,6 +31,8 @@ class RoadMechanicMixin(object):
         env = request.env
         website = request.website
         return {
+            # pages without a filter sidebar hide the mobile Filter button
+            'hide_filter_button': False,
             'orm_services': env['odex.road.mechanic.service'].search([]),
             'orm_home_services': env['odex.road.mechanic.service'].search(
                 [('show_on_homepage', '=', True)], limit=12),
@@ -164,11 +166,13 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
                 expression.AND([workshops, [('is_verified', '=', True)]]), limit=6),
             'verified_suppliers': Workshop.search(
                 expression.AND([suppliers, [('is_verified', '=', True)]]), limit=6),
-            # 3 + 4: the main listings, kept short on the home page
+            # 3 + 4: the main listings. Twelve is fetched so a wide screen can
+            # fill whole rows; the grid trims the trailing partial row in CSS,
+            # because only the browser knows how many cards fit.
             'all_workshops': Workshop.search(
-                workshops, limit=6, order='create_date desc, id desc'),
+                workshops, limit=12, order='create_date desc, id desc'),
             'all_suppliers': Workshop.search(
-                suppliers, limit=6, order='create_date desc, id desc'),
+                suppliers, limit=12, order='create_date desc, id desc'),
             'total_workshops': Workshop.search_count(workshops),
             'total_suppliers': Workshop.search_count(suppliers),
             # 5 + 6: providers of the two field services
