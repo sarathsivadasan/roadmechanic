@@ -630,3 +630,26 @@ the leftovers stayed, so every dropdown showed each entry twice.
   editor's grid mode, where each block carries an inline `grid-area` that only
   `!important` can release. Two columns between 576px and 992px; desktop and
   phone are untouched.
+
+
+* 18.0.6.1.3 - fixed the install error "External ID not found:
+  odex_road_mechanic.action_merge_duplicates". The Configuration menu item
+  added in 18.0.6.1.0 pointed at a server action whose record was never
+  written: the edit that was meant to add it used a text anchor that did not
+  match, and a silent no-op replace left the menu pointing at nothing. The
+  action record now exists in views/workshop_views.xml, which loads before the
+  menu.
+
+  A new reference checker (xmlcheck.py) walks every ref, action and parent in
+  every data file and verifies the target both exists and is defined in a file
+  that loads earlier. It found two further latent faults, now fixed:
+
+  - views/part_offer_views.xml was missing from the manifest entirely, so
+    action_part_offer was never created even though views/service_menus.xml
+    references it. The Supplier Offers backend views were not loading at all.
+  - views/job_views.xml hung its menus off menu_road_mechanic_root but loaded
+    nine files before views/menus.xml defines it.
+
+  Neither had surfaced because an upgrade resolves these references from
+  external IDs left by earlier installs; both would have broken a fresh install
+  into a clean database.
