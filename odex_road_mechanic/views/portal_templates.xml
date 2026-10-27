@@ -765,10 +765,11 @@
                       class="orm-form orm-panel">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <p class="orm-muted orm-small">
-                        Tick the days you open. Only the ticked days are shown to customers, and
-                        the Open now badge follows these hours. Times are decimal, so 8.5 means
-                        08:30. Leave the afternoon equal to the morning end for one continuous
-                        block.
+                        Tick the days you open and leave your days off unticked - a day
+                        off is shown to customers as Closed and takes no bookings. The
+                        Open now badge follows these hours. Times are decimal, so 8.5
+                        means 08:30. Leave the afternoon equal to the morning end for one
+                        continuous block.
                     </p>
 
                     <label class="orm-check">

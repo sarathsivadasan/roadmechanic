@@ -576,3 +576,57 @@ only to the owning partner.
   the name clamps to two lines, the location and tag rows always reserve their
   slot, and the Call/WhatsApp row is pinned to the bottom of the card. Badges
   anchor to the photo rather than the card. Same treatment on the offer tiles.
+
+
+---
+
+# Release 18.0.6.1.0
+
+**Working hours could not be saved, and there was no day off.** The list used
+the `active` field as the on/off switch, so unticking a day archived the record
+and the row disappeared instead of being saved as closed. Days now carry an
+explicit **Closed** flag:
+
+* Tick Closed for a day off. The day still shows in the public opening hours,
+  as Closed, and generates no booking slot.
+* A day left out of the list is treated as closed too.
+* `active` is gone from the editable list, so nothing silently archives itself.
+* A unique constraint on (workshop, day) stops the same weekday being added
+  twice.
+* "Generate a weekly schedule" now creates all seven days, with Friday closed
+  by default - untick it if you open on Fridays.
+* The portal editor at `/my/workshop/<id>/hours` writes the same flag.
+
+**Duplicate master data on every upgrade.** The cause was the earlier failed
+installs: they created services, types, brands and areas, then died before
+Odoo recorded an external id. A later install adopted one record per name, and
+the leftovers stayed, so every dropdown showed each entry twice.
+
+* A merge routine now runs on install and on **every upgrade**: it keeps the
+  record the module owns, repoints every reference on it - workshops, offers,
+  requests, jobs, anything with a link to it - and deletes the leftover. It is
+  safe to run repeatedly.
+* Also available on demand: Road Mechanic - Configuration - **Merge Duplicate
+  Master Data**.
+* Services, workshop types, areas, part categories and job categories now carry
+  a uniqueness check, so a duplicate cannot be created by hand either.
+* Three view files were listed twice in the manifest; that is fixed.
+
+
+* 18.0.6.1.1 - tablet layout. The hero text carries `flex-basis: 640px` for the
+  desktop two-column layout; once the hero stacks below 992px that basis is read
+  as a HEIGHT, which is what opened the tall empty band under the search box.
+  Neutralised there and on the three other rules with a pixel basis. The footer
+  link groups now fall into two columns from tablet down rather than one long
+  stack, footer links keep a readable contrast against whatever palette the
+  theme sets, and the provider CTA band stacks instead of colliding with the
+  floating header.
+
+
+* 18.0.6.1.2 - footer on tablet, second attempt. The previous rules required
+  `.s_text_block` in the selector chain; this footer does not have it, so they
+  matched nothing. The rules no longer assume a snippet wrapper and cover both
+  shapes an Odoo 18 footer takes - classic Bootstrap columns, and the website
+  editor's grid mode, where each block carries an inline `grid-area` that only
+  `!important` can release. Two columns between 576px and 992px; desktop and
+  phone are untouched.

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- noupdate is off on purpose: this runs on every upgrade so duplicate
+         master data left by an earlier install is merged away. -->
+    <data>
+        <function model="odex.road.mechanic.workshop"
+                  name="action_merge_duplicate_master_data"/>
+    </data>
+</odoo>

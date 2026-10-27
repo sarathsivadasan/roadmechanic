@@ -301,7 +301,7 @@ class RoadMechanicPortal(CustomerPortal, RoadMechanicMixin):
             rows.append({
                 'code': code,
                 'label': label,
-                'enabled': bool(line and line.active),
+                'enabled': bool(line) and not line.is_closed,
                 'morning_from': line.morning_from if line else 8.0,
                 'morning_to': line.morning_to if line else 13.0,
                 'afternoon_from': line.afternoon_from if line else 14.0,
@@ -340,11 +340,12 @@ class RoadMechanicPortal(CustomerPortal, RoadMechanicMixin):
                     'morning_to': _float(form.get('day_%s_mt' % code), 13.0),
                     'afternoon_from': _float(form.get('day_%s_af' % code), 14.0),
                     'afternoon_to': _float(form.get('day_%s_at' % code), 20.0),
-                    'active': enabled,
+                    'is_closed': not enabled,
+                    'active': True,
                 }
                 if line:
                     line.write(values)
-                elif enabled:
+                else:
                     WorkingDay.create(dict(values, workshop_id=workshop.id, dayofweek=code))
             workshop.sudo().write({
                 'open_24h': post.get('open_24h') in ('1', 'on', 'true'),

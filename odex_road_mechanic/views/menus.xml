@@ -180,6 +180,13 @@
               action="action_service"
               sequence="10"/>
 
+    <menuitem id="menu_config_merge_duplicates"
+              name="Merge Duplicate Master Data"
+              parent="menu_road_mechanic_configuration"
+              action="action_merge_duplicates"
+              sequence="90"
+              groups="odex_road_mechanic.group_road_mechanic_manager"/>
+
     <menuitem id="menu_road_mechanic_configuration_part_categories"
               name="Spare Parts Categories"
               parent="menu_road_mechanic_configuration"

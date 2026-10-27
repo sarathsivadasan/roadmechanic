@@ -295,20 +295,29 @@
                         <page string="Working Hours" name="hours">
                             <div class="mb-2">
                                 <button name="action_generate_default_days" type="object"
-                                        string="Generate Saturday - Thursday schedule"
+                                        string="Generate a weekly schedule"
                                         class="btn-link"/>
                             </div>
                             <separator string="Opening Days"/>
                             <field name="working_day_ids">
                                 <list editable="bottom">
-                                    <field name="dayofweek"/>
-                                    <field name="morning_from" widget="float_time"/>
-                                    <field name="morning_to" widget="float_time"/>
-                                    <field name="afternoon_from" widget="float_time"/>
-                                    <field name="afternoon_to" widget="float_time"/>
-                                    <field name="active" widget="boolean_toggle"/>
+                                    <field name="dayofweek" required="1"/>
+                                    <field name="is_closed" widget="boolean_toggle"
+                                           string="Closed"/>
+                                    <field name="morning_from" widget="float_time"
+                                           readonly="is_closed"/>
+                                    <field name="morning_to" widget="float_time"
+                                           readonly="is_closed"/>
+                                    <field name="afternoon_from" widget="float_time"
+                                           readonly="is_closed"/>
+                                    <field name="afternoon_to" widget="float_time"
+                                           readonly="is_closed"/>
                                 </list>
                             </field>
+                            <div class="text-muted small mt-1">
+                                Tick <b>Closed</b> for a day off. A day left out of this
+                                list is also treated as closed.
+                            </div>
                             <separator string="Fallback"/>
                             <group>
                                 <group>

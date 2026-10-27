@@ -526,7 +526,7 @@ class RoadMechanicWorkshop(models.Model):
         rows = []
         for index, name in days:
             line = lines.get(index)
-            if not line:
+            if not line or line.is_closed:
                 rows.append({'day': name, 'hours': _('Closed'),
                              'today': index == today_index, 'closed': True})
                 continue
@@ -541,14 +541,14 @@ class RoadMechanicWorkshop(models.Model):
         return rows
 
     def action_generate_default_days(self):
-        """Create a Saturday to Thursday schedule from the workshop hours."""
+        """Create all seven days from the workshop hours, Friday closed."""
         WorkingDay = self.env['odex.road.mechanic.working.day']
         for workshop in self:
             existing = set(workshop.working_day_ids.mapped('dayofweek'))
             opening = workshop.opening_time or 8.0
             closing = workshop.closing_time or 20.0
             midday = min(max(opening + 1, 13.0), closing)
-            for dayofweek in ('5', '6', '0', '1', '2', '3'):
+            for dayofweek in ('0', '1', '2', '3', '4', '5', '6'):
                 if dayofweek in existing:
                     continue
                 WorkingDay.create({
@@ -558,6 +558,8 @@ class RoadMechanicWorkshop(models.Model):
                     'morning_to': midday,
                     'afternoon_from': min(midday + 1, closing),
                     'afternoon_to': closing,
+                    # Friday is the usual day off here; untick it if you open
+                    'is_closed': dayofweek == '4',
                 })
         return True
 
@@ -768,6 +770,27 @@ class RoadMechanicWorkshop(models.Model):
     # ------------------------------------------------------------------
     # Public directory API (used by the website controllers)
     # ------------------------------------------------------------------
+    @api.model
+    def action_merge_duplicate_master_data(self):
+        """Merge duplicate services, types, brands, areas and categories.
+
+        Runs on every module upgrade and from Configuration, because earlier
+        installs left master data behind without an external id and those
+        leftovers show up a second time in every dropdown.
+        """
+        from ..hooks import dedupe_master_data
+        merged = dedupe_master_data(self.env)
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Master data'),
+                'message': _('%s duplicate record(s) merged.', merged),
+                'type': 'success' if merged else 'info',
+                'sticky': False,
+            },
+        }
+
     @api.model
     def _public_domain(self, listing_type='workshop'):
         """Published companies of one listing type.

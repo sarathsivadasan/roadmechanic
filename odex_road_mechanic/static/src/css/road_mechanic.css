@@ -1581,22 +1581,6 @@ html[data-orm-theme="dark"] .roadmechanic-workshop-page .orm-wsp-hero__title { c
 .odex-road-mechanic .orm-card .orm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
 .odex-road-mechanic .orm-card .orm-actions .orm-btn { width: 100%; }
 
-/* Footer readability. The footer belongs to the website theme, so this only
-   raises contrast and tightens the mobile layout - it sets no palette of its
-   own and can be removed without affecting anything else. */
-#wrapwrap > footer a:not(.btn) { color: inherit; opacity: .85; }
-#wrapwrap > footer a:not(.btn):hover { opacity: 1; text-decoration: underline; }
-#wrapwrap > footer h5,
-#wrapwrap > footer h6,
-#wrapwrap > footer .h6 { opacity: 1; }
-
-@media (max-width: 767.98px) {
-    /* two columns of links instead of one long scroll */
-    #wrapwrap > footer .s_text_block .row > div[class*="col-lg-"] { width: 50%; }
-    #wrapwrap > footer .s_text_block .row > div[class*="col-lg-"]:nth-child(n+3) {
-        margin-top: 1rem;
-    }
-}
 
 
 /* Sticky pieces sit below the website header, never over it. Odoo's fixed
@@ -1686,3 +1670,93 @@ html[data-orm-theme="dark"] .roadmechanic-workshop-page .orm-wsp-hero__title { c
 .odex-road-mechanic .orm-grid--offers > * { height: 100%; }
 .odex-road-mechanic .orm-offertile__media { flex: 0 0 auto; aspect-ratio: 16 / 10; overflow: hidden; }
 .odex-road-mechanic .orm-offertile__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+
+/* ==========================================================================
+   Tablet fixes
+   ========================================================================== */
+
+/* The hero text carries flex-basis 640px for the two-column desktop layout.
+   Once the hero stacks, that basis is read as a HEIGHT, which is what opened
+   the tall empty band between the search box and the points panel on tablets. */
+@media (max-width: 991.98px) {
+    .odex-road-mechanic .orm-hero__inner { gap: 1.25rem; justify-content: flex-start; }
+    .odex-road-mechanic .orm-hero__text {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: none;
+    }
+    .odex-road-mechanic .orm-hero__points { flex: 0 0 auto; width: 100%; }
+    .odex-road-mechanic .orm-hero { padding-bottom: 2rem; }
+}
+
+
+/* the CTA band sits under a floating header on tablets, so give it room */
+@media (max-width: 991.98px) {
+    .odex-road-mechanic .orm-cta { scroll-margin-top: 5rem; }
+    .odex-road-mechanic .orm-cta__inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .odex-road-mechanic .orm-actions--cta { width: 100%; }
+    .odex-road-mechanic .orm-actions--cta .orm-btn { flex: 1 1 auto; }
+}
+
+
+/* the remaining px flex-basis values, neutralised wherever their row stacks */
+@media (max-width: 991.98px) {
+    .odex-road-mechanic .orm-hero__points { flex-basis: auto; }
+    .odex-road-mechanic .orm-providers__search { flex-direction: column; }
+    .odex-road-mechanic .orm-providers__search .orm-input,
+    .odex-road-mechanic .orm-providers__search .orm-btn { flex: 0 0 auto; width: 100%; }
+}
+
+
+/* ==========================================================================
+   Footer on tablet
+   --------------------------------------------------------------------------
+   The earlier attempt required `.s_text_block` to sit in the chain, which this
+   footer does not have, so nothing matched. These rules make no assumption
+   about the snippet wrapper and cover both shapes an Odoo 18 footer takes:
+   classic Bootstrap columns, and the website editor's grid mode, where each
+   block carries an inline `grid-area` that only `!important` can release.
+
+   Layout only - the footer palette still belongs to the website theme.
+   ========================================================================== */
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+
+    /* --- shape 1: classic Bootstrap columns --------------------------- */
+    #wrapwrap footer .row > div[class*="col-"] {
+        flex: 0 0 auto !important;
+        width: 50% !important;
+        max-width: 50% !important;
+    }
+
+    /* --- shape 2: website editor grid mode ---------------------------- */
+    /* the inline grid-area pins each block to its own row, so release it
+       and let the blocks flow into two columns instead */
+    #wrapwrap footer .row.o_grid_mode {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 1.5rem 1rem;
+    }
+    #wrapwrap footer .row.o_grid_mode > .o_grid_item {
+        grid-area: auto !important;
+        width: auto !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+    }
+
+    /* breathing room between the two rows of groups, either shape */
+    #wrapwrap footer .row > div[class*="col-"]:nth-child(n+3) { margin-top: 1.25rem; }
+}
+
+/* footer link contrast, independent of the snippet wrapper */
+#wrapwrap footer a:not(.btn) { color: inherit; opacity: .88; }
+#wrapwrap footer a:not(.btn):hover { opacity: 1; text-decoration: underline; }
+#wrapwrap footer h5,
+#wrapwrap footer h6,
+#wrapwrap footer .h6 { opacity: 1; }

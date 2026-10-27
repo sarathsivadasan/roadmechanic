@@ -16,6 +16,10 @@ class RoadMechanicWorkingDay(models.Model):
     _name = 'odex.road.mechanic.working.day'
     _description = 'Workshop Working Day'
     _order = 'workshop_id, dayofweek'
+    _sql_constraints = [
+        ('day_uniq', 'unique(workshop_id, dayofweek)',
+         'This day is already configured for the workshop.'),
+    ]
 
     workshop_id = fields.Many2one(
         'odex.road.mechanic.workshop', string='Workshop',
@@ -28,6 +32,10 @@ class RoadMechanicWorkingDay(models.Model):
     capacity = fields.Integer(
         string='Slot Capacity Override',
         help='Bookings allowed per slot on this day. Leave 0 to use the workshop default.')
+    is_closed = fields.Boolean(
+        string='Closed',
+        help='Tick for a day off. The day still appears in the opening hours, '
+             'shown as Closed, and no booking slot is generated for it.')
     active = fields.Boolean(default=True)
     day_label = fields.Char(compute='_compute_day_label')
 
@@ -60,6 +68,8 @@ class RoadMechanicWorkingDay(models.Model):
     def time_ranges(self):
         """Return the open [from, to] float ranges of this day."""
         self.ensure_one()
+        if self.is_closed:
+            return []
         ranges = []
         if self.morning_to and self.morning_to > self.morning_from:
             ranges.append((self.morning_from, self.morning_to))

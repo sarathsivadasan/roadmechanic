@@ -33,6 +33,17 @@ class JobCategory(models.Model):
         'odex.road.mechanic.job', 'job_category_id', string='Jobs')
     job_count = fields.Integer(compute='_compute_job_count')
 
+    @api.constrains('name')
+    def _check_unique_name(self):
+        for record in self:
+            if not record.name:
+                continue
+            domain = [('id', '!=', record.id), ('name', '=ilike', record.name.strip())]
+            
+            if self.with_context(active_test=False).search_count(domain):
+                raise ValidationError(
+                    _('"%s" already exists.', record.name))
+
     _sql_constraints = [
         ('slug_uniq', 'unique(slug)', 'The URL slug must be unique.'),
     ]
