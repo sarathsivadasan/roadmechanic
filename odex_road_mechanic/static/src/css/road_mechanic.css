@@ -1503,7 +1503,10 @@ html[data-orm-theme="dark"] .orm-rating-input label { color: #3f3f46; }
     align-items: stretch;
 }
 .odex-road-mechanic .orm-rail > * {
-    flex: 0 0 clamp(220px, 19%, 275px);
+    /* same width as a card in the home page preview grid: four across with
+       three gaps between them, so a section holding one card shows one
+       normal-sized card rather than one stretched across the row */
+    flex: 0 0 calc((100% - 3 * var(--orm-gap)) / 4);
     scroll-snap-align: start;
     min-width: 0;
 }
@@ -1514,19 +1517,20 @@ html[data-orm-theme="dark"] .orm-rating-input label { color: #3f3f46; }
 .odex-road-mechanic .orm-cta .orm-btn--outline { border-color: #fff; color: #fff; }
 .odex-road-mechanic .orm-cta .orm-btn--outline:hover { background: #fff; color: #171717; }
 
-@media (max-width: 1399.98px) {
-    .odex-road-mechanic .orm-rail > * { flex-basis: clamp(215px, 24%, 265px); }
+/* three across on tablet, two on a small tablet, one on a phone - the same
+   steps the preview grid uses */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .odex-road-mechanic .orm-rail > * {
+        flex-basis: calc((100% - 2 * var(--orm-gap)) / 3);
+    }
 }
-@media (max-width: 1199.98px) {
-    .odex-road-mechanic .orm-rail > * { flex-basis: clamp(210px, 31%, 260px); }
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .odex-road-mechanic .orm-rail > * {
+        flex-basis: calc((100% - var(--orm-gap)) / 2);
+    }
 }
-@media (max-width: 991.98px) {
-    .odex-road-mechanic .orm-rail > * { flex-basis: 46%; }
-}
-@media (max-width: 767.98px) {
-    .odex-road-mechanic .orm-rail > * { flex-basis: 78%; }
-}
-@media (max-width: 480px) {
+@media (max-width: 575.98px) {
+    /* a sliver of the next card shows the row scrolls */
     .odex-road-mechanic .orm-rail > * { flex-basis: 86%; }
 }
 
@@ -1792,7 +1796,11 @@ html[data-orm-theme="dark"] .roadmechanic-workshop-page .orm-wsp-hero__title { c
 
 /* A rail holding one card has nothing to scroll to, so the peek gap reads as
    bad centring. Let a lone card fill the row instead. */
-.odex-road-mechanic .orm-rail > :only-child { flex-basis: 100%; width: 100%; }
+/* a lone card has nothing to scroll to, so on a phone it fills the row rather
+   than leaving the peek gap; on larger screens it keeps its normal width */
+@media (max-width: 575.98px) {
+    .odex-road-mechanic .orm-rail > :only-child { flex-basis: 100%; }
+}
 
 /* ------------------------------------------------------------ footer phone */
 /* two columns from phone up, so the footer stops being a long scroll */

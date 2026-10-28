@@ -693,3 +693,13 @@ the leftovers stayed, so every dropdown showed each entry twice.
   The trim never matches the first card, so a section holding fewer records
   than one row still shows all of them. Preview cards fill their column, so a
   wide screen does not leave a gap beside each card.
+
+
+* 18.0.6.3.2 - the Verified workshops row showed one card stretched across the
+  whole screen. The cause was a rule added in 18.0.6.2.0 that gave a lone card
+  in a rail `flex-basis: 100%`; it was meant to close a gap on phones but
+  applied at every width. Rail cards now use the same width as the home page
+  preview grid - four across on desktop, three on tablet, two on a small
+  tablet, one on a phone - so a row holding a single card shows one
+  normal-sized card. The lone-card rule is now phone-only. Rails fetch 8
+  instead of 6, so there is a second screenful to scroll to on a desktop.

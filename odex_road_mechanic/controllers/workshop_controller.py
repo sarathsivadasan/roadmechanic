@@ -161,11 +161,12 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
 
         values = self._orm_common_values()
         values.update({
-            # 1 + 2: verified, one row each
+            # 1 + 2: verified. Four fit across a desktop row, so eight gives a
+            # second screenful to scroll to without loading the whole table.
             'verified_workshops': Workshop.search(
-                expression.AND([workshops, [('is_verified', '=', True)]]), limit=6),
+                expression.AND([workshops, [('is_verified', '=', True)]]), limit=8),
             'verified_suppliers': Workshop.search(
-                expression.AND([suppliers, [('is_verified', '=', True)]]), limit=6),
+                expression.AND([suppliers, [('is_verified', '=', True)]]), limit=8),
             # 3 + 4: the main listings. Twelve is fetched so a wide screen can
             # fill whole rows; the grid trims the trailing partial row in CSS,
             # because only the browser knows how many cards fit.
@@ -177,9 +178,9 @@ class RoadMechanicWebsite(http.Controller, RoadMechanicMixin):
             'total_suppliers': Workshop.search_count(suppliers),
             # 5 + 6: providers of the two field services
             'roadside_providers': Workshop.search(
-                Workshop._provider_domain('roadside'), limit=6),
+                Workshop._provider_domain('roadside'), limit=8),
             'recovery_providers': Workshop.search(
-                Workshop._provider_domain('recovery'), limit=6),
+                Workshop._provider_domain('recovery'), limit=8),
             # 7 + 8: offers split by the kind of company running them
             'workshop_offers': Offer.search(
                 expression.AND([offer_domain,
