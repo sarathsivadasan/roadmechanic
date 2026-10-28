@@ -312,11 +312,17 @@
                                            readonly="is_closed"/>
                                     <field name="afternoon_to" widget="float_time"
                                            readonly="is_closed"/>
+                                    <field name="display_hours" readonly="1"
+                                           string="Shown On Website"/>
                                 </list>
                             </field>
                             <div class="text-muted small mt-1">
                                 Tick <b>Closed</b> for a day off. A day left out of this
                                 list is also treated as closed.
+                                For one continuous day, fill <b>Morning From</b> and
+                                <b>Afternoon To</b> and leave the middle two at 00:00.
+                                For a lunch break, fill all four.
+                                <b>Shown On Website</b> is exactly what customers see.
                             </div>
                             <separator string="Fallback"/>
                             <group>

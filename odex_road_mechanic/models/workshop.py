@@ -418,13 +418,29 @@ class RoadMechanicWorkshop(models.Model):
         now = pytz.utc.localize(datetime.utcnow()).astimezone(tz)
         return now.hour + now.minute / 60.0
 
-    @api.depends('opening_time', 'closing_time', 'open_24h', 'tz')
+    def _local_weekday(self, tz_name=None):
+        tz = pytz.timezone(tz_name or DEFAULT_TZ)
+        return pytz.utc.localize(datetime.utcnow()).astimezone(tz).weekday()
+
+    @api.depends('opening_time', 'closing_time', 'open_24h', 'tz',
+                 'working_day_ids.is_closed', 'working_day_ids.active',
+                 'working_day_ids.dayofweek', 'working_day_ids.morning_from',
+                 'working_day_ids.morning_to', 'working_day_ids.afternoon_from',
+                 'working_day_ids.afternoon_to')
     def _compute_is_open(self):
         for record in self:
             if record.open_24h:
                 record.is_open = True
                 continue
             now = record._local_now_float(record.tz)
+            # when opening days are configured they are the source of truth,
+            # so the badge can never disagree with the hours table
+            if record.working_day_ids:
+                today = record._local_weekday(record.tz)
+                day = record.working_day_ids.filtered(
+                    lambda d: d.active and int(d.dayofweek) == today)[:1]
+                record.is_open = bool(day) and day.is_open_at(now)
+                continue
             start, end = record.opening_time or 0.0, record.closing_time or 0.0
             if not start and not end:
                 record.is_open = False

@@ -703,3 +703,27 @@ the leftovers stayed, so every dropdown showed each entry twice.
   tablet, one on a phone - so a row holding a single card shows one
   normal-sized card. The lone-card rule is now phone-only. Rails fetch 8
   instead of 6, so there is a second screenful to scroll to on a desktop.
+
+
+---
+
+# Release 18.0.6.4.0 - opening hours now match the backend
+
+A day entered as Morning From 09:00, Morning To 00:00, Afternoon From 00:00,
+Afternoon To 23:00 was published as "12:00 AM - 11:00 PM". The morning block
+was dropped because its closing time was zero, and the afternoon block was read
+as starting at midnight. The intended meaning - open 09:00 to 23:00 with no
+break - was lost.
+
+* `time_ranges()` now treats a zero as "not filled in" rather than midnight,
+  since a workshop that really opens at 00:00 uses Open 24 Hours. An opening
+  time with no closing time, closed by the afternoon's closing time, is read as
+  one continuous span. Two real blocks are still kept apart, and blocks that
+  meet are merged.
+* **Open now** was computed from the workshop's single opening/closing window
+  while the table was built from the opening days, so the two could disagree.
+  When opening days are configured they are now the only source for the badge.
+* Booking slots come from the same method, so they follow the corrected hours.
+* The backend list gained a read-only **Shown On Website** column that prints
+  exactly what customers will see for that day, so a mis-entered row is visible
+  at entry time instead of on the live site.

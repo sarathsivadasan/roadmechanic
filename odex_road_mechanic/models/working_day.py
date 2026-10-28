@@ -38,12 +38,38 @@ class RoadMechanicWorkingDay(models.Model):
              'shown as Closed, and no booking slot is generated for it.')
     active = fields.Boolean(default=True)
     day_label = fields.Char(compute='_compute_day_label')
+    display_hours = fields.Char(
+        string='Shown On Website', compute='_compute_display_hours',
+        help='Exactly what customers see for this day.')
 
     @api.depends('dayofweek')
     def _compute_day_label(self):
         labels = dict(WEEKDAYS)
         for record in self:
             record.day_label = labels.get(record.dayofweek, '')
+
+    @api.depends('is_closed', 'morning_from', 'morning_to',
+                 'afternoon_from', 'afternoon_to')
+    def _compute_display_hours(self):
+        for record in self:
+            if record.is_closed:
+                record.display_hours = _('Closed')
+                continue
+            blocks = record.time_ranges()
+            if not blocks:
+                record.display_hours = _('Not set')
+                continue
+            record.display_hours = ', '.join(
+                '%s - %s' % (record._format_hour(start), record._format_hour(end))
+                for start, end in blocks)
+
+    @staticmethod
+    def _format_hour(value):
+        value = value or 0.0
+        hours = int(value)
+        minutes = int(round((value - hours) * 60))
+        suffix = 'AM' if hours < 12 else 'PM'
+        return '%02d:%02d %s' % (hours % 12 or 12, minutes, suffix)
 
     @api.depends('dayofweek', 'workshop_id.name')
     def _compute_display_name(self):
@@ -66,13 +92,54 @@ class RoadMechanicWorkingDay(models.Model):
                 raise ValidationError(_('Afternoon "from" must be earlier than afternoon "to".'))
 
     def time_ranges(self):
-        """Return the open [from, to] float ranges of this day."""
+        """Return the open [from, to] float ranges of this day.
+
+        The four fields describe either one continuous span or two blocks
+        with a break between them. A zero means "not filled in" rather than
+        midnight, because a workshop that genuinely opens at 00:00 sets
+        Open 24 Hours instead. So a day entered as
+
+            Morning From 09:00, Morning To 00:00,
+            Afternoon From 00:00, Afternoon To 23:00
+
+        means open 09:00 to 23:00 with no break, not 00:00 to 23:00.
+        """
         self.ensure_one()
         if self.is_closed:
             return []
-        ranges = []
-        if self.morning_to and self.morning_to > self.morning_from:
-            ranges.append((self.morning_from, self.morning_to))
-        if self.afternoon_to and self.afternoon_to > self.afternoon_from:
-            ranges.append((self.afternoon_from, self.afternoon_to))
-        return ranges
+
+        m_from = self.morning_from or 0.0
+        m_to = self.morning_to or 0.0
+        a_from = self.afternoon_from or 0.0
+        a_to = self.afternoon_to or 0.0
+
+        morning = (m_from, m_to) if m_to > m_from else None
+        afternoon = (a_from, a_to) if a_to > a_from else None
+
+        # an opening time with no closing time, closed by the afternoon's
+        # closing time: one continuous span
+        if morning is None and afternoon is not None and m_from and not a_from:
+            return [(m_from, a_to)]
+        # a closing time with no afternoon at all
+        if afternoon is None and morning is not None:
+            return [morning]
+        if morning is None and afternoon is not None:
+            return [afternoon]
+        if morning is None and afternoon is None:
+            return []
+
+        # two real blocks, merged when they meet
+        if afternoon[0] <= morning[1]:
+            return [(morning[0], max(morning[1], afternoon[1]))]
+        return [morning, afternoon]
+
+    def is_open_at(self, moment):
+        """True when ``moment`` (hours as a float) falls in an open range."""
+        self.ensure_one()
+        for start, end in self.time_ranges():
+            if end > start:
+                if start <= moment <= end:
+                    return True
+            elif end < start and (moment >= start or moment <= end):
+                return True
+        return False
